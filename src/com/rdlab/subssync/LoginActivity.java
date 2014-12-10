@@ -32,9 +32,7 @@ public class LoginActivity extends Activity implements ServiceTaskEvent {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		
-		organizer=new ServiceOrganizer(this,this.getApplicationContext());
-		
+
 		userName = (EditText) findViewById(R.id.txtUsername);
 		password = (EditText) findViewById(R.id.txtPassword);
 		login = (Button) findViewById(R.id.btnLogin);
@@ -45,24 +43,27 @@ public class LoginActivity extends Activity implements ServiceTaskEvent {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
-				paramsx.add(new BasicNameValuePair("username", userName.getText().toString()));
-				paramsx.add(new BasicNameValuePair("password", password.getText().toString()));
-				
-				ServiceRequest req=new ServiceRequest("login",paramsx);
+				paramsx.add(new BasicNameValuePair("username", userName
+						.getText().toString()));
+				paramsx.add(new BasicNameValuePair("password", password
+						.getText().toString()));
+
+				ServiceRequest req = new ServiceRequest("login", paramsx);
 				organizer.execute(req);
 			}
 		});
 
+		organizer = new ServiceOrganizer(this, this);
 	}
 
 	@Override
 	public void serviceReturned(Object items) {
 		// TODO Auto-generated method stub
-		Gson gson=new Gson();
-		LoginModel model=gson.fromJson(items.toString(), LoginModel.class);
-		Constants.LoggedUserSerno=model.getSerno();
-		
-		Intent intent=new Intent(getApplicationContext(), MainActivity.class);
+		Gson gson = new Gson();
+		LoginModel model = gson.fromJson(items.toString(), LoginModel.class);
+		Constants.LoggedUserSerno = model.getSerno();
+
+		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(intent);
 	}
 }

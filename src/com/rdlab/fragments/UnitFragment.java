@@ -120,6 +120,7 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 
 				AddWiringFragment df = new AddWiringFragment();
 				Bundle b = new Bundle();
+				b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
 				b.putString(Constants.UAVT_TAG, item.getUAVTNo());
 				df.setArguments(b);
 

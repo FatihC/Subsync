@@ -115,7 +115,9 @@
                 android:id="@+id/spBrands"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/address_item_text" />
         </TableRow>
 
         <TableRow
@@ -155,7 +157,9 @@
                 android:id="@+id/spStatuses"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/address_item_text" />
         </TableRow>
 
         <TableRow

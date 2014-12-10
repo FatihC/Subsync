@@ -1,38 +1,20 @@
 package com.rdlab.webservice;
 
-import org.parceler.Parcel;
 
-import com.google.gson.annotations.SerializedName;
-
-@Parcel
 public class PushRequest {
 	
-	@SerializedName("userSerno")
 	private Long userSerno;
-	@SerializedName("districtCode")
 	private Long districtCode;
-	@SerializedName("createDate")
 	private Long createDate;
-	
-	@SerializedName("uavtCode")
 	private Long uavtCode;
-	@SerializedName("wiringNo")
 	private String wiringNo;
-	
-	@SerializedName("meterNo")
 	private String meterNo;
-	@SerializedName("meterBrand")
 	private String meterBrand;
-
-	@SerializedName("checkStatus")
 	private Integer checkStatus; // biirm yok, kapali, sayac var ulasilamadi....
-	@SerializedName("existOnUavt")
 	private Integer existOnUavt;  // 0-exist, 1-not
-
-	@SerializedName("doorNumber")
 	private String doorNumber;
-	@SerializedName("customerName")
 	private String customerName;
+	
 	
 	public void setCreateDate(Long createDate) {
 		this.createDate = createDate;
