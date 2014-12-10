@@ -1,16 +1,12 @@
 package com.rdlab.webservice;
 
-import org.parceler.Parcel;
 
-import com.google.gson.annotations.SerializedName;
 
-@Parcel
 public class LoginModel {
 
-	@SerializedName("Username")
-	private String Username;
-	@SerializedName("Password")
-	private String Password;
+	String Username;
+	String Password;
+	Long Serno;
 	
 	public LoginModel() {
 		// TODO Auto-generated constructor stub
@@ -25,13 +21,13 @@ public class LoginModel {
 	public String getUsername() {
 		return Username;
 	}
-	public void setUsername(String username) {
-		Username = username;
-	}
+	
 	public String getPassword() {
 		return Password;
 	}
-	public void setPassword(String password) {
-		Password = password;
+	
+	public Long getSerno() {
+		return Serno;
 	}
+	
 }

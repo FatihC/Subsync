@@ -9,7 +9,7 @@ import retrofit.http.POST;
 public interface IOperationService {
 
 	@POST("/login")
-	void login(@Body LoginModel user);
+	int login(@Body LoginModel user);
 	
 	@POST("/push")
 	String push(@Body PushRequest user);

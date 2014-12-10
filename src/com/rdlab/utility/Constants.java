@@ -23,9 +23,6 @@ public class Constants {
 	public static final String STREET_LIST_STATE = "STREET_LIST_STATE";
 	public static final String CSBM_LIST_STATE = "CSBM_LIST_STATE";
 
-	public static String SelectedCountyCode = "1115";
-	public static String SelectedCountyName = "Akçakale";
-	public static String SelectedClassName = "com.rdlab.model.Akcakale";
 
 	public static final String HALILIYE = "1";
 	public static final String EYYUBIYE = "2";
@@ -47,5 +44,12 @@ public class Constants {
 	public static final String CSBM_HEADER_TEXT="LÜTFEN SOKAK/BULVAR/MEYDAN/MEZRA SEÇÝNÝZ";
 	public static final String BLOCK_HEADER_TEXT="LÜTFEN DIÞ KAPI NUMARASI SEÇÝNÝZ";
 	
+	
+	
+
+	public static String SelectedCountyCode = "1115";
+	public static String SelectedCountyName = "Akçakale";
+	public static String SelectedClassName = "com.rdlab.model.Akcakale";
+	public static Long LoggedUserSerno;
 
 }

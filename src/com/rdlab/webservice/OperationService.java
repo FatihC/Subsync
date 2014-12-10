@@ -8,7 +8,7 @@ import retrofit.converter.GsonConverter;
 
 public class OperationService {
 	private Converter DATA_CONVERTER = new GsonConverter(new Gson());
-	private final String API_URL = "http://192.168.1.14:31035/uavt/rest/api";
+	private static final String API_URL = "http://192.168.1.18/UAVTWebapi/api/v1/uavt";
 	IOperationService service;
 
 	public OperationService() {
