@@ -16,10 +16,11 @@ public class UnitItem {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public UnitItem(String indoor,String uavt) {
+	public UnitItem(String indoor,String uavt,boolean synced) {
 		// TODO Auto-generated constructor stub
 		this.IndoorNumber=indoor;
 		this.UAVTNo=uavt;
+		this.Synced=synced;
 	}
 	
 	public UnitItem(String indoor,String wiring,String sbsName,String mpName,String mpSer,String stat,String statCode,boolean synced) {

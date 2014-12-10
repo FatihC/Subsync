@@ -18,7 +18,7 @@ public class Haliliye extends SugarRecord {
 	private String DoorNumber;
 	private String SiteName;
 	private String BlockName;
-	private String UAVTAddressCode;
+	private String UAVTAddressNo;
 	private String IndoorNumber;
 	@Ignore
 	private int UnitCount;
@@ -36,7 +36,7 @@ public class Haliliye extends SugarRecord {
 			String districtName, String villageCode, String villageName,
 			String streetCode, String streetName, String csbmCode,
 			String csbmName, String buildingCode, String doorNumber,
-			String siteName, String blockName, String uavtAddressCode,
+			String siteName, String blockName, String UAVTAddressNo,
 			String indoorNumber) {
 
 		this.CountyCode = countyCode;
@@ -53,7 +53,7 @@ public class Haliliye extends SugarRecord {
 		this.DoorNumber = doorNumber;
 		this.SiteName = siteName;
 		this.BlockName = blockName;
-		this.UAVTAddressCode = uavtAddressCode;
+		this.UAVTAddressNo = UAVTAddressNo;
 		this.IndoorNumber = indoorNumber;
 	}
 
@@ -105,8 +105,8 @@ public class Haliliye extends SugarRecord {
 		return this.DoorNumber;
 	}
 
-	public String GetUAVTAddressCode() {
-		return this.UAVTAddressCode;
+	public String GetUAVTAddressNo() {
+		return this.UAVTAddressNo;
 	}
 
 	public String GetIndoorNumber() {

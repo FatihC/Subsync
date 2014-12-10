@@ -44,6 +44,14 @@
     <string name="action_halfeti">Halfeti</string>
     <string name="action_harran">Harran</string>
     <string name="action_hilvan">Hilvan</string>
+    <string name="tesisat_no">Tesisat No</string>
+    <string name="fatura_kmad_ancak_saya_bilgileri_mevcut_ise">Fatura çıkmadı ancak sayaç bilgileri mevcut ise</string>
+    <string name="saya_seri_no">Sayaç Seri No</string>
+    <string name="marka">Marka</string>
+    <string name="tan_ms_z_durumlarda">Tanımsız Durumlarda</string>
+    <string name="di_er_durumlar">Diğer Durumlar</string>
+    <string name="kaydet">Kaydet</string>
+    <string name="fatura_kt_ise">Fatura çıktı ise</string>
     
     
         

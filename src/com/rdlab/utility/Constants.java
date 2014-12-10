@@ -8,6 +8,7 @@ public class Constants {
 	public static final String STREET_CODE_TAG = "STREET_CODE";
 	public static final String CSBM_CODE_TAG = "CSBM_CODE";
 	public static final String DOOR_NUMBER_TAG = "DOOR_NUMBER";
+	public static final String UAVT_TAG = "UAVT_ADDRESS_NO";
 	
 	public static final String DISTRICT_NAME_TAG = "DISTRICT_NAME";
 	public static final String VILLAGE_NAME_TAG = "VILLAGE_NAME";

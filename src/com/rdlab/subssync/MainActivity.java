@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import com.rdlab.adapters.NavigationDrawerAdapter;
 import com.rdlab.dependencyInjection.BaseActivity;
 import com.rdlab.fragments.DistrictFragment;
+import com.rdlab.fragments.StreetFragment;
 import com.rdlab.model.NavigationDrawerItem;
 import com.rdlab.utility.Constants;
+import com.rdlab.utility.Helper;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -110,7 +112,7 @@ public class MainActivity extends BaseActivity {
 		Fragment fragment = null;
 		switch (position) {
 		case 0:
-			fragment = new DistrictFragment();
+			fragment = getFragment();
 			break;
 		case 1:
 			//fragment = new FindPeopleFragment();
@@ -150,6 +152,22 @@ public class MainActivity extends BaseActivity {
 			// error in creating fragment
 			Log.e("MainActivity", "Error in creating fragment");
 		}
+	}
+	
+	private Fragment getFragment(){
+		ArrayList<String> result=Helper.checkIfOnlyCenterExist();
+		if (result.size()>0) {
+			StreetFragment df = new StreetFragment();
+			Bundle b = new Bundle();
+			b.putString(Constants.DISTRICT_CODE_TAG, result.get(0));
+			b.putString(Constants.DISTRICT_NAME_TAG, result.get(1));
+			b.putString(Constants.VILLAGE_CODE_TAG, result.get(2));
+			b.putString(Constants.VILLAGE_NAME_TAG, result.get(3));
+			df.setArguments(b);
+			return df;
+		}
+		
+		return new DistrictFragment();
 	}
 
 	@Override

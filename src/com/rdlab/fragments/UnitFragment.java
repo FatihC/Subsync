@@ -2,6 +2,7 @@ package com.rdlab.fragments;
 
 import java.util.ArrayList;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -69,7 +70,7 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("%s > %s > %s > %s > %s > %s", Constants.SelectedCountyName,
-				districtName, villageName,streetName,csbmName,doorNumber));
+				districtName.trim(), villageName.trim(),streetName.trim(),csbmName.trim(),doorNumber.trim()));
 
 		View rootView = inflater.inflate(R.layout.fragment_block, container,
 				false);
@@ -115,6 +116,19 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
+				UnitItem item = addressList.get(arg2);
+
+				AddWiringFragment df = new AddWiringFragment();
+				Bundle b = new Bundle();
+				b.putString(Constants.UAVT_TAG, item.getUAVTNo());
+				df.setArguments(b);
+
+				FragmentTransaction ft = getFragmentManager()
+						.beginTransaction();
+				ft.replace(R.id.frame_container, df);
+				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+				ft.addToBackStack(null);
+				ft.commit();
 			}
 		});
 

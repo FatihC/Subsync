@@ -1,8 +1,6 @@
 package com.rdlab.data;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -10,7 +8,6 @@ import javax.inject.Inject;
 import com.rdlab.model.AddressListItem;
 import com.rdlab.model.BlockItem;
 import com.rdlab.model.UnitItem;
-import com.rdlab.utility.Constants;
 import com.rdlab.utility.Helper;
 
 public class Repository implements IRepository {
@@ -26,7 +23,7 @@ public class Repository implements IRepository {
 		String[] cols = new String[] { "DISTRICT_CODE", "DISTRICT_NAME" };
 		String[] fields = new String[] { "DistrictCode", "DistrictName" };
 
-		return selectDistinct(cols, fields);
+		return Helper.selectDistinct(cols, fields);
 	}
 
 	@Override
@@ -35,7 +32,7 @@ public class Repository implements IRepository {
 		String[] fields = new String[] { "VillageCode", "VillageName" };
 		String[] whereColumns = new String[] { "DISTRICT_CODE" };
 
-		return selectDistinctWhere(cols, fields, whereColumns, params);
+		return Helper.selectDistinctWhere(cols, fields, whereColumns, params);
 	}
 
 	@Override
@@ -44,7 +41,7 @@ public class Repository implements IRepository {
 		String[] fields = new String[] { "StreetCode", "StreetName" };
 		String[] whereColumns = new String[] {"DISTRICT_CODE", "VILLAGE_CODE" };
 
-		return selectDistinctWhere(cols, fields, whereColumns, params);
+		return Helper.selectDistinctWhere(cols, fields, whereColumns, params);
 	}
 
 	@Override
@@ -53,9 +50,8 @@ public class Repository implements IRepository {
 		String[] fields = new String[] { "CSBMCode", "CSBMName" };
 		String[] whereColumns = new String[] {"DISTRICT_CODE", "VILLAGE_CODE" , "STREET_CODE" };
 
-		return selectDistinctWhere(cols, fields, whereColumns, params);
+		return Helper.selectDistinctWhere(cols, fields, whereColumns, params);
 	}
-
 	
 	@Override
 	public ArrayList<BlockItem> getBlockItems(String... params) {
@@ -63,7 +59,7 @@ public class Repository implements IRepository {
 		String[] cols = new String[] {"DOOR_NUMBER", "SITE_NAME", "BLOCK_NAME" };
 		String[] whereColumns = new String[] { "DISTRICT_CODE", "VILLAGE_CODE" , "STREET_CODE","CSBM_CODE" };
 		
-		ArrayList<?> items = (ArrayList<?>) invokeMethodAnonymous(
+		ArrayList<?> items = (ArrayList<?>) Helper.invokeMethodAnonymous(
 				"selectWhereGrouped", new Class[] { Class.class,
 						String[].class, String[].class, String[].class }, 3,
 				cols, whereColumns, params);
@@ -120,7 +116,7 @@ public class Repository implements IRepository {
 		String[] cols = new String[] {"INDOOR_NUMBER", "UAVT_ADDRESS_NO"};
 		String[] whereColumns = new String[] { "DISTRICT_CODE", "VILLAGE_CODE" , "STREET_CODE","CSBM_CODE","DOOR_NUMBER" };
 		
-		ArrayList<?> items = (ArrayList<?>) invokeMethodAnonymous(
+		ArrayList<?> items = (ArrayList<?>) Helper.invokeMethodAnonymous(
 				"selectWhere", new Class[] { Class.class,
 						String[].class, String[].class, String[].class }, 3,
 				cols, whereColumns, params);
@@ -134,7 +130,7 @@ public class Repository implements IRepository {
 				
 				Field fieldIndoor = object.getClass().getDeclaredField("IndoorNumber");
 				fieldIndoor.setAccessible(true);
-				Field fieldUavt= object.getClass().getDeclaredField("UAVTAddressCode");
+				Field fieldUavt= object.getClass().getDeclaredField("UAVTAddressNo");
 				fieldUavt.setAccessible(true);
 			
 				if (fieldIndoor.get(object)!=null) {
@@ -144,7 +140,7 @@ public class Repository implements IRepository {
 					uavtNo=fieldUavt.get(object).toString();	
 				}
 				
-				result.add(new UnitItem(indoorNumber, uavtNo));
+				result.add(new UnitItem(indoorNumber, uavtNo,true));
 			}
 
 		} catch (IllegalArgumentException e) {
@@ -162,57 +158,7 @@ public class Repository implements IRepository {
 	}
 	
 	
-	private ArrayList<AddressListItem> selectDistinctWhere(String[] cols,
-			String[] fields, String[] whereColumns, String... params) {
-
-		ArrayList<?> items = (ArrayList<?>) invokeMethodAnonymous(
-				"selectDistinctWithWhere", new Class[] { Class.class,
-						String[].class, String[].class, String[].class }, 3,
-				cols, whereColumns, params);
-		return Helper.mapAddressItemListToListItemList(items, fields);
-	}
-
-	private ArrayList<AddressListItem> selectDistinct(String[] cols,
-			String[] fields) {
-
-		ArrayList<?> items = (ArrayList<?>) invokeMethodAnonymous(
-				"selectDistinct", new Class[] { Class.class, String[].class },
-				1, cols);
-		return Helper.mapAddressItemListToListItemList(items, fields);
-	}
-
-	private Object invokeMethodAnonymous(String methodName,
-			Class<?>[] methodArgs, int paramCount, String[]... params) {
-		Class<?> selectedClass;
-		try {
-			selectedClass = Class.forName(Constants.SelectedClassName);
-			Method m = selectedClass.getMethod(methodName, methodArgs);
-
-			if (paramCount > 1) {
-				return m.invoke(null, selectedClass, params[0], params[1],
-						params[2]);
-			}
-			return m.invoke(null, selectedClass, params[0]);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
+	
 	
 
 }
