@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
+import org.apache.commons.io.FileUtils;
+
 import com.orm.SugarContext;
 import com.rdlab.data.DataInitializer;
 
@@ -29,7 +31,7 @@ public class BaseActivity extends Activity {
 		DataInitializer.InitData();
 
 		/*try {
-			reverseCopyDb();
+			reverseCopy();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,14 +56,26 @@ public class BaseActivity extends Activity {
 	@SuppressLint("SdCardPath")
 	private void reverseCopyDb() throws Exception {
 
-		File dstDB = getDatabasePath("sub_sync.dat");
+		// File dstDB = getDatabasePath("sub_sync.dat");
+		File dstDB = new File("/data/data/com.rdlab.subssync/databases");
 		File currentDB = new File("/sdcard/Download", "test.dat");
 		@SuppressWarnings("resource")
 		FileChannel fi = new FileInputStream(currentDB).getChannel();
 		@SuppressWarnings("resource")
 		FileChannel fo = new FileOutputStream(dstDB).getChannel();
+		FileUtils.copyFile(currentDB, dstDB);
+
 		fo.transferFrom(fi, 0, fi.size()); // to copy from source to destination
 		fi.close();
 		fo.close();
+	}
+
+	@SuppressLint("SdCardPath")
+	private void reverseCopy() throws Exception {
+
+		File dstDB = new File(
+				"/data/data/com.rdlab.subssync/databases/sub_sync.dat");
+		File currentDB = new File("/sdcard/Download", "test.dat");
+		FileUtils.copyFile(currentDB, dstDB);
 	}
 }

@@ -8,6 +8,7 @@ public class ItemConditions {
 	private String StreetCode;
 	private String CSBMCode;
 	private String DoorNumber;
+	private Long TesisatNo;
 	private int CountyId;
 	private int DistrictId;
 	private int VillageId;
@@ -78,6 +79,12 @@ public class ItemConditions {
 	}
 	public void setDoorNumber(String doorNumber) {
 		DoorNumber = doorNumber;
+	}
+	public Long getTesisatNo() {
+		return TesisatNo;
+	}
+	public void setTesisatNo(Long tesisatNo) {
+		TesisatNo = tesisatNo;
 	}
 
 }

@@ -53,6 +53,8 @@ public class ReadOperation extends
 			return repository.getBlockItems(conditions.getDistrictCode(),conditions.getVillageCode(),conditions.getStreetCode(),conditions.getCSBMCode());
 		case Indoor:
 			return repository.getUnitItems(conditions.getDistrictCode(),conditions.getVillageCode(),conditions.getStreetCode(),conditions.getCSBMCode(),conditions.getDoorNumber());
+		case Subscriber:
+			return repository.getSubscriberDetail(conditions.getTesisatNo().toString());
 		default:
 			return null;
 		}

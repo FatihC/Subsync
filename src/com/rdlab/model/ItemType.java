@@ -12,5 +12,6 @@ public enum ItemType {
 	Block,
 	UAVT,
 	Indoor,
+	Subscriber,
 	All
 }

@@ -6,6 +6,7 @@ import com.rdlab.adapters.NavigationDrawerAdapter;
 import com.rdlab.dependencyInjection.BaseActivity;
 import com.rdlab.fragments.DistrictFragment;
 import com.rdlab.fragments.StreetFragment;
+import com.rdlab.fragments.SyncFragment;
 import com.rdlab.model.NavigationDrawerItem;
 import com.rdlab.utility.Constants;
 import com.rdlab.utility.Helper;
@@ -115,7 +116,7 @@ public class MainActivity extends BaseActivity {
 			fragment = getFragment();
 			break;
 		case 1:
-			//fragment = new FindPeopleFragment();
+			fragment = new SyncFragment();
 			break;
 		case 2:
 			//fragment = new PhotosFragment();

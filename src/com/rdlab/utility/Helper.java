@@ -117,6 +117,38 @@ public class Helper {
 
 		return null;
 	}
+	
+	public static Object invokeMethodAnonymousForMBS(String methodName,
+			Class<?>[] methodArgs, int paramCount, String[]... params) {
+		Class<?> selectedClass;
+		try {
+			selectedClass = Class.forName(Constants.SelectedClassName+"Mbs");
+			Method m = selectedClass.getMethod(methodName, methodArgs);
+
+			if (paramCount > 1) {
+				return m.invoke(null, selectedClass, params[0], params[1],
+						params[2]);
+			}
+			return m.invoke(null, selectedClass, params[0]);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 
 	public static ArrayList<AddressListItem> selectDistinctWhere(String[] cols,
 			String[] fields, String[] whereColumns, String... params) {

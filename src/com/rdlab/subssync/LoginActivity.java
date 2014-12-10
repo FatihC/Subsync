@@ -7,13 +7,13 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.google.gson.Gson;
+import com.rdlab.dependencyInjection.BaseActivity;
 import com.rdlab.events.ServiceTaskEvent;
 import com.rdlab.utility.Constants;
 import com.rdlab.webservice.LoginModel;
 import com.rdlab.webservice.ServiceOrganizer;
 import com.rdlab.webservice.ServiceRequest;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +21,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class LoginActivity extends Activity implements ServiceTaskEvent {
+public class LoginActivity extends BaseActivity implements ServiceTaskEvent {
 
 	EditText userName, password;
 	Button login;

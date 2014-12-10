@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.rdlab.events.ServiceTaskEvent;
 
 public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
-	private static final String API_URL = "http://192.168.1.29/UAVTWebapi/api/v1/uavt/";
+	private static final String API_URL = "http://192.168.1.14/UAVTWebapi/api/v1/uavt/";
 	private ServiceTaskEvent delegate;
 	private ProgressDialog dialog;
 	private Context context;
@@ -53,7 +53,7 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost(getAbsoluteUrl(methodName));
-			httpPost.setEntity(new UrlEncodedFormEntity(params));
+			httpPost.setEntity(new UrlEncodedFormEntity(params,"UTF-8"));
 
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity httpEntity = httpResponse.getEntity();
