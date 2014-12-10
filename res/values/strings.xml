@@ -52,6 +52,10 @@
     <string name="di_er_durumlar">Diğer Durumlar</string>
     <string name="kaydet">Kaydet</string>
     <string name="fatura_kt_ise">Fatura çıktı ise</string>
+    <string name="kullan_c_ad_">Kullanıcı Adı</string>
+    <string name="_ifre">Şifre</string>
+    <string name="rdlab_uavt_tesisat_e_le_me">RDLAB UAVT-TESISAT EŞLEŞME</string>
+    <string name="giri_">Giriş</string>
     
     
         
