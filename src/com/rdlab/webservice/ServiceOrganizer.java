@@ -19,20 +19,20 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.rdlab.events.ServiceTaskEvent;
+import com.rdlab.utility.Helper;
 
 public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
-	private static final String API_URL = "http://192.168.1.14/UAVTWebapi/api/v1/uavt/";
+	private static final String API_URL = "http://192.168.1.8/UAVTWebapi/api/v1/uavt/";
 	private ServiceTaskEvent delegate;
 	private ProgressDialog dialog;
-	private Context context;
+	private static Context context;
 	
 	public ServiceOrganizer(ServiceTaskEvent delegate,Context context) {
 		// TODO Auto-generated constructor stub
 		this.delegate=delegate;
-		this.context=context;
+		ServiceOrganizer.context=context;
 		dialog = new ProgressDialog(context);
 		dialog.setTitle("Ýþlem yapýlýyor");
 		dialog.setMessage("Lütfen bekleyiniz...");
@@ -47,7 +47,7 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 		
 		InputStream is = null;
 		//JSONObject json = null;
-		String outPut = "";
+		String outPut = "error";
 		// Making the HTTP request
 		try {
 
@@ -66,10 +66,13 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 			//json = new JSONObject(outPut);
 
 		} catch (UnsupportedEncodingException e) {
+			Helper.giveNotification(context, "Beklenmeyen hata oluþtu");
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
+			Helper.giveNotification(context, "Beklenmeyen hata oluþtu");
 			e.printStackTrace();
 		} catch (IOException e) {
+			Helper.giveNotification(context, "Beklenmeyen hata oluþtu");
 			e.printStackTrace();
 		} 
 
@@ -118,10 +121,6 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 	protected void onPostExecute(Object result) {
 		if (dialog.isShowing()) {
 			dialog.dismiss();
-		}
-		
-		if (result.toString().trim().equals("")) {
-			Toast.makeText(context, "Hata oluþtu.", Toast.LENGTH_LONG).show();
 		}
 
 		delegate.serviceReturned(result);

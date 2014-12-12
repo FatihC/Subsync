@@ -36,6 +36,8 @@ public class BaseActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
+		
+		
 
 	}
 
@@ -76,6 +78,15 @@ public class BaseActivity extends Activity {
 		File dstDB = new File(
 				"/data/data/com.rdlab.subssync/databases/sub_sync.dat");
 		File currentDB = new File("/sdcard/Download", "test.dat");
+		FileUtils.copyFile(currentDB, dstDB);
+	}
+	
+	@SuppressLint("SdCardPath")
+	private void copy() throws Exception {
+
+		File currentDB = new File(
+				"/data/data/com.rdlab.subssync/databases/sub_sync.dat");
+		File dstDB = new File("/sdcard/Download", "test.dat");
 		FileUtils.copyFile(currentDB, dstDB);
 	}
 }

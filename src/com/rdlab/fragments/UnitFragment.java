@@ -122,6 +122,13 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 				Bundle b = new Bundle();
 				b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
 				b.putString(Constants.UAVT_TAG, item.getUAVTNo());
+				b.putString(Constants.INDOOR_TAG, item.getIndoorNumber());
+				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
+				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
+				b.putString(Constants.STREET_CODE_TAG, streetCode);
+				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+				
+				
 				df.setArguments(b);
 
 				FragmentTransaction ft = getFragmentManager()

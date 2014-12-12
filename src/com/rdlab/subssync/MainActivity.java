@@ -46,8 +46,6 @@ public class MainActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		
 
 		_drawerTitle = _appTitle = getTitle();
 
@@ -119,16 +117,16 @@ public class MainActivity extends BaseActivity {
 			fragment = new SyncFragment();
 			break;
 		case 2:
-			//fragment = new PhotosFragment();
+			// fragment = new PhotosFragment();
 			break;
 		case 3:
-			//fragment = new CommunityFragment();
+			// fragment = new CommunityFragment();
 			break;
 		case 4:
-			//fragment = new PagesFragment();
+			// fragment = new PagesFragment();
 			break;
 		case 5:
-			//fragment = new WhatsHotFragment();
+			// fragment = new WhatsHotFragment();
 			break;
 
 		default:
@@ -136,14 +134,13 @@ public class MainActivity extends BaseActivity {
 		}
 
 		if (fragment != null) {
-			
-			FragmentTransaction ft = getFragmentManager()
-					.beginTransaction();
+
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.replace(R.id.frame_container, fragment);
 			ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
 			ft.addToBackStack(null);
 			ft.commit();
-			
+
 			// update selected item and title, then close the drawer
 			_drawerList.setItemChecked(position, true);
 			_drawerList.setSelection(position);
@@ -154,10 +151,10 @@ public class MainActivity extends BaseActivity {
 			Log.e("MainActivity", "Error in creating fragment");
 		}
 	}
-	
-	private Fragment getFragment(){
-		ArrayList<String> result=Helper.checkIfOnlyCenterExist();
-		if (result.size()>0) {
+
+	private Fragment getFragment() {
+		ArrayList<String> result = Helper.checkIfOnlyCenterExist();
+		if (result.size() > 0) {
 			StreetFragment df = new StreetFragment();
 			Bundle b = new Bundle();
 			b.putString(Constants.DISTRICT_CODE_TAG, result.get(0));
@@ -167,7 +164,7 @@ public class MainActivity extends BaseActivity {
 			df.setArguments(b);
 			return df;
 		}
-		
+
 		return new DistrictFragment();
 	}
 
@@ -188,56 +185,73 @@ public class MainActivity extends BaseActivity {
 		case R.id.action_settings:
 			return true;
 		case R.id.action_bozova:
-			setGlobalConstants("1209",getString(R.string.action_bozova),"com.rdlab.model.Bozova");
+			setGlobalConstants("1209", getString(R.string.action_bozova),
+					"com.rdlab.model.Bozova","37");
 			return true;
 		case R.id.action_birecik:
-			setGlobalConstants("1194",getString(R.string.action_birecik),"com.rdlab.model.Birecik");
+			setGlobalConstants("1194", getString(R.string.action_birecik),
+					"com.rdlab.model.Birecik","36");
 			return true;
 		case R.id.action_akcakale:
-			setGlobalConstants("1115",getString(R.string.action_akcakale),"com.rdlab.model.Akcakale");
+			setGlobalConstants("1115", getString(R.string.action_akcakale),
+					"com.rdlab.model.Akcakale","35");
 			return true;
 		case R.id.action_haliliye:
-			setGlobalConstants("2092",getString(R.string.action_haliliye),"com.rdlab.model.Haliliye");
+			setGlobalConstants("2092", getString(R.string.action_haliliye),
+					"com.rdlab.model.Haliliye","33");
 			return true;
 		case R.id.action_eyyubiye:
-			setGlobalConstants("2091",getString(R.string.action_eyyubiye),"com.rdlab.model.Eyyubiye");
+			setGlobalConstants("2091", getString(R.string.action_eyyubiye),
+					"com.rdlab.model.Eyyubiye","32");
 			return true;
 		case R.id.action_siverek:
-			setGlobalConstants("1630",getString(R.string.action_siverek),"com.rdlab.model.Siverek");
+			setGlobalConstants("1630", getString(R.string.action_siverek),
+					"com.rdlab.model.Siverek","42");
 			return true;
 		case R.id.action_karakopru:
-			setGlobalConstants("2093",getString(R.string.action_karakopru),"com.rdlab.model.Karakopru");
+			setGlobalConstants("2093", getString(R.string.action_karakopru),
+					"com.rdlab.model.Karakopru","34");
 			return true;
 		case R.id.action_suruc:
-			setGlobalConstants("1643",getString(R.string.action_suruc),"com.rdlab.model.Suruc");
+			setGlobalConstants("1643", getString(R.string.action_suruc),
+					"com.rdlab.model.Suruc","43");
 			return true;
 		case R.id.action_ceylanpinar:
-			setGlobalConstants("1220",getString(R.string.action_ceylanpinar),"com.rdlab.model.Ceylanpinar");
+			setGlobalConstants("1220", getString(R.string.action_ceylanpinar),
+					"com.rdlab.model.Ceylanpinar","38");
 			return true;
 		case R.id.action_halfeti:
-			setGlobalConstants("1378",getString(R.string.action_halfeti),"com.rdlab.model.Halfeti");
+			setGlobalConstants("1378", getString(R.string.action_halfeti),
+					"com.rdlab.model.Halfeti","39");
 			return true;
 		case R.id.action_harran:
-			setGlobalConstants("1800",getString(R.string.action_harran),"com.rdlab.model.Harran");
+			setGlobalConstants("1800", getString(R.string.action_harran),
+					"com.rdlab.model.Harran","40");
 			return true;
 		case R.id.action_hilvan:
-			setGlobalConstants("1393",getString(R.string.action_hilvan),"com.rdlab.model.Hilvan");
+			setGlobalConstants("1393", getString(R.string.action_hilvan),
+					"com.rdlab.model.Hilvan","41");
 			return true;
 		case R.id.action_viransehir:
-			setGlobalConstants("1713",getString(R.string.action_viransehir),"com.rdlab.model.Viransehir");
+			setGlobalConstants("1713", getString(R.string.action_viransehir),
+					"com.rdlab.model.Viransehir","44");
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
-	private void setGlobalConstants(String code,String name,String className){
-		Constants.SelectedCountyCode = code;                   
-		Constants.SelectedCountyName = name;               
+	private void setGlobalConstants(String code, String name, String className,String universalDistrictCode) {
+		Constants.SelectedCountyCode = code;
+		Constants.SelectedCountyName = name;
 		Constants.SelectedClassName = className;
-		Toast.makeText(this, "Þehir seçiminiz tamamlandý.", Toast.LENGTH_SHORT).show();
+		Constants.SelectedUniversalCountyCode=universalDistrictCode;
+		Toast.makeText(this, "Þehir seçiminiz tamamlandý.", Toast.LENGTH_SHORT)
+				.show();
+		setTitle(_appTitle);
+		displayView(0);
 	}
-	
+
 	/***
 	 * Called when invalidateOptionsMenu() is triggered
 	 */
@@ -251,7 +265,7 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	public void setTitle(CharSequence title) {
-		_appTitle = title;
+		_appTitle = title + "/" + Constants.SelectedCountyName;
 		getActionBar().setTitle(_appTitle);
 	}
 
@@ -273,15 +287,15 @@ public class MainActivity extends BaseActivity {
 		// Pass any configuration change to the drawer toggls
 		_drawerToggle.onConfigurationChanged(newConfig);
 	}
-	
+
 	@Override
 	public void onBackPressed() {
-		FragmentManager fm=getFragmentManager();
-		int backStackEntryCount=fm.getBackStackEntryCount();
+		FragmentManager fm = getFragmentManager();
+		int backStackEntryCount = fm.getBackStackEntryCount();
 		if (backStackEntryCount > 0) {
-	        getFragmentManager().popBackStack();
-	    } else {
-	        super.onBackPressed();
-	    }
+			getFragmentManager().popBackStack();
+		} else {
+			super.onBackPressed();
+		}
 	}
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="action_settings">Settings</string>    
+    <string name="action_settings">Ayarlar</string>    
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
     
-    <string name="app_name">Subs Sync</string>
+    <string name="app_name">UAVT Eşleştirme</string>
     <string name="hello_world">Hello world!</string>
     <string name="pre_text"></string>
     <string name="dash">-</string>
@@ -14,7 +14,7 @@
     <string-array name="nav_drawer_items">
         <item >Tesisat Eşleştirme</item>
         <item >Veriyi Güncelle</item>
-        <item >İstatistik</item>
+        <!-- <item >İstatistik</item> -->
         <item >Çıkış</item>
     </string-array>
     
@@ -23,7 +23,7 @@
     <array name="nav_drawer_icons">
         <item>@drawable/ic_home</item>
         <item>@drawable/ic_sync</item>
-        <item>@drawable/ic_graph</item>
+        <!-- <item>@drawable/ic_graph</item> -->
         <item>@drawable/ic_logout</item>
     </array>
      
@@ -44,12 +44,12 @@
     <string name="action_halfeti">Halfeti</string>
     <string name="action_harran">Harran</string>
     <string name="action_hilvan">Hilvan</string>
-    <string name="tesisat_no">Tesisat No</string>
+    <string name="tesisat_no">Tesisat No:</string>
     <string name="fatura_kmad_ancak_saya_bilgileri_mevcut_ise">Fatura çıkmadı ancak sayaç bilgileri mevcut ise</string>
-    <string name="saya_seri_no">Sayaç Seri No</string>
-    <string name="marka">Marka</string>
+    <string name="saya_seri_no">Sayaç Seri No:</string>
+    <string name="marka">Marka:</string>
     <string name="tan_ms_z_durumlarda">Tanımsız Durumlarda</string>
-    <string name="di_er_durumlar">Diğer Durumlar</string>
+    <string name="di_er_durumlar">Diğer Durumlar:</string>
     <string name="kaydet">Kaydet</string>
     <string name="fatura_kt_ise">Fatura çıktı ise</string>
     <string name="kullan_c_ad_">Kullanıcı Adı</string>
@@ -57,7 +57,16 @@
     <string name="rdlab_uavt_tesisat_e_le_me">RDLAB UAVT-TESISAT EŞLEŞME</string>
     <string name="giri_">Giriş</string>
     <string name="ara">Ara</string>
-    <string name="abone_unvan_">Abone Unvanı</string>
+    <string name="abone_unvan_">Abone Unvanı:</string>
+    <string name="abone_bulunamad_">Abone Bulunamadı</string>
+    <string name="i_ptal">İptal</string>
+    <string name="e_le_me_veri_si_ni_merkeze_yolla">EŞLEŞME VERİSİNİ MERKEZE YOLLA</string>
+    <string name="uavt_veri_si_g_ncelle">UAVT VERİSİ GÜNCELLE</string>
+    <string name="bekleyen_i_emri_say_s_">Bekleyen İş Emri Sayısı</string>
+    <string name="d_kap_no_">Dış Kapı No:</string>
+    <string name="site_ad_">Site Adı:</string>
+    <string name="blok_ad_">Blok Adı:</string>
+    <string name="yeni_d_kap_ekle">Yeni Dış Kapı Ekle</string>
     
     
         

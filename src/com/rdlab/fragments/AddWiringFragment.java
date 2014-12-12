@@ -1,17 +1,15 @@
 package com.rdlab.fragments;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import com.rdlab.events.DataEvent;
 import com.rdlab.model.ItemConditions;
 import com.rdlab.model.ItemType;
+import com.rdlab.model.PushRequest;
 import com.rdlab.model.SubscriberItem;
 import com.rdlab.subssync.R;
 import com.rdlab.utility.Constants;
-import com.rdlab.utility.PendingItems;
+import com.rdlab.utility.DateUtils;
+import com.rdlab.utility.Helper;
 import com.rdlab.utility.ReadOperation;
-import com.rdlab.webservice.PushRequest;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -32,13 +30,17 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 	TextView title;
 	Spinner meterBrands, statuses;
 	Button save,search;
-	ArrayList<String> brands = new ArrayList<String>(Arrays.asList("KOHLER",
-			"VIKO", "ELEKTROMED", "NAR"));
-	ArrayList<String> statusList = new ArrayList<String>(Arrays.asList(
-			"PARÇALANMIÞ", "BÝNA YOK"));
 	ArrayAdapter<String> brandAdapter,statusAdapter;
 	String uavtAddresNo;
 	String doorNumber;
+	String csbmCode;
+	String streetCode;
+	String villageCode;
+	String districtCode;
+	String indoorNumber;
+	
+	
+	
 	ReadOperation operator;
 	boolean foundStatusSbs=false;
 
@@ -56,6 +58,11 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		
 		uavtAddresNo=bund.getString(Constants.UAVT_TAG);
 		doorNumber=bund.getString(Constants.DOOR_NUMBER_TAG);
+		indoorNumber=bund.getString(Constants.INDOOR_TAG);
+		csbmCode = bund.getString(Constants.CSBM_CODE_TAG);
+		streetCode = bund.getString(Constants.STREET_CODE_TAG);
+		villageCode = bund.getString(Constants.VILLAGE_CODE_TAG);
+		districtCode = bund.getString(Constants.DISTRICT_CODE_TAG);
 		
 		final View rootView = inflater.inflate(R.layout.fragment_add_unit, container,
 				false);
@@ -68,10 +75,10 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		title=(TextView)rootView.findViewById(R.id.txtTitle);
 
 		brandAdapter = new ArrayAdapter<String>(
-				getActivity().getApplicationContext(),R.layout.spinner_item, brands);
+				getActivity().getApplicationContext(),R.layout.spinner_item, Constants.METER_BRANDS);
 
 		statusAdapter = new ArrayAdapter<String>(
-				getActivity().getApplicationContext(),R.layout.spinner_item, statusList);
+				getActivity().getApplicationContext(),R.layout.spinner_item, Constants.STATUSES);
 
 		meterBrands.setAdapter(brandAdapter);
 		statuses.setAdapter(statusAdapter);
@@ -85,12 +92,17 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 				//save to db
 				PushRequest pr=new PushRequest();
 				//pr.setUserSerno(Constants.LoggedUserSerno);
-				pr.setUserSerno(1023L);
-				pr.setDistrictCode(Long.parseLong(Constants.SelectedCountyCode));
-				pr.setCreateDate(new java.util.Date().getTime());
-				pr.setUavtCode(Long.parseLong(uavtAddresNo));
+				pr.setUserSerno(Constants.LoggedUserSerno);
+				pr.setDistrictCode(Constants.SelectedUniversalCountyCode);
+				pr.setCsbmCode(csbmCode);
+				pr.setIndoorNumber(indoorNumber);
+				pr.setStreetCode(streetCode);
+				pr.setVillageCode(villageCode);
+				pr.setCreateDate(DateUtils.nowLong());
+				pr.setExistOnUavt(1);
+				pr.setUavtCode(uavtAddresNo);
 				pr.setDoorNumber(doorNumber);
-				pr.setCustomerName(title.getText().toString());
+				pr.setPushed(false);
 				
 				String wiringNo="",meterNo="",selectedBrand="",selectedStatus="";
 				
@@ -99,18 +111,24 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 				selectedBrand=AddWiringFragment.this.meterBrands.getSelectedItem().toString();
 				selectedStatus=AddWiringFragment.this.statuses.getSelectedItem().toString();
 				
-				if (wiringNo.length()>0) {
+				if (foundStatusSbs) {
 					pr.setWiringNo(wiringNo);
+					pr.setCustomerName(title.getText().toString());
 				}
-				else if(meterNo.length()>0||selectedBrand.length()>0){
-					pr.setMeterNo(meterNo);
-					pr.setMeterBrand(selectedBrand);
-				}
-				else if(selectedStatus.length()>0){
-					pr.setCheckStatus(1);
-				}
+				else {
+					if(meterNo.length()>0||selectedBrand.length()>0){
+						pr.setMeterNo(meterNo);
+						pr.setMeterBrand(selectedBrand);
+					}
+					else if(selectedStatus.length()>0){
+						pr.setCheckStatus(selectedStatus);
+					}
+					
+				} 
 				
-				PendingItems.PushRequests.add(pr);
+				
+				PushRequest.save(pr);
+				
 				Toast.makeText(getActivity().getApplicationContext(), "Bilgi Eklendi", Toast.LENGTH_LONG).show();
 				getActivity().getFragmentManager().popBackStack();
 			}
@@ -134,8 +152,13 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		if (items!=null) {
 			foundStatusSbs=true;
 			SubscriberItem sb=(SubscriberItem) items;
-			title.setText(sb.getUnvan());	
+			title.setText(sb.getUnvan());
+			Helper.giveNotification(getView().getContext(), "Abone bulundu.");
+			
+			return;
 		}
+	
+		Helper.giveNotification(getView().getContext(), "Abone bulunamadý.");
 	}
 	
 	private void searchWiring(View rootView){

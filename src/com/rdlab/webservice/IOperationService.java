@@ -2,6 +2,9 @@ package com.rdlab.webservice;
 
 import java.util.List;
 
+
+import com.rdlab.model.PushRequest;
+
 /*import retrofit.Callback;*/
 import retrofit.http.Body;
 import retrofit.http.POST;
