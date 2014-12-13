@@ -11,8 +11,11 @@ public class Constants {
 	public static final String STREET_CODE_TAG = "STREET_CODE";
 	public static final String CSBM_CODE_TAG = "CSBM_CODE";
 	public static final String DOOR_NUMBER_TAG = "DOOR_NUMBER";
+	public static final String SITE_NAME_TAG = "SITE_NAME";
+	public static final String BLOCK_NAME_TAG = "BLOCK_NAME_NUMBER";
 	public static final String UAVT_TAG = "UAVT_ADDRESS_NO";
 	public static final String INDOOR_TAG = "INDOOR_NUMBER";
+	public static final String CHECKED_UAVT = "CHECK_STATUS";
 
 	public static final String DISTRICT_NAME_TAG = "DISTRICT_NAME";
 	public static final String VILLAGE_NAME_TAG = "VILLAGE_NAME";
@@ -49,12 +52,13 @@ public class Constants {
 	 * Warnings
 	 */
 	public static final String USER_NOT_EXIST = "Kullanýcý Adý ya da þifre hatasý.";
+	public static final String NO_ITEM_SELECTED = "Tesisat No, Sayaç No-Marka veya Durum seçilmelidir.";
 
 	/*
 	 * Meter brands
 	 */
 	public static final ArrayList<String> METER_BRANDS = new ArrayList<String>(
-			Arrays.asList("ABB", "AEG", "ALFATECH", "AMPY", "ASER",
+			Arrays.asList("","ABB", "AEG", "ALFATECH", "AMPY", "ASER",
 					"ASSAY ECHELON", "BAÞARI - KAAN", "BAYLAN", "Circulator",
 					"EAS M1", "Ekosay", "ELEKTRA", "ELEKTROMED", "EMH ELGAMA",
 					"Entes", "ESEM", "FEDERAL", "FLASH", "GANZ", "ISKRA",
@@ -64,7 +68,7 @@ public class Constants {
 					"Telefunken", "Vi-KO", "Diger"));
 
 	public static final ArrayList<String> STATUSES = new ArrayList<String>(
-			Arrays.asList("Birim Yok", "Kapalý", "Sayaç Var Ulaþýlamadý",
+			Arrays.asList("","Birim Yok", "Kapalý", "Sayaç Var Ulaþýlamadý",
 					"Sayaç yok - Enerjisiz Birim",
 					"Sayaç Yok - Ortak Kullaným", "Sayaç Yok - Süzme Sayaç",
 					"Sayaç Yok - Abonesiz"));

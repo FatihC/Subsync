@@ -94,7 +94,8 @@ public class MainActivity extends BaseActivity {
 			// displayView(0);
 
 		}
-
+		
+		
 		_drawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -104,6 +105,8 @@ public class MainActivity extends BaseActivity {
 				displayView(arg2);
 			}
 		});
+		
+		displayView(0);
 	}
 
 	private void displayView(int position) {

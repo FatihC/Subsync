@@ -91,7 +91,7 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		txtSite.setText(site);
 		txtBlock.setText(block);
 
-		if (!checkStatus) {
+		if (checkStatus) {
 			imgStatus.setImageResource(R.drawable.no);
 		}
 

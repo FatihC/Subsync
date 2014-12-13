@@ -20,6 +20,7 @@ import com.rdlab.webservice.ServiceRequest;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -80,10 +81,19 @@ public class LoginActivity extends BaseActivity implements ServiceTaskEvent {
 	@Override
 	public void serviceReturned(Object items) {
 		// TODO Auto-generated method stub
-		Gson gson = new Gson();
-		LoginModel model = gson.fromJson(items.toString(), LoginModel.class);
-		Constants.LoggedUserSerno = model.getSerno();
-		startActivity();
+		try {
+			Gson gson = new Gson();
+			LoginModel model = gson.fromJson(items.toString(), LoginModel.class);
+			Constants.LoggedUserSerno = model.getSerno();
+			startActivity();
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.w("ws responded badly", items.toString());
+			Log.w("Exception is ", e);
+			if (findUser()) {
+				startActivity();
+			}
+		}
 
 	}
 
@@ -93,12 +103,12 @@ public class LoginActivity extends BaseActivity implements ServiceTaskEvent {
 	}
 
 	private boolean findUser() {
-		List<Users> userList = Select
-				.from(Users.class)
-				.where(Condition.prop("Username").eq(
-						userName.getText().toString()))
-				.and(Condition.prop("Password").eq(
-						password.getText().toString())).list();
+		
+		String x="SELECT * FROM USERS WHERE USERNAME='";
+		x+=userName.getText().toString()+"' AND PASSWORD='";
+		x+=password.getText().toString()+"'";
+		
+		List<Users> userList = Users.findWithQuery(Users.class, x,null);
 
 		if (userList != null && userList.size() > 0) {
 			Users item = userList.get(0);

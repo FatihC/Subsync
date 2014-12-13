@@ -29,58 +29,59 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	ImageButton push;
 	TextView txtPending;
 	ServiceOrganizer organizer;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView=inflater.inflate(R.layout.fragment_sync, container, false);
-		
+		View rootView = inflater.inflate(R.layout.fragment_sync, container,
+				false);
+
 		organizer = new ServiceOrganizer(this, rootView.getContext());
-		
-		push=(ImageButton)rootView.findViewById(R.id.push);
-		txtPending=(TextView)rootView.findViewById(R.id.txtPendingRequestCount);
-		
-		txtPending.append(String.format(": %d", getPendingRequests().size()));
-		
+
+		push = (ImageButton) rootView.findViewById(R.id.push);
+		txtPending = (TextView) rootView
+				.findViewById(R.id.txtPendingRequestCount);
+
+		int pendingCount = getPendingRequests().size();
+		if (pendingCount == 0) {
+			txtPending.append("Bekleyen iþ emriniz bulunmamaktadýr");
+		} else {
+			txtPending.append(String.format(": %d", pendingCount));
+		}
+
 		push.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				push.setClickable(false);
 				sendPendingItems();
 			}
 		});
-		
+
 		return rootView;
 	}
-
 
 	@Override
 	public void serviceReturned(Object items) {
 		// TODO Auto-generated method stub
-		if (items.toString().equals("error")) {
-			Helper.giveNotification(getView().getContext(), "Ýþlem sýrasýnda hata oluþtu. Kýsa süre sonra tekrar deneyiniz.");
+		if (items.toString().equals("error") || !items.toString().isEmpty()) {
+			Helper.giveNotification(getView().getContext(),
+					"Ýþlem sýrasýnda hata oluþtu. Kýsa süre sonra tekrar deneyiniz.");
+			push.setClickable(true);
 			return;
 		}
-		
-		Helper.giveNotification(getView().getContext(), "Ýþleminiz baþarýyla tamamlanmýþtýr.");
+		Helper.giveNotification(getView().getContext(),
+				"Ýþleminiz baþarýyla tamamlanmýþtýr.");
 		txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
-		updatePendingRequest();
+		PushRequest.deleteAll(PushRequest.class);
+		push.setClickable(false);
 	}
-	
-	private void updatePendingRequest(){
-		List<PushRequest> pushRequestList=getPendingRequests();
-		for (PushRequest pushRequest : pushRequestList) {
-			if (!pushRequest.isPushed()) {
-				pushRequest.setPushed(true);
-				pushRequest.save();
-			}
-		}
-	}
-	
-	private List<PushRequest> getPendingRequests(){
-		List<PushRequest> pushRequestList=PushRequest.listAll(PushRequest.class);
-		List<PushRequest> result=new ArrayList<PushRequest>();
+
+	private List<PushRequest> getPendingRequests() {
+		List<PushRequest> pushRequestList = PushRequest
+				.listAll(PushRequest.class);
+		List<PushRequest> result = new ArrayList<PushRequest>();
 		for (PushRequest pushRequest : pushRequestList) {
 			if (pushRequest.isPushed()) {
 				continue;
@@ -89,42 +90,23 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		}
 		return result;
 	}
-	
-	private void sendPendingItems(){
-		List<PushRequest> pushRequestList=getPendingRequests();
-		if (pushRequestList==null) {
-			Helper.giveNotification(getView().getContext(), "Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
+
+	private void sendPendingItems() {
+		List<PushRequest> pushRequestList = getPendingRequests();
+		if (pushRequestList == null) {
+			Helper.giveNotification(getView().getContext(),
+					"Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
 			return;
 		}
-		
+
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
 		for (PushRequest pr : pushRequestList) {
-			
-			Gson g=new Gson();
-			String converted=g.toJson(pr, PushRequest.class);
-			paramsx.add(new BasicNameValuePair("",converted));
-			/*paramsx.add(new BasicNameValuePair("userSerno",pr.getUserSerno().toString()));
-			paramsx.add(new BasicNameValuePair("districtCode",pr.getDistrictCode().toString()));
-			paramsx.add(new BasicNameValuePair("createDate",pr.getCreateDate().toString()));
-			paramsx.add(new BasicNameValuePair("uavtCode",pr.getUavtCode().toString()));
-			paramsx.add(new BasicNameValuePair("doorNumber",pr.getDoorNumber().toString()));
-			paramsx.add(new BasicNameValuePair("existOnUavt","0"));
-			
-			if (pr.getWiringNo()!=null) {
-				paramsx.add(new BasicNameValuePair("wiringNo",pr.getWiringNo().toString()));
-				paramsx.add(new BasicNameValuePair("customerName",pr.getCustomerName().toString()));
-			}
-			if (pr.getMeterNo()!=null) {
-				paramsx.add(new BasicNameValuePair("meterNo",pr.getMeterNo().toString()));
-				paramsx.add(new BasicNameValuePair("meterBrand",pr.getMeterBrand().toString()));
-			}
-			if (pr.getCheckStatus()!=null) {
-				paramsx.add(new BasicNameValuePair("checkStatus",pr.getCheckStatus().toString()));
-			}*/
+
+			Gson g = new Gson();
+			String converted = g.toJson(pr, PushRequest.class);
+			paramsx.add(new BasicNameValuePair("", converted));
 		}
-		
-		
-		
+
 		ServiceRequest req = new ServiceRequest("push", paramsx);
 		new ServiceOrganizer(this, getView().getContext()).execute(req);
 	}

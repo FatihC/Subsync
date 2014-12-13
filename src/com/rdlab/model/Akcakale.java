@@ -20,8 +20,17 @@ public class Akcakale extends SugarRecord {
 	private String BlockName;
 	private String UAVTAddressNo;
 	private String IndoorNumber;
+	
+	private boolean CheckStatus;
+	public boolean isCheckStatus() {
+		return CheckStatus;
+	}
+
+	public void setCheckStatus(boolean checkStatus) {
+		CheckStatus = checkStatus;
+	}
 	@Ignore
-	private int UnitCount;
+	int UnitCount;
 	
 	public int getUnitCount(){
 		return UnitCount;
@@ -37,7 +46,7 @@ public class Akcakale extends SugarRecord {
 			String streetCode, String streetName, String csbmCode,
 			String csbmName, String buildingCode, String doorNumber,
 			String siteName, String blockName, String UAVTAddressNo,
-			String indoorNumber) {
+			String indoorNumber,boolean check) {
 
 		this.CountyCode = countyCode;
 		this.CountyName = countyName;
@@ -55,6 +64,7 @@ public class Akcakale extends SugarRecord {
 		this.BlockName = blockName;
 		this.UAVTAddressNo = UAVTAddressNo;
 		this.IndoorNumber = indoorNumber;
+		this.CheckStatus=check;
 	}
 
 	public String GetCountyCode() {
@@ -126,4 +136,6 @@ public class Akcakale extends SugarRecord {
 		// TODO Auto-generated method stub
 		return this.DistrictCode + "  " + this.DistrictName;
 	}
+
+	
 }

@@ -44,7 +44,6 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 	String districtCode;
 	String districtName;
 
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -56,6 +55,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 			bund = getArguments();
 		}
 
+		
 		csbmCode = bund.getString(Constants.CSBM_CODE_TAG);
 		streetCode = bund.getString(Constants.STREET_CODE_TAG);
 		villageCode = bund.getString(Constants.VILLAGE_CODE_TAG);
@@ -83,7 +83,24 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				AddDoorFragment df = new AddDoorFragment();
+				Bundle b = new Bundle();
+				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
+				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
+				b.putString(Constants.STREET_CODE_TAG, streetCode);
+				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+				b.putString(Constants.DISTRICT_NAME_TAG, districtName);
+				b.putString(Constants.VILLAGE_NAME_TAG, villageName);
+				b.putString(Constants.STREET_NAME_TAG, streetName);
+				b.putString(Constants.CSBM_NAME_TAG, csbmName);
+				df.setArguments(b);
 				
+				FragmentTransaction ft = getFragmentManager()
+						.beginTransaction();
+				ft.replace(R.id.frame_container, df);
+				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+				ft.addToBackStack(null);
+				ft.commit();
 			}
 		});
 		searchText.addTextChangedListener(new TextWatcher() {
@@ -127,14 +144,18 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 				b.putString(Constants.STREET_NAME_TAG, streetName);
 				b.putString(Constants.CSBM_NAME_TAG, csbmName);
 				b.putString(Constants.DOOR_NUMBER_TAG, item.getDoorNumber());
+				b.putString(Constants.SITE_NAME_TAG, item.getSiteName());
+				b.putString(Constants.BLOCK_NAME_TAG, item.getBlockName());
 				df.setArguments(b);
 
+				
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.frame_container, df);
 				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
 				ft.addToBackStack(null);
 				ft.commit();
+				
 			}
 			
 		});
@@ -143,7 +164,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		
 		return rootView;
 	}
-
+	
 	@Override
 	public void OnDataChanged(Object items) {
 		// TODO Auto-generated method stub

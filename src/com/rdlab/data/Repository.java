@@ -58,7 +58,7 @@ public class Repository implements IRepository {
 	@Override
 	public ArrayList<BlockItem> getBlockItems(String... params) {
 		// TODO Auto-generated method stub
-		String[] cols = new String[] { "DOOR_NUMBER", "SITE_NAME", "BLOCK_NAME" };
+		String[] cols = new String[] { "DOOR_NUMBER", "SITE_NAME", "BLOCK_NAME","CHECK_STATUS" };
 		String[] whereColumns = new String[] { "DISTRICT_CODE", "VILLAGE_CODE",
 				"STREET_CODE", "CSBM_CODE" };
 
@@ -85,6 +85,10 @@ public class Repository implements IRepository {
 				Field fieldBlock = object.getClass().getDeclaredField(
 						"BlockName");
 				fieldBlock.setAccessible(true);
+				
+				Field fieldCheck = object.getClass().getDeclaredField(
+						"CheckStatus");
+				fieldCheck.setAccessible(true);
 
 				/*
 				 * long id; Field
@@ -101,8 +105,11 @@ public class Repository implements IRepository {
 				doorNumber = fieldDoor.get(object).toString();
 				siteName = fieldSite.get(object).toString();
 				blockName = fieldBlock.get(object).toString();
+				
+				boolean check=fieldCheck.getBoolean(object);
+				
 
-				result.add(new BlockItem(doorNumber, siteName, blockName, true,
+				result.add(new BlockItem(doorNumber, siteName, blockName, check,
 						count));
 			}
 
@@ -122,7 +129,7 @@ public class Repository implements IRepository {
 
 	@Override
 	public ArrayList<UnitItem> getUnitItems(String... params) {
-		String[] cols = new String[] { "INDOOR_NUMBER", "UAVT_ADDRESS_NO" };
+		String[] cols = new String[] { "INDOOR_NUMBER", "UAVT_ADDRESS_NO","CHECK_STATUS" };
 		String[] whereColumns = new String[] { "DISTRICT_CODE", "VILLAGE_CODE",
 				"STREET_CODE", "CSBM_CODE", "DOOR_NUMBER" };
 
@@ -144,6 +151,10 @@ public class Repository implements IRepository {
 				Field fieldUavt = object.getClass().getDeclaredField(
 						"UAVTAddressNo");
 				fieldUavt.setAccessible(true);
+				
+				Field fieldCheck = object.getClass().getDeclaredField(
+						"CheckStatus");
+				fieldCheck.setAccessible(true);
 
 				if (fieldIndoor.get(object) != null) {
 					indoorNumber = fieldIndoor.get(object).toString();
@@ -151,8 +162,10 @@ public class Repository implements IRepository {
 				if (fieldUavt.get(object) != null) {
 					uavtNo = fieldUavt.get(object).toString();
 				}
+				
+				boolean checked=fieldCheck.getBoolean(object);
 
-				result.add(new UnitItem(indoorNumber, uavtNo, true));
+				result.add(new UnitItem(indoorNumber, uavtNo, checked));
 			}
 
 		} catch (IllegalArgumentException e) {

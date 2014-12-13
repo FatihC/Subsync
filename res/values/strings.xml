@@ -5,7 +5,7 @@
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
     
-    <string name="app_name">UAVT Eşleştirme</string>
+    <string name="app_name">UAVT</string>
     <string name="hello_world">Hello world!</string>
     <string name="pre_text"></string>
     <string name="dash">-</string>
@@ -54,7 +54,7 @@
     <string name="fatura_kt_ise">Fatura çıktı ise</string>
     <string name="kullan_c_ad_">Kullanıcı Adı</string>
     <string name="_ifre">Şifre</string>
-    <string name="rdlab_uavt_tesisat_e_le_me">RDLAB UAVT-TESISAT EŞLEŞME</string>
+    <string name="rdlab_uavt_tesisat_e_le_me">NAR UAVT-TESISAT EŞLEŞME</string>
     <string name="giri_">Giriş</string>
     <string name="ara">Ara</string>
     <string name="abone_unvan_">Abone Unvanı:</string>

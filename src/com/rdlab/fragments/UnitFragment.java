@@ -44,7 +44,8 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 	String districtCode;
 	String districtName;
 	String doorNumber;
-
+	String siteName;
+	String blockName;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,6 +68,8 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 		districtName = bund.getString(Constants.DISTRICT_NAME_TAG);
 		csbmName = bund.getString(Constants.CSBM_NAME_TAG);
 		doorNumber = bund.getString(Constants.DOOR_NUMBER_TAG);
+		siteName = bund.getString(Constants.SITE_NAME_TAG);
+		blockName= bund.getString(Constants.BLOCK_NAME_TAG);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("%s > %s > %s > %s > %s > %s", Constants.SelectedCountyName,
@@ -85,7 +88,29 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				AddNewUnitFragment df = new AddNewUnitFragment();
+				Bundle b = new Bundle();
+				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
+				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
+				b.putString(Constants.STREET_CODE_TAG, streetCode);
+				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+				b.putString(Constants.DISTRICT_NAME_TAG, districtName);
+				b.putString(Constants.VILLAGE_NAME_TAG, villageName);
+				b.putString(Constants.STREET_NAME_TAG, streetName);
+				b.putString(Constants.CSBM_NAME_TAG, csbmName);
+				b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
+				b.putString(Constants.SITE_NAME_TAG, siteName);
+				b.putString(Constants.BLOCK_NAME_TAG, blockName);
 				
+				
+				df.setArguments(b);
+
+				FragmentTransaction ft = getFragmentManager()
+						.beginTransaction();
+				ft.replace(R.id.frame_container, df);
+				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+				ft.addToBackStack(null);
+				ft.commit();
 			}
 		});
 		searchText.addTextChangedListener(new TextWatcher() {
@@ -127,6 +152,8 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
 				b.putString(Constants.STREET_CODE_TAG, streetCode);
 				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+				b.putBoolean(Constants.CHECKED_UAVT, item.isSynced());
+				
 				
 				
 				df.setArguments(b);

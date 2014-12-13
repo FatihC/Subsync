@@ -7,37 +7,37 @@ import java.nio.channels.FileChannel;
 
 import org.apache.commons.io.FileUtils;
 
-import com.orm.SugarContext;
-import com.rdlab.data.DataInitializer;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.os.Bundle;
 
+import com.orm.SugarContext;
+import com.rdlab.data.DataInitializer;
+
 public class BaseActivity extends Activity {
 
+	@SuppressLint("SdCardPath")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-
-		// entry point for dependency injection dagger
-		/* ((BaseApplication) getApplication()).getGraph().inject(this); */
 
 		SugarContext.init(this);
 		FragmentManager.enableDebugLogging(true);
 
 		DataInitializer.InitData();
 
-		/*try {
-			reverseCopy();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
-		
+		File dstDB = new File(
+				"/data/data/com.rdlab.subssync/databases/sub_sync.dat");
+		if (!dstDB.exists()) {
+			try {
+				reverseCopy();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 
@@ -45,7 +45,7 @@ public class BaseActivity extends Activity {
 	private void copyDb() throws Exception {
 
 		File currentDB = getDatabasePath("sub_sync.dat");
-		File dstDB = new File("/sdcard/Download", "test.dat");
+		File dstDB = new File("/sdcard/Download", "db.dat");
 		@SuppressWarnings("resource")
 		FileChannel fi = new FileInputStream(currentDB).getChannel();
 		@SuppressWarnings("resource")
@@ -60,7 +60,7 @@ public class BaseActivity extends Activity {
 
 		// File dstDB = getDatabasePath("sub_sync.dat");
 		File dstDB = new File("/data/data/com.rdlab.subssync/databases");
-		File currentDB = new File("/sdcard/Download", "test.dat");
+		File currentDB = new File("/sdcard/Download", "db.dat");
 		@SuppressWarnings("resource")
 		FileChannel fi = new FileInputStream(currentDB).getChannel();
 		@SuppressWarnings("resource")
@@ -77,16 +77,16 @@ public class BaseActivity extends Activity {
 
 		File dstDB = new File(
 				"/data/data/com.rdlab.subssync/databases/sub_sync.dat");
-		File currentDB = new File("/sdcard/Download", "test.dat");
+		File currentDB = new File("/sdcard/Download", "db.dat");
 		FileUtils.copyFile(currentDB, dstDB);
 	}
-	
+
 	@SuppressLint("SdCardPath")
 	private void copy() throws Exception {
 
 		File currentDB = new File(
 				"/data/data/com.rdlab.subssync/databases/sub_sync.dat");
-		File dstDB = new File("/sdcard/Download", "test.dat");
+		File dstDB = new File("/sdcard/Download", "db.dat");
 		FileUtils.copyFile(currentDB, dstDB);
 	}
 }

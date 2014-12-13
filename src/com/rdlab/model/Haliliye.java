@@ -20,6 +20,14 @@ public class Haliliye extends SugarRecord {
 	private String BlockName;
 	private String UAVTAddressNo;
 	private String IndoorNumber;
+	private boolean CheckStatus;
+	public boolean isCheckStatus() {
+		return CheckStatus;
+	}
+
+	public void setCheckStatus(boolean checkStatus) {
+		CheckStatus = checkStatus;
+	}
 	@Ignore
 	private int UnitCount;
 	
@@ -37,7 +45,7 @@ public class Haliliye extends SugarRecord {
 			String streetCode, String streetName, String csbmCode,
 			String csbmName, String buildingCode, String doorNumber,
 			String siteName, String blockName, String UAVTAddressNo,
-			String indoorNumber) {
+			String indoorNumber,boolean check) {
 
 		this.CountyCode = countyCode;
 		this.CountyName = countyName;
@@ -55,6 +63,7 @@ public class Haliliye extends SugarRecord {
 		this.BlockName = blockName;
 		this.UAVTAddressNo = UAVTAddressNo;
 		this.IndoorNumber = indoorNumber;
+		this.CheckStatus=check;
 	}
 
 	public String GetCountyCode() {

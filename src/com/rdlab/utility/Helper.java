@@ -92,7 +92,7 @@ public class Helper {
 	}
 
 	public static Object invokeMethodAnonymous(String methodName,
-			Class<?>[] methodArgs, int paramCount, String[]... params) {
+			Class<?>[] methodArgs, int paramCount, Object[]... params) {
 		Class<?> selectedClass;
 		try {
 			selectedClass = Class.forName(Constants.SelectedClassName);
@@ -122,12 +122,12 @@ public class Helper {
 
 		return null;
 	}
-	
+
 	public static Object invokeMethodAnonymousForMBS(String methodName,
 			Class<?>[] methodArgs, int paramCount, String[]... params) {
 		Class<?> selectedClass;
 		try {
-			selectedClass = Class.forName(Constants.SelectedClassName+"Mbs");
+			selectedClass = Class.forName(Constants.SelectedClassName + "Mbs");
 			Method m = selectedClass.getMethod(methodName, methodArgs);
 
 			if (paramCount > 1) {
@@ -165,24 +165,26 @@ public class Helper {
 		return Helper.mapAddressItemListToListItemList(items, fields);
 	}
 
-	public static boolean checkConnectionExist(Context context ){
-		ConnectivityManager manager=(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (manager!=null) {
-			 NetworkInfo[] info = manager.getAllNetworkInfo();
-			 if (info!=null) {
+	public static boolean checkConnectionExist(Context context) {
+		ConnectivityManager manager = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (manager != null) {
+			NetworkInfo[] info = manager.getAllNetworkInfo();
+			if (info != null) {
 				for (int i = 0; i < info.length; i++) {
-					if (info[i].getState()==NetworkInfo.State.CONNECTED) {
+					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
 						return true;
 					}
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
-	public static void giveNotification(Context context,String text)
-	{
+
+	public static void giveNotification(Context context, String text) {
 		Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 	}
+	
+
 }

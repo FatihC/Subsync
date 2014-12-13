@@ -24,7 +24,7 @@ import com.rdlab.events.ServiceTaskEvent;
 import com.rdlab.utility.Helper;
 
 public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
-	private static final String API_URL = "http://192.168.1.8/UAVTWebapi/api/v1/uavt/";
+	private static final String API_URL = "http://uavt.dedas.com.tr/UAVTWebapi/api/v1/uavt/";
 	private ServiceTaskEvent delegate;
 	private ProgressDialog dialog;
 	private static Context context;

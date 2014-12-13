@@ -72,7 +72,7 @@ public class UnitItemAdapter extends ArrayAdapter<UnitItem> {
 
 		ImageView imgStatus = (ImageView) arg1.findViewById(R.id.item_synced);
 		boolean checkStatus = item.isSynced();
-		if (!checkStatus) {
+		if (checkStatus) {
 			imgStatus.setImageResource(R.drawable.no);
 		}
 		
