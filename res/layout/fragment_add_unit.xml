@@ -62,7 +62,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textCapCharacters" >
+                        android:inputType="number" >
 
                         <requestFocus />
                     </EditText>
@@ -159,7 +159,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textCapCharacters" />
+                        android:inputType="number" />
                 </TableRow>
 
                 <TableRow
@@ -236,6 +236,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
+            android:visibility="gone"
+            
             android:gravity="center" >
 
             <Button
@@ -245,6 +247,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/info_button"
+                
                 android:text="@string/kaydet" />
 
             <Button

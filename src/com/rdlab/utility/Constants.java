@@ -16,6 +16,13 @@ public class Constants {
 	public static final String UAVT_TAG = "UAVT_ADDRESS_NO";
 	public static final String INDOOR_TAG = "INDOOR_NUMBER";
 	public static final String CHECKED_UAVT = "CHECK_STATUS";
+	public static final String LAST_SYNC_TAG = "LAST_SYNC_DATE";
+	
+
+	public static final String EDIT_OUTDOOR = "OUTDOOR_NUM_EDIT";
+	public static final String EDIT_SITE = "SITE_NAME_EDIT";
+	public static final String EDIT_BLOCK = "BLOCK_NAME_EDIT";
+	public static final String EDIT_INDOOR = "EDIT_INDOOR";
 
 	public static final String DISTRICT_NAME_TAG = "DISTRICT_NAME";
 	public static final String VILLAGE_NAME_TAG = "VILLAGE_NAME";
@@ -42,11 +49,17 @@ public class Constants {
 	public static final String HARRAN = "12";
 	public static final String HILVAN = "13";
 
+	/*
+	 * Fragments Headers
+	 */
 	public static final String DISTRICT_HEADER_TEXT = "LÜTFEN MAHALLE SEÇÝNÝZ";
 	public static final String VILLAGE_HEADER_TEXT = "LÜTFEN KÖY SEÇÝNÝZ";
-	public static final String STREET_HEADER_TEXT = "LÜTFEN CADDE SEÇÝNÝZ";
-	public static final String CSBM_HEADER_TEXT = "LÜTFEN SOKAK/BULVAR/MEYDAN/MEZRA SEÇÝNÝZ";
+	public static final String STREET_HEADER_TEXT = "LÜTFEN MAHALLE/KÖY SEÇÝNÝZ";
+	public static final String CSBM_HEADER_TEXT = "LÜTFEN CADDE/SOKAK/BULVAR/MEYDAN/MEZRA SEÇÝNÝZ";
 	public static final String BLOCK_HEADER_TEXT = "LÜTFEN DIÞ KAPI NUMARASI SEÇÝNÝZ";
+	public static final String UNIT_HEADER_TEXT = "LÜTFEN ÝÇ KAPI NO SEÇÝNÝZ";
+	public static final String MATCH_TEXT = "EÞLEÞTÝRME";
+	public static final String SYNC_HEADER_TEXT = "VERÝ GÜNCELLEME";
 
 	/*
 	 * Warnings
@@ -58,7 +71,7 @@ public class Constants {
 	 * Meter brands
 	 */
 	public static final ArrayList<String> METER_BRANDS = new ArrayList<String>(
-			Arrays.asList("","ABB", "AEG", "ALFATECH", "AMPY", "ASER",
+			Arrays.asList("", "ABB", "AEG", "ALFATECH", "AMPY", "ASER",
 					"ASSAY ECHELON", "BAÞARI - KAAN", "BAYLAN", "Circulator",
 					"EAS M1", "Ekosay", "ELEKTRA", "ELEKTROMED", "EMH ELGAMA",
 					"Entes", "ESEM", "FEDERAL", "FLASH", "GANZ", "ISKRA",
@@ -67,8 +80,12 @@ public class Constants {
 					"ONUR", "ORBIS", "Profilo", "PROTON", "SIEMENS",
 					"Telefunken", "Vi-KO", "Diger"));
 
+	public static final ArrayList<String> UNIT_STATUS = new ArrayList<String>(
+			Arrays.asList("Ortak Kullaným", "Ev", "Ýþ Yeri", "Resmi Kurum",
+					"Ambar", "Bodrum", "Depo", "Hidrofor", "Kazan Dairesi"));
+
 	public static final ArrayList<String> STATUSES = new ArrayList<String>(
-			Arrays.asList("","Birim Yok", "Kapalý", "Sayaç Var Ulaþýlamadý",
+			Arrays.asList("", "Birim Yok", "Kapalý", "Sayaç Var Ulaþýlamadý",
 					"Sayaç yok - Enerjisiz Birim",
 					"Sayaç Yok - Ortak Kullaným", "Sayaç Yok - Süzme Sayaç",
 					"Sayaç Yok - Abonesiz"));

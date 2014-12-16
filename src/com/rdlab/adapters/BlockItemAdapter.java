@@ -1,6 +1,7 @@
 package com.rdlab.adapters;
 
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.rdlab.model.BlockItem;
+import com.rdlab.model.Enums;
 import com.rdlab.subssync.R;
 
 public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
@@ -55,12 +58,12 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 
 	@Override
 	public View getView(int arg0, View arg1, ViewGroup arg2) {
-		if (arg1 == null) {
+//		if (arg1 == null) {
 			LayoutInflater inflater = (LayoutInflater) this._context
 					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 			arg1 = inflater.inflate(R.layout.block_list_item, null);
-		}
-
+//		}
+		
 		BlockItem item = this._addresses.get(arg0);
 
 		TextView txtDoor = (TextView) arg1.findViewById(R.id.item_door_number);
@@ -74,7 +77,7 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		txtUnitCount.setText(String.valueOf(item.getUnitCount()));
 
 		String block = "YOK", site = "YOK";
-		boolean checkStatus = item.isIsNewlyAdded();
+		
 
 		if (!item.getSiteName().isEmpty()
 				&& !item.getSiteName().equalsIgnoreCase("")
@@ -90,8 +93,12 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 
 		txtSite.setText(site);
 		txtBlock.setText(block);
-
-		if (checkStatus) {
+		int status=item.getCheckStatus();
+		
+		if (status==Enums.NewlyAdded.getVal()) {
+			imgStatus.setImageResource(R.drawable.ic_quest);
+		}
+		else if(status==Enums.NotStarted.getVal()){
 			imgStatus.setImageResource(R.drawable.no);
 		}
 

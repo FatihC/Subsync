@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/indHead"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_weight="0.94"
+        android:text="@string/di_kap_no"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/address_item_text" />
+
+    <TextView
+        android:id="@+id/wrHead"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/site_ad_"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/address_item_text" />
+
+    <TextView
+        android:id="@+id/mtrHead"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/blok_ad_"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/address_item_text" />
+
+
+</LinearLayout>

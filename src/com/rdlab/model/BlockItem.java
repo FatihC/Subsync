@@ -5,7 +5,8 @@ public class BlockItem {
 	private String DoorNumber;
 	private String SiteName;
 	private String BlockName;
-	private boolean IsNewlyAdded;
+	boolean IsNewlyAdded;
+	private int CheckStatus;
 	private int UnitCount;
 	private long Id;
 	
@@ -13,30 +14,30 @@ public class BlockItem {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public BlockItem(String doorNumber,String siteName,String blockName,boolean isNewlyAdded) {
+	public BlockItem(String doorNumber,String siteName,String blockName,int checkStatus) {
 		// TODO Auto-generated constructor stub
 		this.DoorNumber=doorNumber;
 		this.SiteName=siteName;
 		this.BlockName=blockName;
-		this.IsNewlyAdded=isNewlyAdded;
+		this.CheckStatus=checkStatus;
 	}
 	
-	public BlockItem(long id,String doorNumber,String siteName,String blockName,boolean isNewlyAdded,int unitCount) {
+	public BlockItem(long id,String doorNumber,String siteName,String blockName,int checkStatus,int unitCount) {
 		// TODO Auto-generated constructor stub
 		this.Id=id;
 		this.DoorNumber=doorNumber;
 		this.SiteName=siteName;
 		this.BlockName=blockName;
-		this.IsNewlyAdded=isNewlyAdded;
+		this.CheckStatus=checkStatus;
 		this.UnitCount=unitCount;
 	}
 	
-	public BlockItem(String doorNumber,String siteName,String blockName,boolean isNewlyAdded,int unitCount) {
+	public BlockItem(String doorNumber,String siteName,String blockName,int checkStatus,int unitCount) {
 		// TODO Auto-generated constructor stub
 		this.DoorNumber=doorNumber;
 		this.SiteName=siteName;
 		this.BlockName=blockName;
-		this.IsNewlyAdded=isNewlyAdded;
+		this.CheckStatus=checkStatus;
 		this.UnitCount=unitCount;
 	}
 
@@ -65,7 +66,10 @@ public class BlockItem {
 	}
 
 	public boolean isIsNewlyAdded() {
-		return IsNewlyAdded;
+		if (this.CheckStatus==Enums.NewlyAdded.getVal()) {
+			return true;
+		}
+		return false;
 	}
 
 	public void setIsNewlyAdded(boolean isNewlyAdded) {
@@ -95,5 +99,13 @@ public class BlockItem {
 
 	public void setUnitCount(int unitCount) {
 		UnitCount = unitCount;
+	}
+
+	public int getCheckStatus() {
+		return CheckStatus;
+	}
+
+	public void setCheckStatus(int checkStatus) {
+		CheckStatus = checkStatus;
 	}
 }

@@ -12,6 +12,7 @@ import com.rdlab.subssync.R;
 import com.rdlab.utility.Constants;
 import com.rdlab.utility.ReadOperation;
 
+import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.Editable;
@@ -56,17 +57,22 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 		districtName = bund.getString(Constants.DISTRICT_NAME_TAG);
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%s > %s > %s", Constants.SelectedCountyName,
-				districtName.trim(), villageName.trim()));
+//		sb.append(String.format("%s > %s > %s", Constants.SelectedCountyName,
+//				districtName.trim(), villageName.trim()));
+		sb.append(String.format("%s > ", Constants.SelectedCountyName));
 
 		View rootView = inflater.inflate(R.layout.fragment_home, container,
 				false);
 
-		((TextView) rootView.findViewById(R.id.headerText))
-				.setText(Constants.STREET_HEADER_TEXT);
-		((TextView)rootView.findViewById(R.id.selectedValues)).setText(sb.toString());
+//		((TextView) rootView.findViewById(R.id.headerText)).setText(Constants.STREET_HEADER_TEXT);
+		
+//		((TextView)rootView.findViewById(R.id.selectedValues)).setText(sb.toString());
+		((TextView)rootView.findViewById(R.id.selectedValues)).setVisibility(View.GONE);
+		
+		
 		searchText = (EditText) rootView.findViewById(R.id.searchText);
 		searchResult = (ListView) rootView.findViewById(R.id.addressItemList);
+		searchText.setHint("Mahalle/Köy Ara");
 		searchText.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -126,6 +132,12 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 		});
 
 		getData(rootView);
+		
+		ActionBar ab=getActivity().getActionBar();
+		ab.setCustomView(R.layout.custom_action_bar);
+		TextView info=(TextView)ab.getCustomView().findViewById(R.id.txtTitle);
+		info.setText(Constants.STREET_HEADER_TEXT);
+		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM|ActionBar.DISPLAY_SHOW_HOME|ActionBar.NAVIGATION_MODE_LIST|ActionBar.DISPLAY_HOME_AS_UP);
 
 		return rootView;
 	}

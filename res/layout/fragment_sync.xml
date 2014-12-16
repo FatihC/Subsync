@@ -18,6 +18,14 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="28sp" />
 
+        <TextView
+            android:id="@+id/txtLastSyncDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="@string/g_ncelle_yap_lmad_"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
     </TableRow>
 
     <TableRow

@@ -33,6 +33,7 @@ public class MainActivity extends BaseActivity {
 	private ListView _drawerList;
 	private ActionBarDrawerToggle _drawerToggle;
 
+	@SuppressWarnings("unused")
 	private CharSequence _drawerTitle;
 	private CharSequence _appTitle;
 
@@ -83,7 +84,8 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(_drawerTitle);
+				// getActionBar().setTitle(_drawerTitle);
+				getActionBar().setTitle("Menü");
 				invalidateOptionsMenu();
 			}
 		};
@@ -94,8 +96,7 @@ public class MainActivity extends BaseActivity {
 			// displayView(0);
 
 		}
-		
-		
+
 		_drawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -105,7 +106,7 @@ public class MainActivity extends BaseActivity {
 				displayView(arg2);
 			}
 		});
-		
+
 		displayView(0);
 	}
 
@@ -120,13 +121,20 @@ public class MainActivity extends BaseActivity {
 			fragment = new SyncFragment();
 			break;
 		case 2:
+			//kullanýcý bilgi
 			// fragment = new PhotosFragment();
 			break;
 		case 3:
+			//þifre degis
 			// fragment = new CommunityFragment();
 			break;
 		case 4:
+			//çýkýþ
 			// fragment = new PagesFragment();
+			Constants.LoggedUserFullname="";
+			Constants.LoggedUserName="";
+			Constants.LoggedUserSerno=null;
+			this.finish();
 			break;
 		case 5:
 			// fragment = new WhatsHotFragment();
@@ -189,66 +197,67 @@ public class MainActivity extends BaseActivity {
 			return true;
 		case R.id.action_bozova:
 			setGlobalConstants("1209", getString(R.string.action_bozova),
-					"com.rdlab.model.Bozova","37");
+					"com.rdlab.model.Bozova", "37");
 			return true;
 		case R.id.action_birecik:
 			setGlobalConstants("1194", getString(R.string.action_birecik),
-					"com.rdlab.model.Birecik","36");
+					"com.rdlab.model.Birecik", "36");
 			return true;
 		case R.id.action_akcakale:
 			setGlobalConstants("1115", getString(R.string.action_akcakale),
-					"com.rdlab.model.Akcakale","35");
+					"com.rdlab.model.Akcakale", "35");
 			return true;
 		case R.id.action_haliliye:
 			setGlobalConstants("2092", getString(R.string.action_haliliye),
-					"com.rdlab.model.Haliliye","33");
+					"com.rdlab.model.Haliliye", "33");
 			return true;
 		case R.id.action_eyyubiye:
 			setGlobalConstants("2091", getString(R.string.action_eyyubiye),
-					"com.rdlab.model.Eyyubiye","32");
+					"com.rdlab.model.Eyyubiye", "32");
 			return true;
 		case R.id.action_siverek:
 			setGlobalConstants("1630", getString(R.string.action_siverek),
-					"com.rdlab.model.Siverek","42");
+					"com.rdlab.model.Siverek", "42");
 			return true;
 		case R.id.action_karakopru:
 			setGlobalConstants("2093", getString(R.string.action_karakopru),
-					"com.rdlab.model.Karakopru","34");
+					"com.rdlab.model.Karakopru", "34");
 			return true;
 		case R.id.action_suruc:
 			setGlobalConstants("1643", getString(R.string.action_suruc),
-					"com.rdlab.model.Suruc","43");
+					"com.rdlab.model.Suruc", "43");
 			return true;
 		case R.id.action_ceylanpinar:
 			setGlobalConstants("1220", getString(R.string.action_ceylanpinar),
-					"com.rdlab.model.Ceylanpinar","38");
+					"com.rdlab.model.Ceylanpinar", "38");
 			return true;
 		case R.id.action_halfeti:
 			setGlobalConstants("1378", getString(R.string.action_halfeti),
-					"com.rdlab.model.Halfeti","39");
+					"com.rdlab.model.Halfeti", "39");
 			return true;
 		case R.id.action_harran:
 			setGlobalConstants("1800", getString(R.string.action_harran),
-					"com.rdlab.model.Harran","40");
+					"com.rdlab.model.Harran", "40");
 			return true;
 		case R.id.action_hilvan:
 			setGlobalConstants("1393", getString(R.string.action_hilvan),
-					"com.rdlab.model.Hilvan","41");
+					"com.rdlab.model.Hilvan", "41");
 			return true;
 		case R.id.action_viransehir:
 			setGlobalConstants("1713", getString(R.string.action_viransehir),
-					"com.rdlab.model.Viransehir","44");
+					"com.rdlab.model.Viransehir", "44");
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
-	private void setGlobalConstants(String code, String name, String className,String universalDistrictCode) {
+	private void setGlobalConstants(String code, String name, String className,
+			String universalDistrictCode) {
 		Constants.SelectedCountyCode = code;
 		Constants.SelectedCountyName = name;
 		Constants.SelectedClassName = className;
-		Constants.SelectedUniversalCountyCode=universalDistrictCode;
+		Constants.SelectedUniversalCountyCode = universalDistrictCode;
 		Toast.makeText(this, "Þehir seçiminiz tamamlandý.", Toast.LENGTH_SHORT)
 				.show();
 		setTitle(_appTitle);
@@ -268,7 +277,9 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	public void setTitle(CharSequence title) {
-		_appTitle = title + "/" + Constants.SelectedCountyName;
+		// for greater purpose
+		// _appTitle = title + "/" + Constants.SelectedCountyName;
+		_appTitle = Constants.SelectedCountyName;
 		getActionBar().setTitle(_appTitle);
 	}
 

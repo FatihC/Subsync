@@ -63,6 +63,12 @@ public class DateUtils {
 		return sdf1.format(nowDate());
 	}
 	
+	public static final String ConvertDateToString(Date date) {
+		SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+		sdf1.setTimeZone(TimeZone.getTimeZone("Europe/Istanbul"));
+		return sdf1.format(date);
+	}
+	
 	public static final String reverseFormatForThrougput(Long date) {
 		try {
 			SimpleDateFormat sdf1 = new SimpleDateFormat(formatted);

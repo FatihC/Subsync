@@ -60,46 +60,31 @@ public class UnitItemAdapter extends ArrayAdapter<UnitItem> {
 		if (arg1 == null) {
 			LayoutInflater inflater = (LayoutInflater) this._context
 					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-			arg1 = inflater.inflate(R.layout.unit_list_item, null);
+			arg1 = inflater.inflate(R.layout.unit_list_item, null);	
 		}
 
 		UnitItem item = this._addresses.get(arg0);
 
 		TextView txtID = (TextView) arg1.findViewById(R.id.item_indoor_number);
-		TextView txtWMS = (TextView) arg1.findViewById(R.id.item_wiring_or_meter_or_stat);
-		TextView txtSM = (TextView) arg1.findViewById(R.id.item_sbs_or_meterser);
+		TextView txtWir = (TextView) arg1.findViewById(R.id.item_wiring);
+		TextView txtMB = (TextView) arg1.findViewById(R.id.item_meter_brand);
+		TextView txtMS = (TextView) arg1.findViewById(R.id.item_meter_ser);
+		TextView txtSta = (TextView) arg1.findViewById(R.id.item_stat);
 		TextView txtSbs = (TextView) arg1.findViewById(R.id.item_sbs);
 
 		ImageView imgStatus = (ImageView) arg1.findViewById(R.id.item_synced);
 		boolean checkStatus = item.isSynced();
-		if (checkStatus) {
+		if (!checkStatus) {
 			imgStatus.setImageResource(R.drawable.no);
 		}
-		
-		txtID.setText(item.getIndoorNumber());
 
-		String wiring = "YOK", sbs = "YOK",mpName="YOK",mpSer="YOK",sta="YOK";
-		if (item.getWiringNo()!=null&&!item.getWiringNo().isEmpty()&&!item.getWiringNo().equals("")) {
-			wiring=item.getWiringNo();
-			sbs=item.getSubscriberName();
-			txtWMS.setText(wiring);
-			txtSM.setText(sbs);
-			return arg1;
-		}
-		if (item.getMeterpointBrand()!=null&&!item.getMeterpointBrand().isEmpty()&&!item.getMeterpointBrand().equals("")) {
-			mpName=item.getMeterpointBrand();
-			mpSer=item.getMeterpointSerno();
-			sbs=item.getSubscriberName();
-			txtWMS.setText(mpName);
-			txtSM.setText(mpSer);
-			txtSbs.setText(sbs);
-			return arg1;
-		}
-		if (item.getStatusName()!=null&&!item.getStatusName().isEmpty()&&!item.getStatusName().equals("")) {
-			sta=item.getStatusName();
-			txtWMS.setText(sta);
-			return arg1;
-		}
+		txtID.setText(item.getIndoorNumber());
+		txtWir.setText(item.getWiringNo());
+		txtMB.setText(item.getMeterpointBrand());
+		txtMS.setText(item.getMeterpointSerno());
+		txtSta.setText(item.getStatusName());
+		txtSbs.setText(item.getSubscriberName());
+		
 
 		return arg1;
 	}

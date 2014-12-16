@@ -12,6 +12,7 @@ import com.rdlab.subssync.R;
 import com.rdlab.utility.Constants;
 import com.rdlab.utility.ReadOperation;
 
+import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.Editable;
@@ -59,17 +60,18 @@ public class CSBMFragment extends BaseFragment implements DataEvent {
 		districtName = bund.getString(Constants.DISTRICT_NAME_TAG);
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%s > %s > %s > %S", Constants.SelectedCountyName,
-				districtName.trim(), villageName.trim(),streetName.trim()));
+//		sb.append(String.format("%s > %s > %s > %S", Constants.SelectedCountyName,
+//				districtName.trim(), villageName.trim(),streetName.trim()));
+		sb.append(String.format("%s >",streetName.trim()));
 
 		View rootView = inflater.inflate(R.layout.fragment_home, container,
 				false);
 
-		((TextView) rootView.findViewById(R.id.headerText))
-				.setText(Constants.CSBM_HEADER_TEXT);
+		((TextView)rootView.findViewById(R.id.selectedValues)).setVisibility(View.VISIBLE);
 		((TextView)rootView.findViewById(R.id.selectedValues)).setText(sb.toString());
 		searchText = (EditText) rootView.findViewById(R.id.searchText);
 		searchResult = (ListView) rootView.findViewById(R.id.addressItemList);
+		searchText.setHint("C/S/B/M Ara");
 		searchText.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -122,6 +124,12 @@ public class CSBMFragment extends BaseFragment implements DataEvent {
 		});
 
 		getData(rootView);
+		
+		ActionBar ab=getActivity().getActionBar();
+		ab.setCustomView(R.layout.custom_action_bar);
+		TextView info=(TextView)ab.getCustomView().findViewById(R.id.txtTitle);
+		info.setText(Constants.CSBM_HEADER_TEXT);
+		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM|ActionBar.DISPLAY_SHOW_HOME|ActionBar.NAVIGATION_MODE_LIST|ActionBar.DISPLAY_HOME_AS_UP);
 
 		return rootView;
 	}

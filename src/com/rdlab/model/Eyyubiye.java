@@ -4,34 +4,36 @@ import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
 
 public class Eyyubiye extends SugarRecord {
-	private String CountyCode;
-	private String CountyName;
-	private String DistrictCode;
-	private String DistrictName;
-	private String VillageCode;
-	private String VillageName;
-	private String StreetCode;
-	private String StreetName;
-	private String CSBMCode;
-	private String CSBMName;
-	private String BuildingCode;
-	private String DoorNumber;
-	private String SiteName;
-	private String BlockName;
-	private String UAVTAddressNo;
-	private String IndoorNumber;
-	private boolean CheckStatus;
-	public boolean isCheckStatus() {
+	public String CountyCode;
+	public String CountyName;
+	public String DistrictCode;
+	public String DistrictName;
+	public String VillageCode;
+	public String VillageName;
+	public String StreetCode;
+	public String StreetName;
+	public String CSBMCode;
+	public String CSBMName;
+	public String BuildingCode;
+	public String DoorNumber;
+	public String SiteName;
+	public String BlockName;
+	public String UAVTAddressNo;
+	public String IndoorNumber;
+	private int CheckStatus;
+
+	public int isCheckStatus() {
 		return CheckStatus;
 	}
 
-	public void setCheckStatus(boolean checkStatus) {
+	public void setCheckStatus(int checkStatus) {
 		CheckStatus = checkStatus;
 	}
+
 	@Ignore
 	private int UnitCount;
-	
-	public int getUnitCount(){
+
+	public int getUnitCount() {
 		return UnitCount;
 	}
 
@@ -45,7 +47,7 @@ public class Eyyubiye extends SugarRecord {
 			String streetCode, String streetName, String csbmCode,
 			String csbmName, String buildingCode, String doorNumber,
 			String siteName, String blockName, String UAVTAddressNo,
-			String indoorNumber,boolean check) {
+			String indoorNumber, int check) {
 
 		this.CountyCode = countyCode;
 		this.CountyName = countyName;
@@ -63,7 +65,7 @@ public class Eyyubiye extends SugarRecord {
 		this.BlockName = blockName;
 		this.UAVTAddressNo = UAVTAddressNo;
 		this.IndoorNumber = indoorNumber;
-		this.CheckStatus=check;
+		this.CheckStatus = check;
 	}
 
 	public String GetCountyCode() {

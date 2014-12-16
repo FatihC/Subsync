@@ -4,22 +4,22 @@ import com.orm.SugarRecord;
 
 public class PushRequest extends SugarRecord{
 
-	Long userSerno;
-	String  districtCode;
-	Long createDate;
-	String uavtCode;
-	String wiringNo;
-	String meterNo;
-	String meterBrand;
-	String  checkStatus; // biirm yok, kapali, sayac var ulasilamadi....
-	Integer existOnUavt;  // 0-exist, 1-not
-	String doorNumber;
-	String customerName;
-	Boolean pushed;
-	String villageCode;
-	String streetCode;
-	String csbmCode;
-	String indoorNumber;
+	public Long userSerno;
+	public String  districtCode;
+	public Long createDate;
+	public String uavtCode;
+	public String wiringNo;
+	public String meterNo;
+	public String meterBrand;
+	public String  checkStatus; // biirm yok, kapali, sayac var ulasilamadi....
+	public Integer existOnUavt;  // 0-exist, 1-not
+	public String doorNumber;
+	public String customerName;
+	public Boolean pushed;
+	public String villageCode;
+	public String streetCode;
+	public String csbmCode;
+	public String indoorNumber;
 	
 	
 	

@@ -90,13 +90,6 @@ public class Repository implements IRepository {
 						"CheckStatus");
 				fieldCheck.setAccessible(true);
 
-				/*
-				 * long id; Field
-				 * fieldId=object.getClass().getSuperclass().getDeclaredField
-				 * ("id"); fieldId.setAccessible(true);
-				 * id=Long.parseLong(fieldId.get(object).toString());
-				 */
-
 				Field fieldUnit = object.getClass().getDeclaredField(
 						"UnitCount");
 				fieldUnit.setAccessible(true);
@@ -106,7 +99,7 @@ public class Repository implements IRepository {
 				siteName = fieldSite.get(object).toString();
 				blockName = fieldBlock.get(object).toString();
 				
-				boolean check=fieldCheck.getBoolean(object);
+				int check=fieldCheck.getInt(object);
 				
 
 				result.add(new BlockItem(doorNumber, siteName, blockName, check,
@@ -163,9 +156,9 @@ public class Repository implements IRepository {
 					uavtNo = fieldUavt.get(object).toString();
 				}
 				
-				boolean checked=fieldCheck.getBoolean(object);
+				int check=fieldCheck.getInt(object);
 
-				result.add(new UnitItem(indoorNumber, uavtNo, checked));
+				result.add(new UnitItem(indoorNumber, uavtNo, check));
 			}
 
 		} catch (IllegalArgumentException e) {

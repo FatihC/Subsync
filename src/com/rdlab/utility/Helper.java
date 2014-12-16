@@ -5,13 +5,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
+import com.orm.SugarRecord;
+import com.orm.util.NamingHelper;
 import com.rdlab.model.AddressListItem;
+import com.rdlab.model.Akcakale;
+import com.rdlab.model.Birecik;
+import com.rdlab.model.Bozova;
+import com.rdlab.model.Ceylanpinar;
+import com.rdlab.model.Enums;
+import com.rdlab.model.Eyyubiye;
+import com.rdlab.model.Halfeti;
+import com.rdlab.model.Haliliye;
+import com.rdlab.model.Harran;
+import com.rdlab.model.Hilvan;
+import com.rdlab.model.Karakopru;
+import com.rdlab.model.Siverek;
+import com.rdlab.model.Suruc;
+import com.rdlab.model.Viransehir;
 
 public class Helper {
 
@@ -185,6 +203,329 @@ public class Helper {
 	public static void giveNotification(Context context, String text) {
 		Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 	}
-	
 
+	public static void updateStatus(String districtCode, String villageCode,
+			String streetCode, String csbmCode, String doorNumber,
+			String indoorNumber, Enums value) throws ClassNotFoundException {
+		StringBuilder sb = new StringBuilder();
+		String tableName = NamingHelper.toSQLName(Class
+				.forName(Constants.SelectedClassName));
+		sb.append(String
+				.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
+						+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
+						tableName, districtCode, villageCode, streetCode,
+						csbmCode, doorNumber));
+		if (!indoorNumber.isEmpty()) {
+			sb.append(String.format(" AND INDOOR_NUMBER='%s'", indoorNumber));
+		}
+
+		if (Constants.SelectedUniversalCountyCode.equals("32")) {
+			List<Eyyubiye> result = Eyyubiye.findWithQuery(Eyyubiye.class,
+					sb.toString(), null);
+			Eyyubiye item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Eyyubiye.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("33")) {
+			List<Haliliye> result = Haliliye.findWithQuery(Haliliye.class,
+					sb.toString(), null);
+			Haliliye item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Haliliye.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("34")) {
+			List<Karakopru> result = Karakopru.findWithQuery(Karakopru.class,
+					sb.toString(), null);
+			Karakopru item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Karakopru.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("35")) {
+			List<Akcakale> result = Akcakale.findWithQuery(Akcakale.class,
+					sb.toString(), null);
+			Akcakale item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Akcakale.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("36")) {
+			List<Birecik> result = Birecik.findWithQuery(Birecik.class,
+					sb.toString(), null);
+			Birecik item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Birecik.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("37")) {
+			List<Bozova> result = Bozova.findWithQuery(Bozova.class,
+					sb.toString(), null);
+			Bozova item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Bozova.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("38")) {
+			List<Ceylanpinar> result = Ceylanpinar.findWithQuery(
+					Ceylanpinar.class, sb.toString(), null);
+			Ceylanpinar item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Ceylanpinar.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("39")) {
+			List<Halfeti> result = Halfeti.findWithQuery(Halfeti.class,
+					sb.toString(), null);
+			Halfeti item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Halfeti.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("40")) {
+			List<Harran> result = Harran.findWithQuery(Harran.class,
+					sb.toString(), null);
+			Harran item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Harran.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("41")) {
+			List<Hilvan> result = Hilvan.findWithQuery(Hilvan.class,
+					sb.toString(), null);
+			Hilvan item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Hilvan.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("42")) {
+			List<Siverek> result = Siverek.findWithQuery(Siverek.class,
+					sb.toString(), null);
+			Siverek item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Siverek.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("43")) {
+			List<Suruc> result = Suruc.findWithQuery(Suruc.class,
+					sb.toString(), null);
+			Suruc item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Suruc.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("44")) {
+			List<Viransehir> result = Viransehir.findWithQuery(
+					Viransehir.class, sb.toString(), null);
+			Viransehir item = result.get(0);
+			item.setCheckStatus(value.getVal());
+			Viransehir.save(item);
+		}
+	}
+
+	public static void updateData(String districtCode, String villageCode,
+			String streetCode, String csbmCode, String doorNumber,
+			String indoorNumber, String newDoorNum, String newSiteName,
+			String newBlockName, String newIndoorNum)
+			throws ClassNotFoundException {
+		StringBuilder sb = new StringBuilder();
+		String tableName = NamingHelper.toSQLName(Class
+				.forName(Constants.SelectedClassName));
+		sb.append(String
+				.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
+						+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
+						tableName, districtCode, villageCode, streetCode,
+						csbmCode, doorNumber));
+		if (!indoorNumber.isEmpty()) {
+			sb.append(String.format(" AND INDOOR_NUMBER='%s'", indoorNumber));
+		}
+
+		if (Constants.SelectedUniversalCountyCode.equals("32")) {
+			List<Eyyubiye> result = Eyyubiye.findWithQuery(Eyyubiye.class,
+					sb.toString(), null);
+			Eyyubiye item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Eyyubiye.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("33")) {
+			List<Haliliye> result = Haliliye.findWithQuery(Haliliye.class,
+					sb.toString(), null);
+			Haliliye item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Haliliye.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("34")) {
+			List<Karakopru> result = Karakopru.findWithQuery(Karakopru.class,
+					sb.toString(), null);
+			Karakopru item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Karakopru.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("35")) {
+			List<Akcakale> result = Akcakale.findWithQuery(Akcakale.class,
+					sb.toString(), null);
+			Akcakale item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Akcakale.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("36")) {
+			List<Birecik> result = Birecik.findWithQuery(Birecik.class,
+					sb.toString(), null);
+			Birecik item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Birecik.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("37")) {
+			List<Bozova> result = Bozova.findWithQuery(Bozova.class,
+					sb.toString(), null);
+			Bozova item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Bozova.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("38")) {
+			List<Ceylanpinar> result = Ceylanpinar.findWithQuery(
+					Ceylanpinar.class, sb.toString(), null);
+			Ceylanpinar item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Ceylanpinar.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("39")) {
+			List<Halfeti> result = Halfeti.findWithQuery(Halfeti.class,
+					sb.toString(), null);
+			Halfeti item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Halfeti.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("40")) {
+			List<Harran> result = Harran.findWithQuery(Harran.class,
+					sb.toString(), null);
+			Harran item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Harran.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("41")) {
+			List<Hilvan> result = Hilvan.findWithQuery(Hilvan.class,
+					sb.toString(), null);
+			Hilvan item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Hilvan.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("42")) {
+			List<Siverek> result = Siverek.findWithQuery(Siverek.class,
+					sb.toString(), null);
+			Siverek item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Siverek.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("43")) {
+			List<Suruc> result = Suruc.findWithQuery(Suruc.class,
+					sb.toString(), null);
+			Suruc item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Suruc.save(item);
+		} else if (Constants.SelectedUniversalCountyCode.equals("44")) {
+			List<Viransehir> result = Viransehir.findWithQuery(
+					Viransehir.class, sb.toString(), null);
+			Viransehir item = result.get(0);
+			if (indoorNumber.isEmpty()) {
+				item.DoorNumber = newDoorNum;
+				item.BlockName = newBlockName;
+				item.SiteName = newSiteName;
+			} else {
+				item.IndoorNumber = newIndoorNum;
+			}
+			Viransehir.save(item);
+		}
+	}
+
+	public static boolean checkBlockUnitsNewlyAdded(String districtCode,String villageCode,String streetCode,String csbmCode,String doorNumber) {
+		
+		try {
+			Class<?> t = Class.forName(Constants.SelectedClassName);
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("SELECT UAVT_ADDRESS_NO FROM %s",
+					NamingHelper.toSQLName(t)));
+			sb.append(" WHERE ");
+			sb.append(String
+					.format("DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
+							districtCode, villageCode, streetCode, csbmCode,
+							doorNumber));
+
+			List<?> listOfT=SugarRecord.findWithQuery(t, sb.toString(), null);
+			for (Object object : listOfT) {
+				Field f=object.getClass().getDeclaredField("UAVTAddressNo");
+				f.setAccessible(true);
+				String value=f.get(object).toString();
+				if (IsUUID(value)||value.isEmpty()) {
+					return true;
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+		return false;
+	}
+	
+	public static boolean IsUUID(String value)
+	{
+		boolean isGuid=false;
+		try {
+			UUID.fromString(value);
+			isGuid=true;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return isGuid;
+	}
 }

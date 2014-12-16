@@ -10,20 +10,21 @@ public class UnitItem {
 	private String StatusName;
 	private String StatusCode;
 	private String UAVTNo;
-	private boolean Synced;
+	boolean Synced;
+	private int CheckStatus;
 	
 	public UnitItem() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public UnitItem(String indoor,String uavt,boolean synced) {
+	public UnitItem(String indoor,String uavt,int checkStatus) {
 		// TODO Auto-generated constructor stub
 		this.IndoorNumber=indoor;
 		this.UAVTNo=uavt;
-		this.Synced=synced;
+		this.CheckStatus=checkStatus;
 	}
 	
-	public UnitItem(String indoor,String wiring,String sbsName,String mpName,String mpSer,String stat,String statCode,boolean synced) {
+	public UnitItem(String indoor,String wiring,String sbsName,String mpName,String mpSer,String stat,String statCode,int checkStatus) {
 		// TODO Auto-generated constructor stub
 		this.IndoorNumber=indoor;
 		this.WiringNo=wiring;
@@ -32,7 +33,7 @@ public class UnitItem {
 		this.MeterpointSerno=mpSer;
 		this.StatusCode=statCode;
 		this.StatusName=stat;
-		this.Synced=synced;
+		this.CheckStatus=checkStatus;
 	}
 
 	public String getIndoorNumber() {
@@ -92,7 +93,10 @@ public class UnitItem {
 	}
 
 	public boolean isSynced() {
-		return Synced;
+		if (this.CheckStatus==Enums.Completed.getVal()) {
+			return true;
+		}
+		return false;
 	}
 
 	public void setSynced(boolean synced) {
@@ -105,5 +109,13 @@ public class UnitItem {
 
 	public void setUAVTNo(String uAVTNo) {
 		UAVTNo = uAVTNo;
+	}
+
+	public int getCheckStatus() {
+		return CheckStatus;
+	}
+
+	public void setCheckStatus(int checkStatus) {
+		CheckStatus = checkStatus;
 	}
 }

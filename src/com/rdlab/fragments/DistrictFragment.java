@@ -2,6 +2,7 @@ package com.rdlab.fragments;
 
 import java.util.ArrayList;
 
+import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.Editable;
@@ -38,7 +39,6 @@ public class DistrictFragment extends BaseFragment implements DataEvent {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_home, container,
 				false);
-		((TextView)rootView.findViewById(R.id.headerText)).setText(Constants.DISTRICT_HEADER_TEXT);
 		((TextView)rootView.findViewById(R.id.selectedValues)).setText(Constants.SelectedCountyName.trim());
 		searchText = (EditText) rootView.findViewById(R.id.searchText);
 		searchResult = (ListView) rootView.findViewById(R.id.addressItemList);
@@ -88,6 +88,12 @@ public class DistrictFragment extends BaseFragment implements DataEvent {
 		});
 
 		getData(rootView);
+		
+		ActionBar ab=getActivity().getActionBar();
+		ab.setCustomView(R.layout.custom_action_bar);
+		TextView info=(TextView)ab.getCustomView().findViewById(R.id.txtTitle);
+		info.setText(Constants.DISTRICT_HEADER_TEXT);
+		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM|ActionBar.DISPLAY_SHOW_HOME|ActionBar.NAVIGATION_MODE_LIST|ActionBar.DISPLAY_HOME_AS_UP);
 		
 		return rootView;
 	}

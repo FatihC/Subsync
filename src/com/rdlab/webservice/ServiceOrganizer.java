@@ -24,7 +24,9 @@ import com.rdlab.events.ServiceTaskEvent;
 import com.rdlab.utility.Helper;
 
 public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
-	private static final String API_URL = "http://uavt.dedas.com.tr/UAVTWebapi/api/v1/uavt/";
+//	private static final String API_URL = "http://uavt.dedas.com.tr/UAVTWebapi/api/v1/uavt/";
+//	private static final String API_URL = "http://192.168.2.238/UAVTWebapi/api/v1/uavt/";
+	private static final String API_URL = "http://10.34.61.33/UAVTWebapi/api/v1/uavt/";
 	private ServiceTaskEvent delegate;
 	private ProgressDialog dialog;
 	private static Context context;
@@ -34,6 +36,7 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 		this.delegate=delegate;
 		ServiceOrganizer.context=context;
 		dialog = new ProgressDialog(context);
+		dialog.setCancelable(false);
 		dialog.setTitle("Ýþlem yapýlýyor");
 		dialog.setMessage("Lütfen bekleyiniz...");
 	}
