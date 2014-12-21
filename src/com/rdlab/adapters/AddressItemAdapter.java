@@ -17,17 +17,24 @@ import android.widget.TextView;
 public class AddressItemAdapter extends ArrayAdapter<AddressListItem> {
 
 	private ArrayList<AddressListItem> _addresses;
+	private ArrayList<AddressListItem> _faddress;
 	private Context _context;
 	private Filter filter;
 
 	/* private ItemType _itemType; */
 
-	public AddressItemAdapter(Context context,int resourceId,ArrayList<AddressListItem> addressList) {
+	public AddressItemAdapter(Context context, int resourceId,
+			ArrayList<AddressListItem> addressList) {
 		// TODO Auto-generated constructor stub
 		super(context, resourceId, addressList);
-		this._addresses = addressList;
+		this._addresses = new ArrayList<AddressListItem>(addressList);
+		this._faddress = new ArrayList<AddressListItem>(addressList);
 		this._context = context;
 
+	}
+
+	public class ViewHolder {
+		TextView txtTitle;
 	}
 
 	public ArrayList<AddressListItem> getData() {
@@ -54,52 +61,54 @@ public class AddressItemAdapter extends ArrayAdapter<AddressListItem> {
 
 	@Override
 	public View getView(int arg0, View arg1, ViewGroup arg2) {
+		ViewHolder viewHolder;
 		if (arg1 == null) {
 			LayoutInflater inflater = (LayoutInflater) this._context
 					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 			arg1 = inflater.inflate(R.layout.filter_list_item, null);
+			viewHolder = new ViewHolder();
+			viewHolder.txtTitle = (TextView) arg1.findViewById(R.id.item_name);
+			arg1.setTag(viewHolder);
+		} else {
+			viewHolder = (ViewHolder) arg1.getTag();
 		}
+		AddressListItem address = _faddress.get(arg0);
 
-		TextView txtTitle = (TextView) arg1.findViewById(R.id.item_name);
-		txtTitle.setText(this._addresses.get(arg0).GetName());
+		TextView txtTitle = viewHolder.txtTitle;
+		txtTitle.setText(address.GetName());
 		return arg1;
 	}
 
 	@Override
 	public Filter getFilter() {
 		if (filter == null)
-			filter = new AppFilter(_addresses);
+			filter = new AppFilter();
 		return filter;
 	}
 
 	private class AppFilter extends Filter {
 
-		private ArrayList<AddressListItem> items;
-
-		public AppFilter(ArrayList<AddressListItem> items) {
-			// TODO Auto-generated constructor stub
-			this.items = items;
-		}
-
 		@Override
 		protected FilterResults performFiltering(CharSequence chars) {
-			String filterSeq = chars.toString().toLowerCase();
 			FilterResults result = new FilterResults();
-			if (filterSeq != null && filterSeq.length() > 0) {
-				ArrayList<AddressListItem> filter = new ArrayList<AddressListItem>();
 
-				for (AddressListItem object : items) {
-					// the filtering itself:
-					if (object.GetName().toLowerCase().contains(filterSeq))
-						filter.add(object);
+			if (chars != null && !chars.toString().isEmpty()) {
+				ArrayList<AddressListItem> filter = new ArrayList<AddressListItem>(
+						_addresses);
+				ArrayList<AddressListItem> nfilter = new ArrayList<AddressListItem>();
+				for (AddressListItem addressListItem : filter) {
+					if (addressListItem.toString().contains(chars)) {
+						nfilter.add(addressListItem);
+					}
 				}
-				result.count = filter.size();
-				result.values = filter;
+				result.count = nfilter.size();
+				result.values = nfilter;
 			} else {
-				// add all objects
 				synchronized (this) {
-					result.values = items;
-					result.count = items.size();
+					ArrayList<AddressListItem> list = new ArrayList<AddressListItem>(
+							_addresses);
+					result.values = list;
+					result.count = list.size();
 				}
 			}
 			return result;
@@ -109,12 +118,14 @@ public class AddressItemAdapter extends ArrayAdapter<AddressListItem> {
 		@Override
 		protected void publishResults(CharSequence constraint,
 				FilterResults results) {
-			ArrayList<AddressListItem> filtered = (ArrayList<AddressListItem>) results.values;
-			notifyDataSetChanged();
+			_faddress = (ArrayList<AddressListItem>) results.values;
 			clear();
-			for (int i = 0, l = filtered.size(); i < l; i++)
-				add((AddressListItem) filtered.get(i));
-			notifyDataSetInvalidated();
+
+			for (AddressListItem itm : _faddress) {
+				add(itm);
+			}
+			notifyDataSetChanged();
+
 		}
 
 	}

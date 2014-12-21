@@ -2,6 +2,8 @@ package com.rdlab.utility;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Constants {
 	public static final String CITY_CODE = "63";
@@ -12,12 +14,15 @@ public class Constants {
 	public static final String CSBM_CODE_TAG = "CSBM_CODE";
 	public static final String DOOR_NUMBER_TAG = "DOOR_NUMBER";
 	public static final String SITE_NAME_TAG = "SITE_NAME";
-	public static final String BLOCK_NAME_TAG = "BLOCK_NAME_NUMBER";
+	public static final String BLOCK_NAME_TAG = "BLOCK_NAME";
 	public static final String UAVT_TAG = "UAVT_ADDRESS_NO";
 	public static final String INDOOR_TAG = "INDOOR_NUMBER";
 	public static final String CHECKED_UAVT = "CHECK_STATUS";
 	public static final String LAST_SYNC_TAG = "LAST_SYNC_DATE";
-	
+	public static final String SELECTED_COUNTY_CODE = "SELECTED_COUNTY_CODE";
+	public static final String SELECTED_COUNTY_NAME = "SELECTED_COUNTY_NAME";
+	public static final String SELECTED_COUNTY_DB_CODE = "SELECTED_COUNTY_DB_CODE";
+	public static final String SELECTED_CLASS_NAME = "SELECTED_CLASS_NAME";
 
 	public static final String EDIT_OUTDOOR = "OUTDOOR_NUM_EDIT";
 	public static final String EDIT_SITE = "SITE_NAME_EDIT";
@@ -48,6 +53,7 @@ public class Constants {
 	public static final String HALFETI = "11";
 	public static final String HARRAN = "12";
 	public static final String HILVAN = "13";
+	public static final String INITIAL_SYNC_DATE = "20141215000000";
 
 	/*
 	 * Fragments Headers
@@ -97,5 +103,64 @@ public class Constants {
 	public static Long LoggedUserSerno;
 	public static String LoggedUserName;
 	public static String LoggedUserFullname;
+
+	public static Map<String, String> COUNTY_CODES = new HashMap<String, String>();
+	public static Map<String, String> METER_BRAND_CODES = new HashMap<String, String>();
+
+	static {
+		COUNTY_CODES.put("32", "com.rdlab.model.Eyyubiye");
+		COUNTY_CODES.put("33", "com.rdlab.model.Haliliye");
+		COUNTY_CODES.put("34", "com.rdlab.model.Karakopru");
+		COUNTY_CODES.put("35", "com.rdlab.model.Akcakale");
+		COUNTY_CODES.put("36", "com.rdlab.model.Birecik");
+		COUNTY_CODES.put("37", "com.rdlab.model.Bozova");
+		COUNTY_CODES.put("38", "com.rdlab.model.Ceylanpinar");
+		COUNTY_CODES.put("39", "com.rdlab.model.Halfeti");
+		COUNTY_CODES.put("40", "com.rdlab.model.Harran");
+		COUNTY_CODES.put("41", "com.rdlab.model.Hilvan");
+		COUNTY_CODES.put("42", "com.rdlab.model.Siverek");
+		COUNTY_CODES.put("43", "com.rdlab.model.Suruc");
+		COUNTY_CODES.put("44", "com.rdlab.model.Viransehir");
+
+		METER_BRAND_CODES.put("AEG", "AEG");
+		METER_BRAND_CODES.put("KÖHLER (AEL)", "AEL");
+		METER_BRAND_CODES.put("MATEÞ", "MAE");
+		METER_BRAND_CODES.put("Vi-KO", "VIK");
+		METER_BRAND_CODES.put("ASSAY ECHELON", "ASY");
+		METER_BRAND_CODES.put("ELEKTRA", "ELK");
+		METER_BRAND_CODES.put("EMH ELGAMA", "EMH");
+		METER_BRAND_CODES.put("ÝSRA", "ISR");
+		METER_BRAND_CODES.put("ABB", "ABB");
+		METER_BRAND_CODES.put("FLASH", "FLS");
+		METER_BRAND_CODES.put("M.K.E.", "MKE");
+		METER_BRAND_CODES.put("MAKEL", "MSY");
+		METER_BRAND_CODES.put("MEKS", "MEK");
+		METER_BRAND_CODES.put("NORA", "NES");
+		METER_BRAND_CODES.put("ONUR", "ONR");
+		METER_BRAND_CODES.put("ORBIS", "ORB");
+		METER_BRAND_CODES.put("ALFATECH", "ALF");
+		METER_BRAND_CODES.put("AMPY", "AMP");
+		METER_BRAND_CODES.put("ASER", "ASR");
+		METER_BRAND_CODES.put("PROTON", "PRO");
+		METER_BRAND_CODES.put("SIEMENS", "SMS");
+		METER_BRAND_CODES.put("EAS M1", "EAS");
+		METER_BRAND_CODES.put("Entes", "ENT");
+		METER_BRAND_CODES.put("ISKRA", "ISK");
+		METER_BRAND_CODES.put("LÝBRA", "LBR");
+		METER_BRAND_CODES.put("Circulator", "CIR");
+		METER_BRAND_CODES.put("ESEM", "ESI");
+		METER_BRAND_CODES.put("FEDERAL", "FED");
+		METER_BRAND_CODES.put("GANZ", "GNZ");
+		METER_BRAND_CODES.put("KÖHLER", "KHL");
+		METER_BRAND_CODES.put("LUNA", "LUN");
+		METER_BRAND_CODES.put("Merlin Gerin", "MER");
+		METER_BRAND_CODES.put("Profilo", "PRF");
+		METER_BRAND_CODES.put("BAÞARI - KAAN", "BSE");
+		METER_BRAND_CODES.put("Diger", "   ");
+		METER_BRAND_CODES.put("Ekosay", "NRM");
+		METER_BRAND_CODES.put("ELEKTROMED", "ELM");
+		METER_BRAND_CODES.put("Telefunken", "TLF");
+		METER_BRAND_CODES.put("BAYLAN", "BYL");
+	}
 
 }

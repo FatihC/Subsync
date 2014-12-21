@@ -3,12 +3,12 @@ package com.rdlab.model;
 import com.orm.SugarRecord;
 
 public class Users extends SugarRecord{
-	Long UserSerno;
-	String Username;
-	String Password;
-	String FullName;
-	Integer Status;
-	Long CreateDate;
+	Long userSerno;
+	String username;
+	String password;
+	String fullName;
+	Integer status;
+	Long createDate;
 	
 	public Users() {
 		// TODO Auto-generated constructor stub
@@ -25,51 +25,51 @@ public class Users extends SugarRecord{
 	}
 
 	public Long getUserSerno() {
-		return UserSerno;
+		return userSerno;
 	}
 
 	public void setUserSerno(Long userSerno) {
-		UserSerno = userSerno;
+		this.userSerno = userSerno;
 	}
 
 	public String getUsername() {
-		return Username;
+		return username;
 	}
 
 	public void setUsername(String username) {
-		Username = username;
+		this.username = username;
 	}
 
 	public String getPassword() {
-		return Password;
+		return password;
 	}
 
 	public void setPassword(String password) {
-		Password = password;
+		this.password = password;
 	}
 
 	public String getFullName() {
-		return FullName;
+		return fullName;
 	}
 
 	public void setFullName(String fullName) {
-		FullName = fullName;
+		this.fullName = fullName;
 	}
 
 	public Integer getStatus() {
-		return Status;
+		return status;
 	}
 
 	public void setStatus(Integer status) {
-		Status = status;
+		this.status = status;
 	}
 
 	public Long getCreateDate() {
-		return CreateDate;
+		return createDate;
 	}
 
 	public void setCreateDate(Long createDate) {
-		CreateDate = createDate;
+		this.createDate = createDate;
 	}
 	
 

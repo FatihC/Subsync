@@ -1,33 +1,25 @@
 package com.rdlab.webservice;
 
-import org.parceler.Parcel;
-
-import com.google.gson.annotations.SerializedName;
-
-@Parcel
 public class UavtFetchRequest {
 	
-	@SerializedName("DistrictCode")
-	private Long DistrictCode;
-	
-	@SerializedName("UserSerno")
-	private Long UserSerno;
+	private String DistrictCode;
+	private Long LastProcessDate;
 	
 	
-	public void setDistrictCode(Long districtCode) {
+	public void setDistrictCode(String districtCode) {
 		DistrictCode = districtCode;
 	}
 	
-	public Long getDistrictCode() {
+	public String getDistrictCode() {
 		return DistrictCode;
 	}
 	
-	public void setUserSerno(Long userSerno) {
-		UserSerno = userSerno;
+	public void setLastProcessDate(Long userSerno) {
+		LastProcessDate = userSerno;
 	}
 	
-	public Long getUserSerno() {
-		return UserSerno;
+	public Long getLastProcessDate() {
+		return LastProcessDate;
 	}
 	
 }

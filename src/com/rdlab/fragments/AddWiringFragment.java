@@ -1,7 +1,5 @@
 package com.rdlab.fragments;
 
-import java.util.UUID;
-
 import com.rdlab.events.DataEvent;
 import com.rdlab.subssync.R;
 import com.rdlab.utility.Constants;
@@ -42,6 +40,8 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 	String villageCode;
 	String districtCode;
 	String indoorNumber;
+	String siteName;
+	String blockName;
 	boolean isSync;
 
 	ReadOperation operator;
@@ -71,6 +71,8 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		streetCode = bund.getString(Constants.STREET_CODE_TAG);
 		villageCode = bund.getString(Constants.VILLAGE_CODE_TAG);
 		districtCode = bund.getString(Constants.DISTRICT_CODE_TAG);
+		siteName = bund.getString(Constants.SITE_NAME_TAG);
+		blockName = bund.getString(Constants.BLOCK_NAME_TAG);
 		isSync = bund.getBoolean(Constants.CHECKED_UAVT);
 
 		final View rootView = inflater.inflate(R.layout.fragment_add_unit,
@@ -229,6 +231,10 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		PushRequest pr = new PushRequest();
 		// pr.setUserSerno(Constants.LoggedUserSerno);
 		pr.setUserSerno(Constants.LoggedUserSerno);
+//		pr.setDistrictCode(districtCode);
+		
+		
+		
 		pr.setDistrictCode(Constants.SelectedUniversalCountyCode);
 		pr.setCsbmCode(csbmCode);
 		pr.setIndoorNumber(indoorNumber);
@@ -238,6 +244,8 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		pr.setExistOnUavt(stat);
 		pr.setUavtCode(uavtAddresNo);
 		pr.setDoorNumber(doorNumber);
+		pr.setSiteName(siteName);
+		pr.setBlockName(blockName);
 		pr.setPushed(false);
 
 		String wiringNo = "", meterNo = "", selectedBrand = "", selectedStatus = "";
@@ -256,6 +264,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 			if (meterNo.length() > 0 && selectedBrand.length() > 0) {
 				pr.setMeterNo(meterNo);
 				pr.setMeterBrand(selectedBrand);
+				pr.setMeterBrandCode(Constants.METER_BRAND_CODES.get(selectedBrand));
 			} else if (selectedStatus.length() > 0) {
 				pr.setCheckStatus(""
 						+ AddWiringFragment.this.statuses.getSelectedItemId());
@@ -274,6 +283,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 				found=true;
 				prItem.wiringNo=pr.wiringNo;
 				prItem.meterBrand=pr.meterBrand;
+				prItem.meterBrandCode=pr.meterBrandCode;
 				prItem.meterNo=pr.meterNo;
 				prItem.customerName=pr.customerName;
 				prItem.checkStatus=pr.checkStatus;

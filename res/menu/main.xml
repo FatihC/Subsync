@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     
-    <item
+   <!--  <item
         android:id="@+id/action_viransehir"
         android:orderInCategory="100"
         android:showAsAction="never"
@@ -66,7 +66,7 @@
         android:id="@+id/action_hilvan"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_hilvan"/>
+        android:title="@string/action_hilvan"/> -->
     
     <item
         android:id="@+id/action_settings"

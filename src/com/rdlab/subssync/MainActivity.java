@@ -7,6 +7,7 @@ import com.rdlab.dependencyInjection.BaseActivity;
 import com.rdlab.fragments.DistrictFragment;
 import com.rdlab.fragments.StreetFragment;
 import com.rdlab.fragments.SyncFragment;
+import com.rdlab.fragments.UserFragment;
 import com.rdlab.model.NavigationDrawerItem;
 import com.rdlab.utility.Constants;
 import com.rdlab.utility.Helper;
@@ -24,7 +25,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -122,7 +122,7 @@ public class MainActivity extends BaseActivity {
 			break;
 		case 2:
 			//kullanýcý bilgi
-			// fragment = new PhotosFragment();
+			fragment=new UserFragment();
 			break;
 		case 3:
 			//þifre degis
@@ -195,74 +195,74 @@ public class MainActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.action_settings:
 			return true;
-		case R.id.action_bozova:
-			setGlobalConstants("1209", getString(R.string.action_bozova),
-					"com.rdlab.model.Bozova", "37");
-			return true;
-		case R.id.action_birecik:
-			setGlobalConstants("1194", getString(R.string.action_birecik),
-					"com.rdlab.model.Birecik", "36");
-			return true;
-		case R.id.action_akcakale:
-			setGlobalConstants("1115", getString(R.string.action_akcakale),
-					"com.rdlab.model.Akcakale", "35");
-			return true;
-		case R.id.action_haliliye:
-			setGlobalConstants("2092", getString(R.string.action_haliliye),
-					"com.rdlab.model.Haliliye", "33");
-			return true;
-		case R.id.action_eyyubiye:
-			setGlobalConstants("2091", getString(R.string.action_eyyubiye),
-					"com.rdlab.model.Eyyubiye", "32");
-			return true;
-		case R.id.action_siverek:
-			setGlobalConstants("1630", getString(R.string.action_siverek),
-					"com.rdlab.model.Siverek", "42");
-			return true;
-		case R.id.action_karakopru:
-			setGlobalConstants("2093", getString(R.string.action_karakopru),
-					"com.rdlab.model.Karakopru", "34");
-			return true;
-		case R.id.action_suruc:
-			setGlobalConstants("1643", getString(R.string.action_suruc),
-					"com.rdlab.model.Suruc", "43");
-			return true;
-		case R.id.action_ceylanpinar:
-			setGlobalConstants("1220", getString(R.string.action_ceylanpinar),
-					"com.rdlab.model.Ceylanpinar", "38");
-			return true;
-		case R.id.action_halfeti:
-			setGlobalConstants("1378", getString(R.string.action_halfeti),
-					"com.rdlab.model.Halfeti", "39");
-			return true;
-		case R.id.action_harran:
-			setGlobalConstants("1800", getString(R.string.action_harran),
-					"com.rdlab.model.Harran", "40");
-			return true;
-		case R.id.action_hilvan:
-			setGlobalConstants("1393", getString(R.string.action_hilvan),
-					"com.rdlab.model.Hilvan", "41");
-			return true;
-		case R.id.action_viransehir:
-			setGlobalConstants("1713", getString(R.string.action_viransehir),
-					"com.rdlab.model.Viransehir", "44");
-			return true;
+//		case R.id.action_bozova:
+//			setGlobalConstants("1209", getString(R.string.action_bozova),
+//					"com.rdlab.model.Bozova", "37");
+//			return true;
+//		case R.id.action_birecik:
+//			setGlobalConstants("1194", getString(R.string.action_birecik),
+//					"com.rdlab.model.Birecik", "36");
+//			return true;
+//		case R.id.action_akcakale:
+//			setGlobalConstants("1115", getString(R.string.action_akcakale),
+//					"com.rdlab.model.Akcakale", "35");
+//			return true;
+//		case R.id.action_haliliye:
+//			setGlobalConstants("2092", getString(R.string.action_haliliye),
+//					"com.rdlab.model.Haliliye", "33");
+//			return true;
+//		case R.id.action_eyyubiye:
+//			setGlobalConstants("2091", getString(R.string.action_eyyubiye),
+//					"com.rdlab.model.Eyyubiye", "32");
+//			return true;
+//		case R.id.action_siverek:
+//			setGlobalConstants("1630", getString(R.string.action_siverek),
+//					"com.rdlab.model.Siverek", "42");
+//			return true;
+//		case R.id.action_karakopru:
+//			setGlobalConstants("2093", getString(R.string.action_karakopru),
+//					"com.rdlab.model.Karakopru", "34");
+//			return true;
+//		case R.id.action_suruc:
+//			setGlobalConstants("1643", getString(R.string.action_suruc),
+//					"com.rdlab.model.Suruc", "43");
+//			return true;
+//		case R.id.action_ceylanpinar:
+//			setGlobalConstants("1220", getString(R.string.action_ceylanpinar),
+//					"com.rdlab.model.Ceylanpinar", "38");
+//			return true;
+//		case R.id.action_halfeti:
+//			setGlobalConstants("1378", getString(R.string.action_halfeti),
+//					"com.rdlab.model.Halfeti", "39");
+//			return true;
+//		case R.id.action_harran:
+//			setGlobalConstants("1800", getString(R.string.action_harran),
+//					"com.rdlab.model.Harran", "40");
+//			return true;
+//		case R.id.action_hilvan:
+//			setGlobalConstants("1393", getString(R.string.action_hilvan),
+//					"com.rdlab.model.Hilvan", "41");
+//			return true;
+//		case R.id.action_viransehir:
+//			setGlobalConstants("1713", getString(R.string.action_viransehir),
+//					"com.rdlab.model.Viransehir", "44");
+//			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
-	private void setGlobalConstants(String code, String name, String className,
-			String universalDistrictCode) {
-		Constants.SelectedCountyCode = code;
-		Constants.SelectedCountyName = name;
-		Constants.SelectedClassName = className;
-		Constants.SelectedUniversalCountyCode = universalDistrictCode;
-		Toast.makeText(this, "Þehir seçiminiz tamamlandý.", Toast.LENGTH_SHORT)
-				.show();
-		setTitle(_appTitle);
-		displayView(0);
-	}
+//	private void setGlobalConstants(String code, String name, String className,
+//			String universalDistrictCode) {
+//		Constants.SelectedCountyCode = code;
+//		Constants.SelectedCountyName = name;
+//		Constants.SelectedClassName = className;
+//		Constants.SelectedUniversalCountyCode = universalDistrictCode;
+//		Toast.makeText(this, "Þehir seçiminiz tamamlandý.", Toast.LENGTH_SHORT)
+//				.show();
+//		setTitle(_appTitle);
+//		displayView(0);
+//	}
 
 	/***
 	 * Called when invalidateOptionsMenu() is triggered

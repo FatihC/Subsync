@@ -15,11 +15,13 @@ import android.widget.TextView;
 
 import com.rdlab.model.BlockItem;
 import com.rdlab.model.Enums;
+
 import com.rdlab.subssync.R;
 
 public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 
 	private ArrayList<BlockItem> _addresses;
+	private ArrayList<BlockItem> _fAddress;
 	private Context _context;
 	private Filter filter;
 
@@ -30,6 +32,7 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		// TODO Auto-generated constructor stub
 		super(context, resourceId, addressList);
 		this._addresses = addressList;
+		this._fAddress = addressList;
 		this._context = context;
 
 	}
@@ -58,13 +61,13 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 
 	@Override
 	public View getView(int arg0, View arg1, ViewGroup arg2) {
-//		if (arg1 == null) {
-			LayoutInflater inflater = (LayoutInflater) this._context
-					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-			arg1 = inflater.inflate(R.layout.block_list_item, null);
-//		}
-		
-		BlockItem item = this._addresses.get(arg0);
+		// if (arg1 == null) {
+		LayoutInflater inflater = (LayoutInflater) this._context
+				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		arg1 = inflater.inflate(R.layout.block_list_item, null);
+		// }
+
+		BlockItem item = this._fAddress.get(arg0);
 
 		TextView txtDoor = (TextView) arg1.findViewById(R.id.item_door_number);
 		TextView txtSite = (TextView) arg1.findViewById(R.id.item_site_name);
@@ -77,7 +80,6 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		txtUnitCount.setText(String.valueOf(item.getUnitCount()));
 
 		String block = "YOK", site = "YOK";
-		
 
 		if (!item.getSiteName().isEmpty()
 				&& !item.getSiteName().equalsIgnoreCase("")
@@ -93,12 +95,11 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 
 		txtSite.setText(site);
 		txtBlock.setText(block);
-		int status=item.getCheckStatus();
-		
-		if (status==Enums.NewlyAdded.getVal()) {
+		int status = item.getCheckStatus();
+
+		if (status == Enums.NewlyAdded.getVal()) {
 			imgStatus.setImageResource(R.drawable.ic_quest);
-		}
-		else if(status==Enums.NotStarted.getVal()){
+		} else if (status == Enums.NotStarted.getVal()) {
 			imgStatus.setImageResource(R.drawable.no);
 		}
 
@@ -108,40 +109,32 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 	@Override
 	public Filter getFilter() {
 		if (filter == null)
-			filter = new AppFilter(_addresses);
+			filter = new AppFilter();
 		return filter;
 	}
 
 	@SuppressLint("DefaultLocale")
 	private class AppFilter extends Filter {
 
-		private ArrayList<BlockItem> items;
-
-		public AppFilter(ArrayList<BlockItem> items) {
-			// TODO Auto-generated constructor stub
-			this.items = items;
-		}
-
 		@Override
-		protected FilterResults performFiltering(CharSequence chars) {
-			String filterSeq = chars.toString().toLowerCase();
-			FilterResults result = new FilterResults();
-			if (filterSeq != null && filterSeq.length() > 0) {
-				ArrayList<BlockItem> filter = new ArrayList<BlockItem>();
+		protected FilterResults performFiltering(CharSequence constraint) {
 
-				for (BlockItem object : items) {
-					// the filtering itself:
-					if (object.getDoorNumber().toLowerCase()
-							.contains(filterSeq))
-						filter.add(object);
+			constraint = constraint.toString().toLowerCase();
+			FilterResults result = new FilterResults();
+			if (constraint != null && constraint.toString().length() > 0) {
+				ArrayList<BlockItem> filteredItems = new ArrayList<BlockItem>();
+
+				for (int i = 0, l = _addresses.size(); i < l; i++) {
+					BlockItem country = _addresses.get(i);
+					if (country.getDoorNumber().toLowerCase().contains(constraint))
+						filteredItems.add(country);
 				}
-				result.count = filter.size();
-				result.values = filter;
+				result.count = filteredItems.size();
+				result.values = filteredItems;
 			} else {
-				// add all objects
 				synchronized (this) {
-					result.values = items;
-					result.count = items.size();
+					result.values = _addresses;
+					result.count = _addresses.size();
 				}
 			}
 			return result;
@@ -151,11 +144,12 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		@Override
 		protected void publishResults(CharSequence constraint,
 				FilterResults results) {
-			ArrayList<BlockItem> filtered = (ArrayList<BlockItem>) results.values;
+
+			_fAddress = (ArrayList<BlockItem>) results.values;
 			notifyDataSetChanged();
 			clear();
-			for (int i = 0, l = filtered.size(); i < l; i++)
-				add((BlockItem) filtered.get(i));
+			for (int i = 0, l = _fAddress.size(); i < l; i++)
+				add(_fAddress.get(i));
 			notifyDataSetInvalidated();
 		}
 

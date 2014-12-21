@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+	<TableRow
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="20dp" >
+
+	    <TextView
+	        android:id="@+id/textView1"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/kullan_c_i_smi_"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	    <TextView
+	        android:id="@+id/lblUsername"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/pre_text"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	</TableRow>
+
+	<TableRow
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="20dp" >
+
+	    <TextView
+	        android:id="@+id/textView3"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/_al_lan_i_l_e_"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	    <TextView
+	        android:id="@+id/lblCounty"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/pre_text"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	</TableRow>
+	
+	<TableRow
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="20dp" >
+
+	    <TextView
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="40dp"
+	        android:layout_weight="1"
+	        android:gravity="center"
+	        android:text="İLÇE DEĞİŞİM İŞLEMLERİ İÇİN MERKEZE GİTMENİZ GEREKMEKTEDİR."
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	</TableRow>
+
+</TableLayout>

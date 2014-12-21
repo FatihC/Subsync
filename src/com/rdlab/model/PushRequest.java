@@ -11,6 +11,9 @@ public class PushRequest extends SugarRecord{
 	public String wiringNo;
 	public String meterNo;
 	public String meterBrand;
+	public String meterBrandCode;
+	public String siteName;
+	public String blockName;
 	public String  checkStatus; // biirm yok, kapali, sayac var ulasilamadi....
 	public Integer existOnUavt;  // 0-exist, 1-not
 	public String doorNumber;
@@ -93,6 +96,9 @@ public class PushRequest extends SugarRecord{
 	}
 
 	public boolean isPushed() {
+		if (pushed==null) {
+			return true;
+		}
 		return pushed;
 	}
 
@@ -130,5 +136,29 @@ public class PushRequest extends SugarRecord{
 
 	public void setIndoorNumber(String indoorNumber) {
 		this.indoorNumber = indoorNumber;
+	}
+
+	public String getSiteName() {
+		return siteName;
+	}
+
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
+	}
+
+	public String getBlockName() {
+		return blockName;
+	}
+
+	public void setBlockName(String blockName) {
+		this.blockName = blockName;
+	}
+
+	public String getMeterBrandCode() {
+		return meterBrandCode;
+	}
+
+	public void setMeterBrandCode(String meterBrandCode) {
+		this.meterBrandCode = meterBrandCode;
 	}
 }

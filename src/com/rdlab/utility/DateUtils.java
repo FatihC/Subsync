@@ -1,6 +1,7 @@
 package com.rdlab.utility;
 
 import android.annotation.SuppressLint;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class DateUtils {
 	}
 	
 	public static final Long nowLong() {
-		return Long.valueOf(format(yyyyMMddHHmmssSSS, nowDate()));
+		return Long.valueOf(format(yyyyMMddHHmmss, nowDate()));
 	}
 	
 	public static final Long forwardRandomFromNow() {
@@ -61,6 +62,19 @@ public class DateUtils {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
 		sdf1.setTimeZone(TimeZone.getTimeZone("Europe/Istanbul"));
 		return sdf1.format(nowDate());
+	}
+	
+	public static final String FormatLongStringDateToString(String date) {
+		try {
+			Date dt=parse(yyyyMMddHHmmss, Long.parseLong(date));
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+			sdf1.setTimeZone(TimeZone.getTimeZone("Europe/Istanbul"));
+			return sdf1.format(dt);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
 	}
 	
 	public static final String ConvertDateToString(Date date) {

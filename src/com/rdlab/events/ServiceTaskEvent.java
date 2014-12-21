@@ -1,5 +1,7 @@
 package com.rdlab.events;
 
+import com.rdlab.webservice.ServiceResult;
+
 public interface ServiceTaskEvent {
-	void  serviceReturned(Object items);
+	void  serviceReturned(ServiceResult result);
 }

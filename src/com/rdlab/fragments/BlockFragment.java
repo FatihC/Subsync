@@ -1,7 +1,11 @@
 package com.rdlab.fragments;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
+import com.orm.SugarRecord;
+import com.orm.util.NamingHelper;
 import com.rdlab.adapters.BlockItemAdapter;
 import com.rdlab.dependencyInjection.BaseFragment;
 import com.rdlab.events.DataEvent;
@@ -9,9 +13,11 @@ import com.rdlab.model.BlockItem;
 import com.rdlab.model.Enums;
 import com.rdlab.model.ItemConditions;
 import com.rdlab.model.ItemType;
+import com.rdlab.model.PushRequest;
 import com.rdlab.subssync.R;
 import com.rdlab.utility.Constants;
 import com.rdlab.utility.Helper;
+import com.rdlab.utility.PendingItems;
 import com.rdlab.utility.ReadOperation;
 
 import android.app.ActionBar;
@@ -76,10 +82,6 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		csbmName = bund.getString(Constants.CSBM_NAME_TAG);
 
 		StringBuilder sb = new StringBuilder();
-		// sb.append(String.format("%s > %s > %s > %s > %s",
-		// Constants.SelectedCountyName,
-		// districtName.trim(),
-		// villageName.trim(),streetName.trim(),csbmName.trim()));
 		sb.append(String.format(" %s > %s >", streetName.trim(),
 				csbmName.trim()));
 
@@ -90,13 +92,14 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 				.toString());
 		searchText = (EditText) rootView.findViewById(R.id.searchBlockText);
 		searchResult = (ListView) rootView.findViewById(R.id.blockList);
+		searchResult.setTextFilterEnabled(true);
 		searchText.setHint("Dýþ Kapý No ile Ara");
 		searchText.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
-				_adapter.getFilter().filter(arg0);
+				_adapter.getFilter().filter(arg0.toString());
 			}
 
 			@Override
@@ -191,9 +194,6 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 				ft.commit();
 			}
 		});
-		saveMatchButton = (Button) ab.getCustomView()
-				.findViewById(R.id.btnSave);
-		saveMatchButton.setVisibility(View.GONE);
 
 		info.setText(Constants.BLOCK_HEADER_TEXT);
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
@@ -201,6 +201,14 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 				| ActionBar.DISPLAY_HOME_AS_UP);
 
 		View header = inflater.inflate(R.layout.header_block_list_item, null);
+		header.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				return;
+			}
+		});
 		searchResult.addHeaderView(header);
 
 		getData(rootView);
@@ -223,13 +231,23 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 	}
 
 	private void setListView(ArrayList<BlockItem> items) {
-		// Parcelable state=searchResult.onSaveInstanceState();
 		_adapter = new BlockItemAdapter(getActivity().getApplicationContext(),
 				0, items);
 		addressList = items;
 		searchResult.setAdapter(_adapter);
-		// searchResult.onRestoreInstanceState(state);
 	}
+	
+	@SuppressWarnings("unused")
+	private void setProperStatus(ArrayList<BlockItem> items)
+	{
+		for (BlockItem blockItem : items) {
+			boolean exist=Helper.checkBlockUnitExist(districtCode, villageCode, streetCode, csbmCode, blockItem.getDoorNumber());
+			if (exist) {
+				blockItem.setCheckStatus(Enums.ReadyToSync.getVal());
+			}
+		}
+	}
+	
 
 	private void getData(View rootView) {
 
@@ -279,12 +297,45 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 						mode.finish();
 						break;
 					}
-					Helper.updateStatus(districtCode, villageCode, streetCode,
-							csbmCode, blockItem.getDoorNumber(), "",
-							Enums.Deleted);
+					
+					Class<?> t=Class.forName(Constants.SelectedClassName);
+					StringBuilder sb = new StringBuilder();
+					String tableName = NamingHelper.toSQLName(t);
+					sb.append(String
+							.format("SELECT UAVT_ADDRESS_NO FROM %s WHERE DISTRICT_CODE='%s' AND "
+									+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
+									tableName, districtCode, villageCode, streetCode,
+									csbmCode, blockItem.getDoorNumber()));
+					
+					List<?> listT=SugarRecord.findWithQuery(t, sb.toString(), null);
+					
+					for (PushRequest prItem : PendingItems.PushRequests) {
+						for (Object object : listT) {
+							Field f=object.getClass().getDeclaredField("UavtAddressNo");
+							f.setAccessible(true);
+							String value=f.get(object).toString();
+							String uavt=prItem.uavtCode;
+							if (uavt.equals(value)) {
+								PendingItems.PushRequests.remove(prItem);
+							}
+						}
+						
+//						String prDoor = prItem.doorNumber;
+//						String checDoor = blockItem.getDoorNumber();
+//						String prVil= prItem.villageCode;
+//						String prStree = prItem.streetCode;
+//						String prCsbm= prItem.csbmCode;
+//						if (prDoor.equals(checDoor)&&prVil.equals(villageCode)&&prStree.equals(streetCode)&&prCsbm.equals(csbmCode)) {
+//							PendingItems.PushRequests.remove(prItem);
+//						}
+
+					}
+					
+					
+					Helper.deleteItem(districtCode, villageCode, streetCode, csbmCode, blockItem.getDoorNumber(), "","");
 					_adapter.notifyDataSetChanged();
 					getData(getView());
-				} catch (ClassNotFoundException e) {
+				} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

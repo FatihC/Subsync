@@ -73,6 +73,7 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 		searchText = (EditText) rootView.findViewById(R.id.searchText);
 		searchResult = (ListView) rootView.findViewById(R.id.addressItemList);
 		searchText.setHint("Mahalle/Köy Ara");
+		searchResult.setTextFilterEnabled(true);
 		searchText.addTextChangedListener(new TextWatcher() {
 
 			@Override

@@ -1,5 +1,6 @@
 package com.rdlab.fragments;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 import android.app.ActionBar;
@@ -18,20 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.rdlab.dependencyInjection.BaseFragment;
-import com.rdlab.model.Akcakale;
-import com.rdlab.model.Birecik;
-import com.rdlab.model.Bozova;
-import com.rdlab.model.Ceylanpinar;
 import com.rdlab.model.Enums;
-import com.rdlab.model.Eyyubiye;
-import com.rdlab.model.Halfeti;
-import com.rdlab.model.Haliliye;
-import com.rdlab.model.Harran;
-import com.rdlab.model.Hilvan;
-import com.rdlab.model.Karakopru;
-import com.rdlab.model.Siverek;
-import com.rdlab.model.Suruc;
-import com.rdlab.model.Viransehir;
 import com.rdlab.subssync.R;
 import com.rdlab.utility.Constants;
 import com.rdlab.utility.Helper;
@@ -106,8 +94,9 @@ public class AddNewUnitFragment extends BaseFragment {
 				Constants.UNIT_STATUS);
 		
 		unitType.setAdapter(statusAdapter);
-		
-		unitNum.setText(editIndoorNumber);
+		if (isUpdate) {
+			unitNum.setText(editIndoorNumber);
+		}
 
 		saveBtn.setOnClickListener(new OnClickListener() {
 
@@ -123,13 +112,21 @@ public class AddNewUnitFragment extends BaseFragment {
 					try {
 						String indoorNum=unitNum.getText().toString()+" "+unitType.getSelectedItem().toString();
 						Helper.updateData(districtCode, villageCode,
-								streetCode, csbmCode, doorNumber, editIndoorNumber,"", "","", indoorNum);
+								streetCode, csbmCode, doorNumber, editIndoorNumber,"", "","", indoorNum,true);
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {
-					saveItem();
+					try {
+						saveItem();
+					} catch (java.lang.InstantiationException
+							| IllegalAccessException | IllegalArgumentException
+							| InvocationTargetException | NoSuchMethodException
+							| ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 				Helper.giveNotification(getView().getContext(), "Yeni birim baþarýyla eklenmiþtir");
@@ -210,86 +207,95 @@ public class AddNewUnitFragment extends BaseFragment {
 		dlg.show();
 	}
 	
-	private void saveItem() {
-		if (Constants.SelectedUniversalCountyCode.equals("32")) {
-			Eyyubiye inst = new Eyyubiye(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Eyyubiye.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("33")) {
-			Haliliye inst = new Haliliye(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Haliliye.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("34")) {
-			Karakopru inst = new Karakopru(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Karakopru.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("35")) {
-			Akcakale inst = new Akcakale(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Akcakale.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("36")) {
-			Birecik inst = new Birecik(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Birecik.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("37")) {
-			Bozova inst = new Bozova(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Bozova.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("38")) {
-			Ceylanpinar inst = new Ceylanpinar(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Ceylanpinar.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("39")) {
-			Halfeti inst = new Halfeti(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Halfeti.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("40")) {
-			Harran inst = new Harran(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Harran.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("41")) {
-			Hilvan inst = new Hilvan(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Hilvan.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("42")) {
-			Siverek inst = new Siverek(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Siverek.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("43")) {
-			Suruc inst = new Suruc(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Suruc.save(inst);
-		} else if (Constants.SelectedUniversalCountyCode.equals("44")) {
-			Viransehir inst = new Viransehir(Constants.SelectedCountyCode,
-					Constants.SelectedCountyName, districtCode, districtName,
-					villageCode, villageName, streetCode, streetName, csbmCode,
-					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
-			Viransehir.save(inst);
-		}
+	private void saveItem() throws java.lang.InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+		
+		Class<?> t=Class.forName(Constants.SelectedClassName);
+		Object entity= t.getDeclaredConstructor(new Class[]{String.class,String.class,String.class,String.class,String.class,String.class,String.class,String.class,String.class,String.class
+				,String.class,String.class,String.class,String.class,String.class,String.class,int.class}).newInstance(Constants.SelectedCountyCode,
+						Constants.SelectedCountyName, districtCode, districtName,
+						villageCode, villageName, streetCode, streetName, csbmCode,
+						csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+		entity.getClass().getMethod("save", new Class[]{Object.class}).invoke(null, entity);
+		
+//		if (Constants.SelectedUniversalCountyCode.equals("32")) {
+//			Eyyubiye inst = new Eyyubiye(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Eyyubiye.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("33")) {
+//			Haliliye inst = new Haliliye(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Haliliye.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("34")) {
+//			Karakopru inst = new Karakopru(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Karakopru.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("35")) {
+//			Akcakale inst = new Akcakale(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Akcakale.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("36")) {
+//			Birecik inst = new Birecik(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Birecik.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("37")) {
+//			Bozova inst = new Bozova(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Bozova.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("38")) {
+//			Ceylanpinar inst = new Ceylanpinar(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Ceylanpinar.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("39")) {
+//			Halfeti inst = new Halfeti(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Halfeti.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("40")) {
+//			Harran inst = new Harran(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Harran.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("41")) {
+//			Hilvan inst = new Hilvan(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Hilvan.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("42")) {
+//			Siverek inst = new Siverek(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Siverek.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("43")) {
+//			Suruc inst = new Suruc(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Suruc.save(inst);
+//		} else if (Constants.SelectedUniversalCountyCode.equals("44")) {
+//			Viransehir inst = new Viransehir(Constants.SelectedCountyCode,
+//					Constants.SelectedCountyName, districtCode, districtName,
+//					villageCode, villageName, streetCode, streetName, csbmCode,
+//					csbmName, "", doorNumber, siteName, blockName, UUID.randomUUID().toString(),unitNum.getText().toString()+" "+unitType.getSelectedItem() ,Enums.NewlyAdded.getVal());
+//			Viransehir.save(inst);
+//		}
 
 	}
 }

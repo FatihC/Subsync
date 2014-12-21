@@ -76,7 +76,6 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		// clearing push request
-		
 
 		Bundle bund = new Bundle();
 		if (savedInstanceState != null) {
@@ -99,10 +98,6 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 		blockName = bund.getString(Constants.BLOCK_NAME_TAG);
 
 		StringBuilder sb = new StringBuilder();
-		// sb.append(String.format("%s > %s > %s > %s > %s > %s",
-		// Constants.SelectedCountyName,
-		// districtName.trim(),
-		// villageName.trim(),streetName.trim(),csbmName.trim(),doorNumber.trim()));
 		sb.append(String.format("%s > %s > %s >", streetName.trim(),
 				csbmName.trim(), doorNumber.trim()));
 
@@ -154,10 +149,9 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
 				b.putString(Constants.STREET_CODE_TAG, streetCode);
 				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+				b.putString(Constants.SITE_NAME_TAG, siteName);
+				b.putString(Constants.BLOCK_NAME_TAG, blockName);
 				b.putBoolean(Constants.CHECKED_UAVT, item.isSynced());
-				// if (item.getCheckStatus()==Enums.Completed.getVal()) {
-				//
-				// }
 
 				df.setArguments(b);
 
@@ -220,20 +214,6 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 			}
 		});
 
-		// Button saveBtn=(Button)
-		// ab.getCustomView().findViewById(R.id.btnSave);
-		// saveBtn.setText("Kaydet");
-		// saveBtn.setVisibility(View.VISIBLE);
-		// saveBtn.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// // TODO Auto-generated method stub
-		// for (PushRequest pr : requestList) {
-		// String a=pr.checkStatus;
-		// }
-		// }
-		// });
 
 		info.setText(Constants.UNIT_HEADER_TEXT);
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
@@ -241,8 +221,17 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 				| ActionBar.DISPLAY_HOME_AS_UP);
 
 		View header = inflater.inflate(R.layout.header_unit_list_item, null);
+		header.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				return;
+			}
+		});
 		searchResult.addHeaderView(header);
 
+		//back button implementation
 		rootView.setFocusableInTouchMode(true);
 		rootView.requestFocus();
 		rootView.setOnKeyListener(new View.OnKeyListener() {
@@ -256,7 +245,7 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 							doBulkOperations();
 							Helper.updateStatus(districtCode, villageCode,
 									streetCode, csbmCode, doorNumber, "",
-									Enums.ReadyToSync);
+									Enums.ReadyToSync,false);
 						} catch (ClassNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -279,13 +268,28 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 
 	private void doBulkOperations() {
 		for (PushRequest pr : PendingItems.PushRequests) {
-			PushRequest.save(pr);
+			String sql="SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='"+pr.uavtCode+"'";
+			List<PushRequest> prList=PushRequest.findWithQuery(PushRequest.class, sql, null);
+			if (prList.size()>0) {
+				PushRequest itemToUpdate=prList.get(0);
+				itemToUpdate.setPushed(false);
+				itemToUpdate.wiringNo=pr.wiringNo;
+				itemToUpdate.customerName=pr.customerName;
+				itemToUpdate.meterBrand=pr.meterBrand;
+				itemToUpdate.meterBrandCode=pr.meterBrandCode;
+				itemToUpdate.meterNo=pr.meterNo;
+				itemToUpdate.checkStatus=pr.checkStatus;
+				PushRequest.save(itemToUpdate);
+			}
+			else {
+				PushRequest.save(pr);	
+			}
 		}
 
 		for (String str : PendingItems.IndoorNumbers) {
 			try {
 				Helper.updateStatus(districtCode, villageCode, streetCode,
-						csbmCode, doorNumber, str, Enums.ReadyToSync);
+						csbmCode, doorNumber, str, Enums.ReadyToSync,false);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				Log.e("Update wiring error", "hata oluþtu update ederken");
@@ -311,29 +315,6 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 	}
 
 	private void setListView(ArrayList<UnitItem> items) {
-
-		// requestList=new ArrayList<PushRequest>();
-		// for (UnitItem unitItem : items) {
-		// PushRequest pr=new PushRequest();
-		// pr.setUserSerno(Constants.LoggedUserSerno);
-		// pr.setDistrictCode(Constants.SelectedUniversalCountyCode);
-		// pr.setCsbmCode(csbmCode);
-		// pr.setIndoorNumber(unitItem.getIndoorNumber());
-		// pr.setStreetCode(streetCode);
-		// pr.setVillageCode(villageCode);
-		// pr.setCreateDate(DateUtils.nowLong());
-		// int
-		// existUavt=unitItem.getCheckStatus()==Enums.NewlyAdded.getVal()?0:1;
-		// pr.setExistOnUavt(existUavt);
-		// pr.setUavtCode(unitItem.getUAVTNo());
-		// pr.setDoorNumber(doorNumber);
-		// pr.setPushed(false);
-		// requestList.add(pr);
-		// }
-		//
-		//
-		// _altAdapter=new UnitMatchItemAdapter(getActivity(), requestList);
-		//
 		getMatches(items);
 		_adapter = new UnitItemAdapter(getActivity().getApplicationContext(),
 				0, items);
@@ -356,8 +337,8 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 		for (UnitItem item : items) {
 			PushRequest selected = null;
 			for (PushRequest pr : PendingItems.PushRequests) {
-				String pUavt=pr.uavtCode;
-				String cmp=item.getUAVTNo();
+				String pUavt = pr.uavtCode;
+				String cmp = item.getUAVTNo();
 				if (pUavt.equals(cmp)) {
 					selected = pr;
 				}
@@ -366,8 +347,13 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 				item.setMeterpointBrand(selected.meterBrand);
 				item.setMeterpointSerno(selected.meterNo);
 				if (selected.checkStatus != null) {
-					item.setStatusName(Constants.STATUSES.get(Integer
-							.parseInt(selected.checkStatus)));
+					if (Helper.IsIntParseable(selected.checkStatus)) {
+						item.setStatusName(Constants.STATUSES.get(Integer
+								.parseInt(selected.checkStatus)));	
+					}
+					else {
+						item.setStatusName("");	
+					}
 				}
 
 				item.setSubscriberName(selected.customerName);
@@ -383,8 +369,13 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 					item.setMeterpointBrand(prItem.meterBrand);
 					item.setMeterpointSerno(prItem.meterNo);
 					if (prItem.checkStatus != null) {
-						item.setStatusName(Constants.STATUSES.get(Integer
-								.parseInt(prItem.checkStatus)));
+						if (Helper.IsIntParseable(prItem.checkStatus)) {
+							item.setStatusName(Constants.STATUSES.get(Integer
+									.parseInt(prItem.checkStatus)));	
+						}
+						else {
+							item.setStatusName("");	
+						}
 					}
 
 					item.setSubscriberName(prItem.customerName);
@@ -465,28 +456,36 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 			switch (item.getItemId()) {
 			case R.id.delete: {
 				try {
-					UnitItem unitItem = _adapter.getItem(--itemCurrentPosition);
 					
-					if (unitItem.getCheckStatus() != Enums.NewlyAdded.getVal()&&!Helper.IsUUID(unitItem.getUAVTNo())) {
+					
+					UnitItem unitItem = _adapter.getItem(--itemCurrentPosition);
+
+					if (_adapter.getCount()<2) {
+						Helper.giveNotification(getView().getContext(),
+								"Dýþ kapýya baðlý tek birimi dýþ kapý silerek gerçekleþtiriniz.");
+						mode.finish();
+						break;
+					}
+					
+					if (unitItem.getCheckStatus() != Enums.NewlyAdded.getVal()
+							&& !Helper.IsUUID(unitItem.getUAVTNo())) {
 						Helper.giveNotification(getView().getContext(),
 								"Manuel eklenen veriler silinebilir.");
 						mode.finish();
 						break;
 					}
-					
-					
+
 					for (PushRequest prItem : PendingItems.PushRequests) {
-						String prUavt=prItem.uavtCode;
-						String checUavt=unitItem.getUAVTNo();
+						String prUavt = prItem.uavtCode;
+						String checUavt = unitItem.getUAVTNo();
 						if (prUavt.equals(checUavt)) {
 							PendingItems.PushRequests.remove(prItem);
 							break;
 						}
 					}
 					
-					Helper.updateStatus(districtCode, villageCode, streetCode,
-							csbmCode, doorNumber, unitItem.getIndoorNumber(),
-							Enums.Deleted);
+					Helper.deleteItem(districtCode, villageCode, streetCode, csbmCode, doorNumber, unitItem.getIndoorNumber(),unitItem.getUAVTNo());
+					
 					_adapter.notifyDataSetChanged();
 					getData(getView());
 				} catch (ClassNotFoundException e) {
@@ -498,7 +497,8 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 			}
 			case R.id.edit: {
 				UnitItem unitItem = _adapter.getItem(--itemCurrentPosition);
-				if (unitItem.getCheckStatus() != Enums.NewlyAdded.getVal()&&!Helper.IsUUID(unitItem.getUAVTNo())) {
+				if (unitItem.getCheckStatus() != Enums.NewlyAdded.getVal()
+						&& !Helper.IsUUID(unitItem.getUAVTNo())) {
 					Helper.giveNotification(getView().getContext(),
 							"Manuel eklenen veriler düzenlenebilir.");
 					mode.finish();
@@ -507,7 +507,13 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 
 				AddNewUnitFragment df = new AddNewUnitFragment();
 				Bundle b = new Bundle();
-				b.putString(Constants.EDIT_INDOOR, unitItem.getIndoorNumber());
+				//ilk item için indoor boþ olacak
+				if (unitItem.getIndoorNumber().isEmpty()||unitItem.getIndoorNumber()==null) {
+					b.putString(Constants.EDIT_INDOOR, "");
+				}
+				else {
+					b.putString(Constants.EDIT_INDOOR, unitItem.getIndoorNumber());
+				}
 				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
 				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
 				b.putString(Constants.STREET_CODE_TAG, streetCode);
