@@ -1,8 +1,10 @@
 package com.rdlab.adapters;
 
 import java.util.ArrayList;
+
 import com.rdlab.model.AddressListItem;
 import com.rdlab.subssync.R;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +19,7 @@ import android.widget.TextView;
 public class AddressItemAdapter extends ArrayAdapter<AddressListItem> {
 
 	private ArrayList<AddressListItem> _addresses;
-	private ArrayList<AddressListItem> _faddress;
+	private ArrayList<AddressListItem> _dtAddress;
 	private Context _context;
 	private Filter filter;
 
@@ -27,16 +29,12 @@ public class AddressItemAdapter extends ArrayAdapter<AddressListItem> {
 			ArrayList<AddressListItem> addressList) {
 		// TODO Auto-generated constructor stub
 		super(context, resourceId, addressList);
-		this._addresses = new ArrayList<AddressListItem>(addressList);
-		this._faddress = new ArrayList<AddressListItem>(addressList);
+		this._addresses = addressList;
+		this._dtAddress=new ArrayList<AddressListItem>(addressList);
 		this._context = context;
 
 	}
-
-	public class ViewHolder {
-		TextView txtTitle;
-	}
-
+	
 	public ArrayList<AddressListItem> getData() {
 		return this._addresses;
 	}
@@ -61,20 +59,14 @@ public class AddressItemAdapter extends ArrayAdapter<AddressListItem> {
 
 	@Override
 	public View getView(int arg0, View arg1, ViewGroup arg2) {
-		ViewHolder viewHolder;
 		if (arg1 == null) {
 			LayoutInflater inflater = (LayoutInflater) this._context
 					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 			arg1 = inflater.inflate(R.layout.filter_list_item, null);
-			viewHolder = new ViewHolder();
-			viewHolder.txtTitle = (TextView) arg1.findViewById(R.id.item_name);
-			arg1.setTag(viewHolder);
-		} else {
-			viewHolder = (ViewHolder) arg1.getTag();
-		}
-		AddressListItem address = _faddress.get(arg0);
+		} 
+		AddressListItem address = _addresses.get(arg0);
 
-		TextView txtTitle = viewHolder.txtTitle;
+		TextView txtTitle = (TextView) arg1.findViewById(R.id.item_name);
 		txtTitle.setText(address.GetName());
 		return arg1;
 	}
@@ -82,34 +74,41 @@ public class AddressItemAdapter extends ArrayAdapter<AddressListItem> {
 	@Override
 	public Filter getFilter() {
 		if (filter == null)
-			filter = new AppFilter();
+			filter = new AppFilter(_dtAddress);
 		return filter;
 	}
 
+	@SuppressLint("DefaultLocale")
 	private class AppFilter extends Filter {
+
+		private ArrayList<AddressListItem> items;
+
+		public AppFilter(ArrayList<AddressListItem> items) {
+			// TODO Auto-generated constructor stub
+			this.items = items;
+		}
 
 		@Override
 		protected FilterResults performFiltering(CharSequence chars) {
+			
 			FilterResults result = new FilterResults();
+			if (chars != null&&!chars.toString().isEmpty() && chars.length() > 0) {
+				ArrayList<AddressListItem> filter = new ArrayList<AddressListItem>();
 
-			if (chars != null && !chars.toString().isEmpty()) {
-				ArrayList<AddressListItem> filter = new ArrayList<AddressListItem>(
-						_addresses);
-				ArrayList<AddressListItem> nfilter = new ArrayList<AddressListItem>();
-				for (AddressListItem addressListItem : filter) {
-					if (addressListItem.toString().contains(chars)) {
-						nfilter.add(addressListItem);
-					}
+				for (AddressListItem object : items) {
+					// the filtering itself:
+					if (object.toString().contains(chars))
+						filter.add(object);
 				}
-				result.count = nfilter.size();
-				result.values = nfilter;
+				result.count = filter.size();
+				result.values = filter;
 			} else {
-				synchronized (this) {
-					ArrayList<AddressListItem> list = new ArrayList<AddressListItem>(
-							_addresses);
-					result.values = list;
-					result.count = list.size();
+				ArrayList<AddressListItem> filter = new ArrayList<AddressListItem>();
+				for (AddressListItem object : items) {
+					filter.add(object);
 				}
+				result.count = filter.size();
+				result.values = filter;
 			}
 			return result;
 		}
@@ -118,14 +117,12 @@ public class AddressItemAdapter extends ArrayAdapter<AddressListItem> {
 		@Override
 		protected void publishResults(CharSequence constraint,
 				FilterResults results) {
-			_faddress = (ArrayList<AddressListItem>) results.values;
-			clear();
-
-			for (AddressListItem itm : _faddress) {
-				add(itm);
-			}
+			ArrayList<AddressListItem> filtered = (ArrayList<AddressListItem>) results.values;
 			notifyDataSetChanged();
-
+			clear();
+			for (int i = 0, l = filtered.size(); i < l; i++)
+				add((AddressListItem) filtered.get(i));
+			notifyDataSetInvalidated();
 		}
 
 	}

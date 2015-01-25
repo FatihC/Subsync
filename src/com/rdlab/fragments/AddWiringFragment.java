@@ -285,6 +285,10 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 				prItem.meterBrand=pr.meterBrand;
 				prItem.meterBrandCode=pr.meterBrandCode;
 				prItem.meterNo=pr.meterNo;
+				prItem.blockName=pr.blockName;
+				prItem.siteName=pr.siteName;
+				prItem.doorNumber=pr.doorNumber;
+				prItem.indoorNumber=pr.indoorNumber;
 				prItem.customerName=pr.customerName;
 				prItem.checkStatus=pr.checkStatus;
 			}

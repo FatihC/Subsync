@@ -24,10 +24,10 @@ import com.rdlab.events.ServiceTaskEvent;
 import com.rdlab.utility.Helper;
 
 public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
-//	 private static final String API_URL ="http://uavt.dedas.com.tr/UAVTWebapi/api/v1/uavt/";
-//	 private static final String API_URL = "http://192.168.1.110/UAVTWebapi/api/v1/uavt/";
+	 private static final String API_URL ="http://uavt.dedas.com.tr/UAVTWebapi/api/v1/uavt/";
+//	 private static final String API_URL = "http://192.168.56.1/UAVTWebapi/api/v1/uavt/";
 //	private static final String API_URL = "http://10.34.61.33/UAVTWebapi/api/v1/uavt/";
-	private static final String API_URL = "http://192.168.2.238/UAVTWebapi/api/v1/uavt/";
+//	private static final String API_URL = "http://192.168.2.238/UAVTWebapi/api/v1/uavt/";
 	
 	private ServiceTaskEvent delegate;
 	private ProgressDialog dialog;
@@ -160,6 +160,9 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 			}
 			else if(this.requestMethodName.equals("fetchMbs")){
 				res.setOperation(ServiceOperation.FetchMBS);
+			}
+			else if(this.requestMethodName.equals("fetchNew")){
+				res.setOperation(ServiceOperation.FetchNewUavt);
 			}
 			else {
 				res.setOperation(ServiceOperation.Error);

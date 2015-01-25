@@ -279,6 +279,10 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 				itemToUpdate.meterBrandCode=pr.meterBrandCode;
 				itemToUpdate.meterNo=pr.meterNo;
 				itemToUpdate.checkStatus=pr.checkStatus;
+				itemToUpdate.blockName=pr.blockName;
+				itemToUpdate.siteName=pr.siteName;
+				itemToUpdate.doorNumber=pr.doorNumber;
+				itemToUpdate.indoorNumber=pr.indoorNumber;
 				PushRequest.save(itemToUpdate);
 			}
 			else {

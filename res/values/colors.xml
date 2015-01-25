@@ -10,5 +10,6 @@
     <color name="counter_text_color">#c5c4c4</color>
     <color name="info_button">#8ad5f0</color>
     <color name="cancel_button">#ff9494</color>
+    <color name="warning_text">#ff0000</color>
 
 </resources>

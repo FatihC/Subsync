@@ -122,7 +122,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				BlockItem item = addressList.get(--arg2);
+				BlockItem item = (BlockItem) arg0.getItemAtPosition(arg2);
 
 				UnitFragment df = new UnitFragment();
 				Bundle b = new Bundle();

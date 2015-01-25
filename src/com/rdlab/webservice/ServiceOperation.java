@@ -7,6 +7,7 @@ public enum ServiceOperation {
 	FetchRequest(3),
 	FetchUserRequest(4),
 	FetchMBS(5),
+	FetchNewUavt(6),
 	Error(5);
 	
 	private int Value;

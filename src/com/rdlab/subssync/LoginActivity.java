@@ -120,6 +120,9 @@ public class LoginActivity extends BaseActivity implements ServiceTaskEvent {
 
 		if (userList != null && userList.size() > 0) {
 			Users item = userList.get(0);
+			if (item.getUserSerno()==null) {
+				return false;
+			}
 			Constants.LoggedUserSerno = item.getUserSerno();
 			Constants.LoggedUserFullname = item.getFullName();
 			Constants.LoggedUserName = item.getUsername();

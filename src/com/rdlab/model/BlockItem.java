@@ -9,36 +9,39 @@ public class BlockItem {
 	private int CheckStatus;
 	private int UnitCount;
 	private long Id;
-	
+
 	public BlockItem() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	public BlockItem(String doorNumber,String siteName,String blockName,int checkStatus) {
+
+	public BlockItem(String doorNumber, String siteName, String blockName,
+			int checkStatus) {
 		// TODO Auto-generated constructor stub
-		this.DoorNumber=doorNumber;
-		this.SiteName=siteName;
-		this.BlockName=blockName;
-		this.CheckStatus=checkStatus;
+		this.DoorNumber = doorNumber;
+		this.SiteName = siteName;
+		this.BlockName = blockName;
+		this.CheckStatus = checkStatus;
 	}
-	
-	public BlockItem(long id,String doorNumber,String siteName,String blockName,int checkStatus,int unitCount) {
+
+	public BlockItem(long id, String doorNumber, String siteName,
+			String blockName, int checkStatus, int unitCount) {
 		// TODO Auto-generated constructor stub
-		this.Id=id;
-		this.DoorNumber=doorNumber;
-		this.SiteName=siteName;
-		this.BlockName=blockName;
-		this.CheckStatus=checkStatus;
-		this.UnitCount=unitCount;
+		this.Id = id;
+		this.DoorNumber = doorNumber;
+		this.SiteName = siteName;
+		this.BlockName = blockName;
+		this.CheckStatus = checkStatus;
+		this.UnitCount = unitCount;
 	}
-	
-	public BlockItem(String doorNumber,String siteName,String blockName,int checkStatus,int unitCount) {
+
+	public BlockItem(String doorNumber, String siteName, String blockName,
+			int checkStatus, int unitCount) {
 		// TODO Auto-generated constructor stub
-		this.DoorNumber=doorNumber;
-		this.SiteName=siteName;
-		this.BlockName=blockName;
-		this.CheckStatus=checkStatus;
-		this.UnitCount=unitCount;
+		this.DoorNumber = doorNumber;
+		this.SiteName = siteName;
+		this.BlockName = blockName;
+		this.CheckStatus = checkStatus;
+		this.UnitCount = unitCount;
 	}
 
 	public String getDoorNumber() {
@@ -66,7 +69,7 @@ public class BlockItem {
 	}
 
 	public boolean isIsNewlyAdded() {
-		if (this.CheckStatus==Enums.NewlyAdded.getVal()) {
+		if (this.CheckStatus == Enums.NewlyAdded.getVal()) {
 			return true;
 		}
 		return false;
@@ -75,7 +78,7 @@ public class BlockItem {
 	public void setIsNewlyAdded(boolean isNewlyAdded) {
 		IsNewlyAdded = isNewlyAdded;
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
 		BlockItem check = (BlockItem) object;
@@ -107,5 +110,11 @@ public class BlockItem {
 
 	public void setCheckStatus(int checkStatus) {
 		CheckStatus = checkStatus;
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.DoorNumber;
 	}
 }

@@ -99,7 +99,14 @@ public class Constants {
 	public static String SelectedCountyCode = "1115";
 	public static String SelectedUniversalCountyCode = "35";
 	public static String SelectedCountyName = "Akçakale";
-	public static String SelectedClassName = "com.rdlab.model.Akcakale";
+	public static String SelectedClassName= "com.rdlab.model.Akcakale";
+	public static String SelectedDistrictCode= "";
+	public static String SelectedDistrictName = "";
+	public static String SelectedVillageCode = "";
+	public static String SelectedVillageName = "";
+	
+	
+	
 	public static Long LoggedUserSerno;
 	public static String LoggedUserName;
 	public static String LoggedUserFullname;

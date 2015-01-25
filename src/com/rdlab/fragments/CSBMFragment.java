@@ -100,7 +100,7 @@ public class CSBMFragment extends BaseFragment implements DataEvent {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				AddressListItem item = addressList.get(arg2);
+				AddressListItem item = (AddressListItem) arg0.getItemAtPosition(arg2);
 
 				BlockFragment df = new BlockFragment();
 				Bundle b = new Bundle();

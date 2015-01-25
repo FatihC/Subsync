@@ -19,6 +19,7 @@ import com.rdlab.subssync.R;
 public class UnitItemAdapter extends ArrayAdapter<UnitItem> {
 
 	private ArrayList<UnitItem> _addresses;
+	private ArrayList<UnitItem> _dtAddress;
 	private Context _context;
 	private Filter filter;
 
@@ -29,6 +30,7 @@ public class UnitItemAdapter extends ArrayAdapter<UnitItem> {
 		// TODO Auto-generated constructor stub
 		super(context, resourceId, addressList);
 		this._addresses = addressList;
+		this._dtAddress=new ArrayList<UnitItem>(addressList);
 		this._context = context;
 
 	}
@@ -92,7 +94,7 @@ public class UnitItemAdapter extends ArrayAdapter<UnitItem> {
 	@Override
 	public Filter getFilter() {
 		if (filter == null)
-			filter = new AppFilter(_addresses);
+			filter = new AppFilter(_dtAddress);
 		return filter;
 	}
 
@@ -108,25 +110,25 @@ public class UnitItemAdapter extends ArrayAdapter<UnitItem> {
 
 		@Override
 		protected FilterResults performFiltering(CharSequence chars) {
-			String filterSeq = chars.toString().toLowerCase();
+			
 			FilterResults result = new FilterResults();
-			if (filterSeq != null && filterSeq.length() > 0) {
+			if (chars != null&&!chars.toString().isEmpty() && chars.length() > 0) {
 				ArrayList<UnitItem> filter = new ArrayList<UnitItem>();
 
 				for (UnitItem object : items) {
 					// the filtering itself:
-					if (object.getIndoorNumber().toLowerCase()
-							.contains(filterSeq))
+					if (object.toString().contains(chars))
 						filter.add(object);
 				}
 				result.count = filter.size();
 				result.values = filter;
 			} else {
-				// add all objects
-				synchronized (this) {
-					result.values = items;
-					result.count = items.size();
+				ArrayList<UnitItem> filter = new ArrayList<UnitItem>();
+				for (UnitItem object : items) {
+					filter.add(object);
 				}
+				result.count = filter.size();
+				result.values = filter;
 			}
 			return result;
 		}

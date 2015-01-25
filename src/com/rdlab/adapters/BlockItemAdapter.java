@@ -15,13 +15,12 @@ import android.widget.TextView;
 
 import com.rdlab.model.BlockItem;
 import com.rdlab.model.Enums;
-
 import com.rdlab.subssync.R;
 
 public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 
 	private ArrayList<BlockItem> _addresses;
-	private ArrayList<BlockItem> _fAddress;
+	private ArrayList<BlockItem> _dtAddress;
 	private Context _context;
 	private Filter filter;
 
@@ -32,7 +31,7 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		// TODO Auto-generated constructor stub
 		super(context, resourceId, addressList);
 		this._addresses = addressList;
-		this._fAddress = addressList;
+		this._dtAddress=new ArrayList<BlockItem>(addressList);
 		this._context = context;
 
 	}
@@ -67,7 +66,7 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		arg1 = inflater.inflate(R.layout.block_list_item, null);
 		// }
 
-		BlockItem item = this._fAddress.get(arg0);
+		BlockItem item = this._addresses.get(arg0);
 
 		TextView txtDoor = (TextView) arg1.findViewById(R.id.item_door_number);
 		TextView txtSite = (TextView) arg1.findViewById(R.id.item_site_name);
@@ -106,36 +105,45 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		return arg1;
 	}
 
+
 	@Override
 	public Filter getFilter() {
 		if (filter == null)
-			filter = new AppFilter();
+			filter = new AppFilter(_dtAddress);
 		return filter;
 	}
 
 	@SuppressLint("DefaultLocale")
 	private class AppFilter extends Filter {
 
+		private ArrayList<BlockItem> items;
+
+		public AppFilter(ArrayList<BlockItem> items) {
+			// TODO Auto-generated constructor stub
+			this.items = items;
+		}
+
 		@Override
-		protected FilterResults performFiltering(CharSequence constraint) {
-
-			constraint = constraint.toString().toLowerCase();
+		protected FilterResults performFiltering(CharSequence chars) {
+			
 			FilterResults result = new FilterResults();
-			if (constraint != null && constraint.toString().length() > 0) {
-				ArrayList<BlockItem> filteredItems = new ArrayList<BlockItem>();
+			if (chars != null&&!chars.toString().isEmpty() && chars.length() > 0) {
+				ArrayList<BlockItem> filter = new ArrayList<BlockItem>();
 
-				for (int i = 0, l = _addresses.size(); i < l; i++) {
-					BlockItem country = _addresses.get(i);
-					if (country.getDoorNumber().toLowerCase().contains(constraint))
-						filteredItems.add(country);
+				for (BlockItem object : items) {
+					// the filtering itself:
+					if (object.toString().contains(chars))
+						filter.add(object);
 				}
-				result.count = filteredItems.size();
-				result.values = filteredItems;
+				result.count = filter.size();
+				result.values = filter;
 			} else {
-				synchronized (this) {
-					result.values = _addresses;
-					result.count = _addresses.size();
+				ArrayList<BlockItem> filter = new ArrayList<BlockItem>();
+				for (BlockItem object : items) {
+					filter.add(object);
 				}
+				result.count = filter.size();
+				result.values = filter;
 			}
 			return result;
 		}
@@ -144,12 +152,11 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		@Override
 		protected void publishResults(CharSequence constraint,
 				FilterResults results) {
-
-			_fAddress = (ArrayList<BlockItem>) results.values;
+			ArrayList<BlockItem> filtered = (ArrayList<BlockItem>) results.values;
 			notifyDataSetChanged();
 			clear();
-			for (int i = 0, l = _fAddress.size(); i < l; i++)
-				add(_fAddress.get(i));
+			for (int i = 0, l = filtered.size(); i < l; i++)
+				add((BlockItem) filtered.get(i));
 			notifyDataSetInvalidated();
 		}
 

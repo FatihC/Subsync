@@ -67,11 +67,12 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 
 		String dt = getLastSyncDate();
 		if (!dt.isEmpty()) {
-			txtLastSyncDate.setText("Son güncelleme tarihi : " + DateUtils.FormatLongStringDateToString(dt));
+			txtLastSyncDate.setText("Son güncelleme tarihi : "
+					+ DateUtils.FormatLongStringDateToString(dt));
 			forFirst = false;
 		}
 
-		int pendingCount = getPendingRequests().size();
+		int pendingCount = getPendingRequestSize();
 		if (pendingCount == 0) {
 			txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
 		} else {
@@ -111,12 +112,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			push.setClickable(true);
 			break;
 		case FetchRequest:
-			Helper.giveNotification(getView().getContext(),
-					"Eþleþim verisi alma iþlemi tamamlandý.");
 			doPostFetchOperation(result.data);
-			
-			// ws iþlemleri bitti takýl kafana göre
-			
 			updateLastSyncDate();
 			doPostPushOperation();
 			push.setClickable(false);
@@ -128,11 +124,16 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			doPostFetchUserOperation(result.data);
 			fetchMbs();
 			break;
+		case FetchNewUavt:
+			// fetch new data
+			doPostFetchNewUavtOperation(result.data);
+			fetchData();
+			break;
 		case Login:
 			break;
 		case FetchMBS:
 			doPostFetchMbsOperation(result.data);
-			fetchData();
+			fetchNewUavt();
 			break;
 		case Push:
 			Helper.giveNotification(getView().getContext(),
@@ -145,12 +146,19 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	}
 
 	private void doPostPushOperation() {
-		List<PushRequest> pushRequestList = PushRequest
-				.listAll(PushRequest.class);
+		ProgressDialog prg = new ProgressDialog(getView().getContext());
+		prg.setCancelable(false);
+		prg.setTitle("Eþleþme Güncelleme");
+		prg.setMessage("Yeni eþleþme verileri güncelleniyor.");
+		prg.show();
+
+		List<PushRequest> pushRequestList = PushRequest.findWithQuery(PushRequest.class, "SELECT * FROM PUSH_REQUEST WHERE PUSHED=0", null);
 		for (PushRequest pushRequest : pushRequestList) {
 			pushRequest.setPushed(true);
 			PushRequest.save(pushRequest);
 		}
+
+		prg.dismiss();
 	}
 
 	private void doPostFetchOperation(Object data) {
@@ -158,16 +166,17 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		prg.setCancelable(false);
 		prg.setTitle("Adres Güncelleme");
 		prg.setMessage("Adres verileri güncelleniyor.");
-		prg.show();
 
 		Gson g = new Gson();
 		ArrayList<PushRequest> vals = g.fromJson(data.toString(),
 				new TypeToken<ArrayList<PushRequest>>() {
 				}.getType());
 		if (vals == null) {
-			prg.dismiss();
+			// prg.dismiss();
 			return;
 		}
+
+		prg.show();
 		for (PushRequest pushRequest : vals) {
 			String sql = "SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='"
 					+ pushRequest.uavtCode + "'";
@@ -211,17 +220,15 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		prg.setTitle("Abone Güncelleme");
 		prg.setCancelable(false);
 		prg.setMessage("Abone verileri güncelleniyor.");
-		prg.show();
 
 		Gson g = new Gson();
 		ArrayList<SubscriberInfo> vals = g.fromJson(data.toString(),
 				new TypeToken<ArrayList<SubscriberInfo>>() {
 				}.getType());
 		if (vals == null) {
-			prg.dismiss();
 			return;
 		}
-
+		prg.show();
 		for (SubscriberInfo subscriberInfo : vals) {
 			Class<?> t;
 			try {
@@ -265,36 +272,75 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 							.invoke(null, newObj);
 				}
 
-			} catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException | java.lang.InstantiationException
+					| IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException
+					| NoSuchFieldException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (java.lang.InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				prg.dismiss();
 			}
 
 		}
 
-//		prg.dismiss();
+		prg.dismiss();
 
+	}
+
+	private void doPostFetchNewUavtOperation(Object data) {
+		ProgressDialog prg = new ProgressDialog(getView().getContext());
+		prg.setTitle("Yeni UAVT Güncelleme");
+		prg.setCancelable(false);
+		prg.setMessage("UAVT verileri güncelleniyor.");
+
+		Gson g = new Gson();
+		ArrayList<UavtModel> vals = g.fromJson(data.toString(),
+				new TypeToken<ArrayList<UavtModel>>() {
+				}.getType());
+		if (vals == null) {
+			return;
+		}
+		prg.show();
+		for (UavtModel uavtModel : vals) {
+			try {
+				Class<?> t = Class.forName(Constants.SelectedClassName);
+				
+				String sql="SELECT * FROM "+NamingHelper.toSQLName(t)+" WHERE CSBM_CODE='"+uavtModel.CSBMCode+"'";
+				List<?> listOfT=SugarRecord.findWithQuery(t, sql, null);
+				if (listOfT.size()>0) {
+					//böyle eleman var bunu yazma
+					continue;
+				}
+				
+				Object entity = t.getDeclaredConstructor(
+						new Class[] { String.class, String.class, String.class,
+								String.class, String.class, String.class,
+								String.class, String.class, String.class,
+								String.class, String.class, String.class,
+								String.class, String.class, String.class,
+								String.class, int.class }).newInstance(
+						uavtModel.CountyCode, uavtModel.CountyName,
+						uavtModel.DistrictCode, uavtModel.DistrictName,
+						uavtModel.VillageCode, uavtModel.VillageName,
+						uavtModel.StreetCode, uavtModel.StreetName,
+						uavtModel.CSBMCode, uavtModel.CSBMName,
+						uavtModel.BuildingCode, uavtModel.DoorNumber,
+						uavtModel.SiteName, uavtModel.BlockName,
+						uavtModel.UAVTAddressNo, uavtModel.IndoorNumber,
+						uavtModel.CheckStatus);
+				entity.getClass()
+						.getMethod("save", new Class[] { Object.class })
+						.invoke(null, entity);
+			} catch (java.lang.InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException
+					| NoSuchMethodException | ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				prg.dismiss();
+				e.printStackTrace();
+			}
+		}
+
+		prg.dismiss();
 	}
 
 	private void updateOrSaveOnUavt(PushRequest pushRequest) {
@@ -448,27 +494,41 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		prg.dismiss();
 	}
 
-	private List<PushRequest> getPendingRequests() {
-		List<PushRequest> pushRequestList = PushRequest
-				.listAll(PushRequest.class);
-		List<PushRequest> result = new ArrayList<PushRequest>();
-		for (PushRequest pushRequest : pushRequestList) {
-			if (pushRequest.isPushed()) {
-				continue;
-			}
-			result.add(pushRequest);
+	private int getPendingRequestSize() {
+		Integer val = PushRequest
+				.getListCount("SELECT COUNT(*) AS COUNT FROM PUSH_REQUEST WHERE PUSHED=0");
+		if (val == null) {
+			// no data
+			return 0;
 		}
-		return result;
+		return val;
+
+	}
+
+	private List<PushRequest> getPendingRequests() {
+		// List<PushRequest> pushRequestList = PushRequest
+		// .listAll(PushRequest.class);
+		List<PushRequest> pushRequestList = PushRequest.findWithQuery(
+				PushRequest.class, "SELECT * FROM PUSH_REQUEST WHERE PUSHED=0",
+				null);
+		// List<PushRequest> result = new ArrayList<PushRequest>();
+		// for (PushRequest pushRequest : pushRequestList) {
+		// if (pushRequest.isPushed()) {
+		// continue;
+		// }
+		// result.add(pushRequest);
+		// }
+		return pushRequestList;
 	}
 
 	private long getMaxSbsDate() throws ClassNotFoundException,
 			NoSuchFieldException, IllegalAccessException,
 			IllegalArgumentException {
-		Class<?> t = Class.forName(Constants.SelectedClassName+"Mbs");
+		Class<?> t = Class.forName(Constants.SelectedClassName + "Mbs");
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format(
-				"select max(ILK_SOZLESME_TARIHI)as ILK_SOZLESME_TARIHI from %s",
-				NamingHelper.toSQLName(t)));
+		sb.append(String
+				.format("select max(ILK_SOZLESME_TARIHI)as ILK_SOZLESME_TARIHI from %s",
+						NamingHelper.toSQLName(t)));
 		List<?> listOft = SugarRecord.findWithQuery(t, sb.toString(), null);
 		if (listOft.size() > 0) {
 			Object obj = listOft.get(0);
@@ -554,6 +614,19 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		new ServiceOrganizer(this, getView().getContext(), "Eþleþme gönderim",
 				"Eþleþme verileri gönderiliyor.").execute(req);
 		pushedCalled = true;
+	}
+
+	private void fetchNewUavt() {
+		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
+		paramsx.add(new BasicNameValuePair("DistrictCode",
+				Constants.SelectedCountyCode));
+		paramsx.add(new BasicNameValuePair("LastProcessDate", getLastSyncDate()));
+
+		ServiceRequest req = new ServiceRequest("fetchNew", paramsx);
+		new ServiceOrganizer(this, getView().getContext(),
+				"Yeni UAVT güncelleme", "Eþleþme verileri güncelleniyor")
+				.execute(req);
+		fetchCalled = true;
 	}
 
 	private void fetchData() {

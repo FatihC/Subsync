@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -48,7 +47,7 @@ public class BaseActivity extends Activity {
 		File dstDB = new File("/data/data/com.rdlab.subssync/databases/sub_sync.dat");
 		File currentDB = new File("/sdcard/Download", "db.dat");
 		
-		if (dstDB.exists()&&getPendingRequests().size()>0&&currentDB.exists()) {
+		if (dstDB.exists()&&getPendingRequests()>0&&currentDB.exists()) {
 			Helper.giveNotification(this, "Bekleyen iþ emriniz var veritabaný deðiþimi yapýlmamýþtýr.");
 			return;
 		}
@@ -79,6 +78,7 @@ public class BaseActivity extends Activity {
 				String cfKey = configuration.getKey();
 				if (cfKey.equals(Constants.SELECTED_COUNTY_CODE)) {
 					Constants.SelectedUniversalCountyCode=configuration.getValue();
+					setDistrictVillageCode(configuration.getValue());
 				}
 				if (cfKey.equals(Constants.SELECTED_COUNTY_NAME)) {
 					Constants.SelectedCountyName=configuration.getValue();
@@ -93,17 +93,31 @@ public class BaseActivity extends Activity {
 		}
 	}
 	
-	private List<PushRequest> getPendingRequests() {
-		List<PushRequest> pushRequestList = PushRequest
-				.listAll(PushRequest.class);
-		List<PushRequest> result = new ArrayList<PushRequest>();
-		for (PushRequest pushRequest : pushRequestList) {
-			if (pushRequest.isPushed()) {
-				continue;
-			}
-			result.add(pushRequest);
+	private void setDistrictVillageCode(String countyCode){
+		if(countyCode.equals("32")) {Constants.SelectedDistrictCode="1771";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49153";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("33")) {Constants.SelectedDistrictCode="1773";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49155";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("34")) {Constants.SelectedDistrictCode="1775";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49157";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("35")) {Constants.SelectedDistrictCode="1392";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32013";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("36")) {Constants.SelectedDistrictCode="1394";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32103";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("37")) {Constants.SelectedDistrictCode="1396";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32176";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("38")) {Constants.SelectedDistrictCode="1399";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32256";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("39")) {Constants.SelectedDistrictCode="1400";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32292";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("40")) {Constants.SelectedDistrictCode="1401";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32326";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("41")) {Constants.SelectedDistrictCode="1402";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32423";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("42")) {Constants.SelectedDistrictCode="1405";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32487";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("43")) {Constants.SelectedDistrictCode="1412";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32620";Constants.SelectedVillageName="MERKEZ";}
+		else if(countyCode.equals("44")) {Constants.SelectedDistrictCode="1414";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32705";Constants.SelectedVillageName="MERKEZ";}
+
+
+	}
+	
+	private int getPendingRequests() {
+		Integer val=PushRequest.getListCount("SELECT COUNT(*) AS COUNT FROM PUSH_REQUEST WHERE PUSHED=0");
+		if (val==null) {
+			//no data
+			return 0;
 		}
-		return result;
+		return val;
 	}
 
 	@SuppressLint("SdCardPath")
