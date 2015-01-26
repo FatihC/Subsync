@@ -114,20 +114,24 @@ public class MainActivity extends BaseActivity {
 		Fragment fragment = null;
 		switch (position) {
 		case 0:
-			fragment = getFragment();
+			fragment = getFragment(false);
 			break;
 		case 1:
-			fragment = new SyncFragment();
+			//control fragment
+			fragment = getFragment(true);
 			break;
 		case 2:
+			fragment = new SyncFragment();
+			break;
+		case 3:
 			//kullanýcý bilgi
 			fragment=new UserFragment();
 			break;
-		case 3:
+		case 4:
 			//þifre degis
 			fragment=new UserPasswordFragment();
 			break;
-		case 4:
+		case 5:
 			//çýkýþ
 			// fragment = new PagesFragment();
 			Constants.LoggedUserFullname="";
@@ -135,10 +139,6 @@ public class MainActivity extends BaseActivity {
 			Constants.LoggedUserSerno=null;
 			this.finish();
 			break;
-		case 5:
-			// fragment = new WhatsHotFragment();
-			break;
-
 		default:
 			break;
 		}
@@ -162,11 +162,14 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
-	private Fragment getFragment() {
+	private Fragment getFragment(boolean forControl) {
 //		ArrayList<String> result = Helper.checkIfOnlyCenterExist();
 //		if (result.size() > 0) {
 			StreetFragment df = new StreetFragment();
 			Bundle b = new Bundle();
+			if (forControl) {
+				b.putBoolean(Constants.FOR_CONTROL, forControl);
+			}
 //			b.putString(Constants.DISTRICT_CODE_TAG, result.get(0));
 //			b.putString(Constants.DISTRICT_NAME_TAG, result.get(1));
 //			b.putString(Constants.VILLAGE_CODE_TAG, result.get(2));

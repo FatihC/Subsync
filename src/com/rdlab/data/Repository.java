@@ -13,6 +13,10 @@ import com.rdlab.utility.Helper;
 
 public class Repository implements IRepository {
 
+	public static enum OperationObjectType {
+		AddressItem, BlockItem, UnitItem,
+	}
+
 	@Inject
 	public Repository() {
 		// TODO Auto-generated constructor stub
@@ -58,7 +62,8 @@ public class Repository implements IRepository {
 	@Override
 	public ArrayList<BlockItem> getBlockItems(String... params) {
 		// TODO Auto-generated method stub
-		String[] cols = new String[] { "DOOR_NUMBER", "SITE_NAME", "BLOCK_NAME","CHECK_STATUS" };
+		String[] cols = new String[] { "DOOR_NUMBER", "SITE_NAME",
+				"BLOCK_NAME", "CHECK_STATUS" };
 		String[] whereColumns = new String[] { "DISTRICT_CODE", "VILLAGE_CODE",
 				"STREET_CODE", "CSBM_CODE" };
 
@@ -66,63 +71,14 @@ public class Repository implements IRepository {
 				"selectWhereGrouped", new Class[] { Class.class,
 						String[].class, String[].class, String[].class }, 3,
 				cols, whereColumns, params);
-		ArrayList<BlockItem> result = new ArrayList<BlockItem>();
 
-		try {
-
-			for (Object object : items) {
-
-				String doorNumber, siteName, blockName;
-
-				int count;
-
-				Field fieldDoor = object.getClass().getDeclaredField(
-						"DoorNumber");
-				fieldDoor.setAccessible(true);
-				Field fieldSite = object.getClass()
-						.getDeclaredField("SiteName");
-				fieldSite.setAccessible(true);
-				Field fieldBlock = object.getClass().getDeclaredField(
-						"BlockName");
-				fieldBlock.setAccessible(true);
-				
-				Field fieldCheck = object.getClass().getDeclaredField(
-						"CheckStatus");
-				fieldCheck.setAccessible(true);
-
-				Field fieldUnit = object.getClass().getDeclaredField(
-						"UnitCount");
-				fieldUnit.setAccessible(true);
-
-				count = fieldUnit.getInt(object);
-				doorNumber = fieldDoor.get(object).toString();
-				siteName = fieldSite.get(object).toString();
-				blockName = fieldBlock.get(object).toString();
-				
-				int check=fieldCheck.getInt(object);
-				
-
-				result.add(new BlockItem(doorNumber, siteName, blockName, check,
-						count));
-			}
-
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return result;
+		return Helper.mapItemsToBlockItemList(items);
 	}
 
 	@Override
 	public ArrayList<UnitItem> getUnitItems(String... params) {
-		String[] cols = new String[] { "INDOOR_NUMBER", "UAVT_ADDRESS_NO","CHECK_STATUS" };
+		String[] cols = new String[] { "INDOOR_NUMBER", "UAVT_ADDRESS_NO",
+				"CHECK_STATUS" };
 		String[] whereColumns = new String[] { "DISTRICT_CODE", "VILLAGE_CODE",
 				"STREET_CODE", "CSBM_CODE", "DOOR_NUMBER" };
 
@@ -130,49 +86,8 @@ public class Repository implements IRepository {
 				"selectWhere", new Class[] { Class.class, String[].class,
 						String[].class, String[].class }, 3, cols,
 				whereColumns, params);
-		ArrayList<UnitItem> result = new ArrayList<UnitItem>();
 
-		try {
-
-			for (Object object : items) {
-
-				String indoorNumber = "", uavtNo = "";
-
-				Field fieldIndoor = object.getClass().getDeclaredField(
-						"IndoorNumber");
-				fieldIndoor.setAccessible(true);
-				Field fieldUavt = object.getClass().getDeclaredField(
-						"UAVTAddressNo");
-				fieldUavt.setAccessible(true);
-				
-				Field fieldCheck = object.getClass().getDeclaredField(
-						"CheckStatus");
-				fieldCheck.setAccessible(true);
-
-				if (fieldIndoor.get(object) != null) {
-					indoorNumber = fieldIndoor.get(object).toString();
-				}
-				if (fieldUavt.get(object) != null) {
-					uavtNo = fieldUavt.get(object).toString();
-				}
-				
-				int check=fieldCheck.getInt(object);
-
-				result.add(new UnitItem(indoorNumber, uavtNo, check));
-			}
-
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return result;
+		return Helper.mapItemsToUnitItemList(items);
 	}
 
 	@Override
@@ -183,44 +98,42 @@ public class Repository implements IRepository {
 		String[] whereColumns = new String[] { "TESISAT_NO" };
 
 		ArrayList<?> items = (ArrayList<?>) Helper.invokeMethodAnonymousForMBS(
-				"selectWhereWithLong", new Class[] { Class.class, String[].class,
-						String[].class, String[].class }, 3, cols,
-				whereColumns, params);
-		SubscriberItem item =null;
+				"selectWhereWithLong", new Class[] { Class.class,
+						String[].class, String[].class, String[].class }, 3,
+				cols, whereColumns, params);
+		SubscriberItem item = null;
 		try {
 
 			for (Object object : items) {
 
-				Long tesisat = null,sozl = null;
+				Long tesisat = null, sozl = null;
 				String unvan = null;
 
-				Field fieldTes = object.getClass().getDeclaredField(
-						"TesisatNo");
+				Field fieldTes = object.getClass()
+						.getDeclaredField("TesisatNo");
 				fieldTes.setAccessible(true);
-				
+
 				Field fieldSoz = object.getClass().getDeclaredField(
 						"IlkSozlesmeTarihi");
 				fieldSoz.setAccessible(true);
-				
-				Field fieldUnvan = object.getClass().getDeclaredField(
-						"Unvan");
+
+				Field fieldUnvan = object.getClass().getDeclaredField("Unvan");
 				fieldUnvan.setAccessible(true);
-				
-				Number n=(Number) fieldTes.get(object);
-				Number n1=(Number) fieldSoz.get(object);
-				
-				
+
+				Number n = (Number) fieldTes.get(object);
+				Number n1 = (Number) fieldSoz.get(object);
+
 				if (n != null) {
 					tesisat = n.longValue();
 				}
 				if (n1 != null) {
 					sozl = n.longValue();
 				}
-				if (fieldUnvan.get(object)!=null) {
+				if (fieldUnvan.get(object) != null) {
 					unvan = fieldUnvan.get(object).toString();
 				}
 
-				item=new SubscriberItem(tesisat, sozl, unvan);
+				item = new SubscriberItem(tesisat, sozl, unvan);
 			}
 
 		} catch (IllegalArgumentException e) {
@@ -237,4 +150,81 @@ public class Repository implements IRepository {
 		return item;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<AddressListItem> getDistrictItemsForControl(
+			String... params) {
+		String[] fields = new String[] { "DistrictCode", "DistrictName" };
+		String sql = String
+				.format("SELECT DISTINCT DISTRICT_CODE, DISTRICT_NAME FROM %s WHERE DISTRICT_CODE='%s'",
+						Helper.getTableName(), params[0]);
+
+		return (ArrayList<AddressListItem>) Helper.getResultWithSql(fields,
+				sql, OperationObjectType.AddressItem);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<AddressListItem> getVillageItemsForControl(
+			String... params) {
+		String[] fields = new String[] { "VillageCode", "VillageName" };
+		String sql = String
+				.format("SELECT DISTINCT VILLAGE_CODE, VILLAGE_NAME FROM %s WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s'",
+						Helper.getTableName(), params[0], params[1]);
+
+		return (ArrayList<AddressListItem>) Helper.getResultWithSql(fields,
+				sql, OperationObjectType.AddressItem);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<AddressListItem> getStreetItemsForControl(String... params) {
+		String[] fields = new String[] { "StreetCode", "StreetName" };
+		String sql = String
+				.format("SELECT DISTINCT STREET_CODE, STREET_NAME FROM %s WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s'",
+						Helper.getTableName(), params[0], params[1], params[2]);
+
+		return (ArrayList<AddressListItem>) Helper.getResultWithSql(fields,
+				sql, OperationObjectType.AddressItem);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<AddressListItem> getCSBMItemsForControl(String... params) {
+		String[] fields = new String[] { "CSBMCode", "CSBMName" };
+		String sql = String
+				.format("SELECT DISTINCT CSBM_CODE, CSBM_NAME FROM %s WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s'",
+						Helper.getTableName(), params[0], params[1], params[2],
+						params[3]);
+
+		return (ArrayList<AddressListItem>) Helper.getResultWithSql(fields,
+				sql, OperationObjectType.AddressItem);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<BlockItem> getBlockItemsForControl(String... params) {
+		String sql = String
+				.format("SELECT DOOR_NUMBER,SITE_NAME,BLOCK_NAME,CHECK_STATUS,COUNT(1) AS 'UNIT_COUNT' FROM %s"
+						+ " WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'"
+						+ " GROUP BY DOOR_NUMBER,SITE_NAME,BLOCK_NAME,CHECK_STATUS",
+						Helper.getTableName(),params[0], params[1], params[2], params[3], params[4]);
+
+		return (ArrayList<BlockItem>) Helper.getResultWithSql(null, sql,
+				OperationObjectType.BlockItem);
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<UnitItem> getUnitItemsForControl(String... params) {
+		String sql = String
+				.format("SELECT INDOOR_NUMBER,UAVT_ADDRESS_NO,CHECK_STATUS FROM %s"
+						+ " WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND "
+						+ " CSBM_CODE='%s' AND DOOR_NUMBER='%s' AND INDOOR_NUMBER='%s' AND UAVT_ADDRESS_NO='%s'",
+						Helper.getTableName(),params[0], params[1], params[2], params[3], params[4],params[5],params[6]);
+		return (ArrayList<UnitItem>) Helper.getResultWithSql(null, sql,
+				OperationObjectType.UnitItem);
+	}
 }

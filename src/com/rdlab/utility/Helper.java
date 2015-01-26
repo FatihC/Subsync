@@ -1,5 +1,6 @@
 package com.rdlab.utility;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,17 +9,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.orm.SugarRecord;
 import com.orm.util.NamingHelper;
+import com.rdlab.data.Repository;
 import com.rdlab.model.AddressListItem;
 import com.rdlab.model.Akcakale;
 import com.rdlab.model.Birecik;
+import com.rdlab.model.BlockItem;
 import com.rdlab.model.Bozova;
 import com.rdlab.model.Ceylanpinar;
 import com.rdlab.model.Enums;
@@ -31,13 +38,21 @@ import com.rdlab.model.Karakopru;
 import com.rdlab.model.PushRequest;
 import com.rdlab.model.Siverek;
 import com.rdlab.model.Suruc;
+import com.rdlab.model.UnitItem;
 import com.rdlab.model.Viransehir;
 
+import de.mindpipe.android.logging.log4j.LogConfigurator;
+
+/**
+ * @author N04155-1013
+ *
+ */
 public class Helper {
 
+	private final static Logger log = Logger.getLogger(Helper.class);
+	
 	public static <T> AddressListItem mapAddressItemToListItem(T addressItem,
 			String[] fields) {
-
 		String code = "", name = "";
 
 		for (String field : fields) {
@@ -57,6 +72,7 @@ public class Helper {
 
 	public static ArrayList<AddressListItem> mapAddressItemListToListItemList(
 			ArrayList<?> addressItems, String[] fields) {
+		log.info("mapAddressItemListToListItemList method called.");
 		ArrayList<AddressListItem> result = new ArrayList<AddressListItem>();
 		for (Object object : addressItems) {
 			result.add(mapAddressItemToListItem(object, fields));
@@ -71,7 +87,7 @@ public class Helper {
 			return f.get(item);
 		} catch (ReflectiveOperationException | IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("Error occured while getting field value for %s class and %s field", item.getClass().getName(),fieldName));
 			return "";
 		}
 	}
@@ -115,7 +131,7 @@ public class Helper {
 			Class<?>[] methodArgs, int paramCount, Object[]... params) {
 		Class<?> selectedClass;
 		try {
-			selectedClass = Class.forName(Constants.SelectedClassName);
+			selectedClass = getClassName();
 			Method m = selectedClass.getMethod(methodName, methodArgs);
 
 			if (paramCount > 1) {
@@ -123,21 +139,14 @@ public class Helper {
 						params[2]);
 			}
 			return m.invoke(null, selectedClass, params[0]);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("NoSuchMethodException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("IllegalAccessException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("IllegalArgumentException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("InvocationTargetException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		}
 
 		return null;
@@ -156,20 +165,15 @@ public class Helper {
 			}
 			return m.invoke(null, selectedClass, params[0]);
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("ClassNotFoundException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("NoSuchMethodException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("IllegalAccessException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("IllegalArgumentException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(String.format("InvocationTargetException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
 		}
 
 		return null;
@@ -199,6 +203,7 @@ public class Helper {
 			}
 		}
 
+		log.warn("There is no internet connection!");
 		return false;
 	}
 
@@ -211,8 +216,7 @@ public class Helper {
 			String indoorNumber, Enums value, boolean updateAll)
 			throws ClassNotFoundException {
 		StringBuilder sb = new StringBuilder();
-		String tableName = NamingHelper.toSQLName(Class
-				.forName(Constants.SelectedClassName));
+		String tableName = getTableName();
 		if (updateAll) {
 			sb.append(String
 					.format("SELECT * FROM %s WHERE  VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
@@ -501,8 +505,7 @@ public class Helper {
 			String newBlockName, String newIndoorNum,boolean fromUnit)
 			throws ClassNotFoundException {
 		StringBuilder sb = new StringBuilder();
-		String tableName = NamingHelper.toSQLName(Class
-				.forName(Constants.SelectedClassName));
+		String tableName =getTableName();
 		sb.append(String
 				.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
 						+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
@@ -676,10 +679,10 @@ public class Helper {
 			String doorNumber) {
 
 		try {
-			Class<?> t = Class.forName(Constants.SelectedClassName);
+			Class<?> t = getClassName();
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("SELECT UAVT_ADDRESS_NO FROM %s",
-					NamingHelper.toSQLName(t)));
+					getTableName()));
 			sb.append(" WHERE ");
 			sb.append(String
 					.format("DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
@@ -695,9 +698,6 @@ public class Helper {
 					return true;
 				}
 			}
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -717,10 +717,10 @@ public class Helper {
 			String doorNumber) {
 
 		try {
-			Class<?> t = Class.forName(Constants.SelectedClassName);
+			Class<?> t = getClassName();
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("SELECT UAVT_ADDRESS_NO FROM %s",
-					NamingHelper.toSQLName(t)));
+					getTableName()));
 			sb.append(" WHERE ");
 			sb.append(String
 					.format("DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
@@ -741,9 +741,6 @@ public class Helper {
 				}
 			}
 			return true;
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -781,5 +778,147 @@ public class Helper {
 			Log.w("Integer parse warning", "Unable to parse string value to int");
 			return false;
 		}
+	}
+
+	public static Class<?> getClassName(){
+		try {
+			return Class.forName(Constants.SelectedClassName);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+	}
+	
+	public static String getTableName(){
+		return NamingHelper.toSQLName(getClassName());
+	}
+
+	/**
+	 * Getting result from sugarrecord with given sql query
+	 * @param fields - for only addressýtem operation for other operation types you can enter null value
+	 * @param sql - sql query for getting data from database
+	 * @param operationType - operation type enum declared in repository class.ç
+	 * @return for addressýtem - List<AddressItem> for block item - List<BlockItem> for  unit item - List<UnitItem>
+	 */
+	public static ArrayList<?> getResultWithSql(String[] fields,String sql,Repository.OperationObjectType operationType) {
+		
+		List<?> listOfT=SugarRecord.findWithQuery(Helper.getClassName(),sql,null);
+		switch (operationType) {
+		case AddressItem:
+			ArrayList<AddressListItem> result=new ArrayList<AddressListItem>();
+			for (Object object : listOfT) {
+				result.add(Helper.mapAddressItemToListItem(object, fields));
+			}
+			return result;
+		case BlockItem:
+			return mapItemsToBlockItemList(listOfT);
+		case UnitItem:
+			return mapItemsToUnitItemList(listOfT);
+		default:
+			return null;
+		}
+		
+		
+	}
+	
+	public static ArrayList<BlockItem> mapItemsToBlockItemList(List<?> items){
+		ArrayList<BlockItem> result = new ArrayList<BlockItem>();
+
+		try {
+
+			for (Object object : items) {
+
+				String doorNumber, siteName, blockName;
+
+				int count;
+
+				Field fieldDoor = object.getClass().getDeclaredField(
+						"DoorNumber");
+				fieldDoor.setAccessible(true);
+				Field fieldSite = object.getClass()
+						.getDeclaredField("SiteName");
+				fieldSite.setAccessible(true);
+				Field fieldBlock = object.getClass().getDeclaredField(
+						"BlockName");
+				fieldBlock.setAccessible(true);
+
+				Field fieldCheck = object.getClass().getDeclaredField(
+						"CheckStatus");
+				fieldCheck.setAccessible(true);
+
+				Field fieldUnit = object.getClass().getDeclaredField(
+						"UnitCount");
+				fieldUnit.setAccessible(true);
+
+				count = fieldUnit.getInt(object);
+				doorNumber = fieldDoor.get(object).toString();
+				siteName = fieldSite.get(object).toString();
+				blockName = fieldBlock.get(object).toString();
+
+				int check = fieldCheck.getInt(object);
+
+				result.add(new BlockItem(doorNumber, siteName, blockName,
+						check, count));
+			}
+
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	} 
+	
+	public static ArrayList<UnitItem> mapItemsToUnitItemList(List<?> items){
+		ArrayList<UnitItem> result = new ArrayList<UnitItem>();
+		try {
+
+			for (Object object : items) {
+
+				String indoorNumber = "", uavtNo = "";
+
+				Field fieldIndoor = object.getClass().getDeclaredField(
+						"IndoorNumber");
+				fieldIndoor.setAccessible(true);
+				Field fieldUavt = object.getClass().getDeclaredField(
+						"UAVTAddressNo");
+				fieldUavt.setAccessible(true);
+
+				Field fieldCheck = object.getClass().getDeclaredField(
+						"CheckStatus");
+				fieldCheck.setAccessible(true);
+
+				if (fieldIndoor.get(object) != null) {
+					indoorNumber = fieldIndoor.get(object).toString();
+				}
+				if (fieldUavt.get(object) != null) {
+					uavtNo = fieldUavt.get(object).toString();
+				}
+
+				int check = fieldCheck.getInt(object);
+
+				result.add(new UnitItem(indoorNumber, uavtNo, check));
+			}
+
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+	
+	public static void configureLog4J(){
+		final LogConfigurator logConfigurator = new LogConfigurator();
+
+		logConfigurator.setFileName(Environment.getExternalStorageDirectory() + File.separator + "uavt.log");
+		logConfigurator.setRootLevel(Level.ALL);
+		logConfigurator.setLevel("org.apache", Level.ALL);
+		logConfigurator.configure();
 	}
 }

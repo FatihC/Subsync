@@ -59,6 +59,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 	String districtCode;
 	String districtName;
 	int itemCurrentPosition;
+	boolean forControl;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,6 +81,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		villageName = bund.getString(Constants.VILLAGE_NAME_TAG);
 		districtName = bund.getString(Constants.DISTRICT_NAME_TAG);
 		csbmName = bund.getString(Constants.CSBM_NAME_TAG);
+		forControl = bund.getBoolean(Constants.FOR_CONTROL);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format(" %s > %s >", streetName.trim(),
@@ -136,6 +138,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 				b.putString(Constants.CSBM_NAME_TAG, csbmName);
 				b.putString(Constants.DOOR_NUMBER_TAG, item.getDoorNumber());
 				b.putString(Constants.SITE_NAME_TAG, item.getSiteName());
+				b.putBoolean(Constants.FOR_CONTROL, forControl);
 				b.putString(Constants.BLOCK_NAME_TAG, item.getBlockName());
 				df.setArguments(b);
 

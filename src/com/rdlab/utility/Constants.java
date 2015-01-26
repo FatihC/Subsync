@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Constants {
+	public static final String FOR_CONTROL = "FOR_CONTROL";
+	
 	public static final String CITY_CODE = "63";
 	public static final String COUNTY_CODE_TAG = "COUNTY_CODE";
 	public static final String DISTRICT_CODE_TAG = "DISTRICT_CODE";

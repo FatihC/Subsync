@@ -5,23 +5,19 @@ import java.util.List;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ActionMode.Callback;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -43,7 +39,7 @@ import com.rdlab.utility.Helper;
 import com.rdlab.utility.PendingItems;
 import com.rdlab.utility.ReadOperation;
 
-public class UnitFragment extends BaseFragment implements DataEvent {
+public class UnitControlFragment extends BaseFragment implements DataEvent {
 
 	UnitItemAdapter _adapter;
 	UnitMatchItemAdapter _altAdapter;
@@ -75,7 +71,6 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		// clearing push request
 
 		Bundle bund = new Bundle();
@@ -140,89 +135,97 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				UnitItem item = addressList.get(--arg2);
 
-				AddWiringFragment df = new AddWiringFragment();
-				Bundle b = new Bundle();
-				b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
-				b.putString(Constants.UAVT_TAG, item.getUAVTNo());
-				b.putString(Constants.INDOOR_TAG, item.getIndoorNumber());
-				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
-				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
-				b.putString(Constants.STREET_CODE_TAG, streetCode);
-				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
-				b.putString(Constants.SITE_NAME_TAG, siteName);
-				b.putString(Constants.BLOCK_NAME_TAG, blockName);
-				b.putBoolean(Constants.FOR_CONTROL, forControl);
-				b.putBoolean(Constants.CHECKED_UAVT, item.isSynced());
+				final int itemPosition=--arg2;
+				
+				final Dialog dlg=new Dialog(getView().getContext());
+				dlg.setContentView(R.layout.dialog_unit_control);
+				dlg.setTitle("Uyarý");
+				
+				Button btnUpdate=(Button)dlg.findViewById(R.id.btnUpdateData);
+				Button btnMakeAudit=(Button)dlg.findViewById(R.id.btnMakeAudit);
+				Button btnAuditList=(Button)dlg.findViewById(R.id.btnAuditList);
 
-				df.setArguments(b);
+				
+				btnUpdate.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						dlg.dismiss();
+						UnitItem item = addressList.get(itemPosition);
 
-				FragmentTransaction ft = getFragmentManager()
-						.beginTransaction();
-				ft.replace(R.id.frame_container, df);
-				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-				ft.addToBackStack(null);
-				ft.commit();
+						AddWiringFragment df = new AddWiringFragment();
+						Bundle b = new Bundle();
+						b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
+						b.putString(Constants.UAVT_TAG, item.getUAVTNo());
+						b.putString(Constants.INDOOR_TAG, item.getIndoorNumber());
+						b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
+						b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
+						b.putString(Constants.STREET_CODE_TAG, streetCode);
+						b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+						b.putString(Constants.SITE_NAME_TAG, siteName);
+						b.putString(Constants.BLOCK_NAME_TAG, blockName);
+						b.putBoolean(Constants.FOR_CONTROL, forControl);
+						b.putBoolean(Constants.CHECKED_UAVT, item.isSynced());
+
+						df.setArguments(b);
+
+						FragmentTransaction ft = getFragmentManager()
+								.beginTransaction();
+						ft.replace(R.id.frame_container, df);
+						ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+						ft.addToBackStack(null);
+						ft.commit();	
+					}
+				});
+				
+				btnMakeAudit.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						AuditFormFragment frg=new AuditFormFragment();
+						FragmentTransaction ft = getFragmentManager()
+								.beginTransaction();
+						ft.replace(R.id.frame_container, frg);
+						ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+						ft.addToBackStack(null);
+						ft.commit();	
+					}
+				});
+				
+				btnAuditList.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						AuditListFragment frg=new AuditListFragment();
+						FragmentTransaction ft = getFragmentManager()
+								.beginTransaction();
+						ft.replace(R.id.frame_container, frg);
+						ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+						ft.addToBackStack(null);
+						ft.commit();	
+					}
+				});
+				
+				dlg.show();
 			}
 		});
 
-		searchResult.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				arg0.startActionMode(modeCallback);
-				arg0.setSelected(true);
-				itemCurrentPosition = arg2;
-				return true;
-			}
-		});
 
 		// Action bar overriden
 		ActionBar ab = getActivity().getActionBar();
 		ab.setCustomView(R.layout.custom_action_bar);
 		TextView info = (TextView) ab.getCustomView().findViewById(
 				R.id.txtTitle);
-		addButton = (Button) ab.getCustomView().findViewById(R.id.btnAddNew);
-		addButton.setText("Birim Ekle");
-		addButton.setVisibility(View.VISIBLE);
-		addButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				AddNewUnitFragment df = new AddNewUnitFragment();
-				Bundle b = new Bundle();
-				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
-				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
-				b.putString(Constants.STREET_CODE_TAG, streetCode);
-				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
-				b.putString(Constants.DISTRICT_NAME_TAG, districtName);
-				b.putString(Constants.VILLAGE_NAME_TAG, villageName);
-				b.putString(Constants.STREET_NAME_TAG, streetName);
-				b.putString(Constants.CSBM_NAME_TAG, csbmName);
-				b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
-				b.putString(Constants.SITE_NAME_TAG, siteName);
-				b.putString(Constants.BLOCK_NAME_TAG, blockName);
-
-				df.setArguments(b);
-
-				FragmentTransaction ft = getFragmentManager()
-						.beginTransaction();
-				ft.replace(R.id.frame_container, df);
-				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-				ft.addToBackStack(null);
-				ft.commit();
-			}
-		});
-
-
-		info.setText(Constants.UNIT_HEADER_TEXT);
+		info.setText(Constants.STREET_HEADER_TEXT);
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
 				| ActionBar.DISPLAY_SHOW_HOME | ActionBar.NAVIGATION_MODE_LIST
 				| ActionBar.DISPLAY_HOME_AS_UP);
 
+		//list view header item added
 		View header = inflater.inflate(R.layout.header_unit_list_item, null);
 		header.setOnClickListener(new OnClickListener() {
 
@@ -437,118 +440,4 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 		dlg.show();
 	}
 
-	private ActionMode.Callback modeCallback = new Callback() {
-
-		@Override
-		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public void onDestroyActionMode(ActionMode mode) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			mode.setTitle("Detay");
-			mode.getMenuInflater().inflate(R.menu.contextmenu_listview, menu);
-			return true;
-		}
-
-		@Override
-		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			switch (item.getItemId()) {
-			case R.id.delete: {
-				try {
-					
-					
-					UnitItem unitItem = _adapter.getItem(--itemCurrentPosition);
-
-					if (_adapter.getCount()<2) {
-						Helper.giveNotification(getView().getContext(),
-								"Dýþ kapýya baðlý tek birimi dýþ kapý silerek gerçekleþtiriniz.");
-						mode.finish();
-						break;
-					}
-					
-					if (unitItem.getCheckStatus() != Enums.NewlyAdded.getVal()
-							&& !Helper.IsUUID(unitItem.getUAVTNo())) {
-						Helper.giveNotification(getView().getContext(),
-								"Manuel eklenen veriler silinebilir.");
-						mode.finish();
-						break;
-					}
-
-					for (PushRequest prItem : PendingItems.PushRequests) {
-						String prUavt = prItem.uavtCode;
-						String checUavt = unitItem.getUAVTNo();
-						if (prUavt.equals(checUavt)) {
-							PendingItems.PushRequests.remove(prItem);
-							break;
-						}
-					}
-					
-					Helper.deleteItem(districtCode, villageCode, streetCode, csbmCode, doorNumber, unitItem.getIndoorNumber(),unitItem.getUAVTNo());
-					
-					_adapter.notifyDataSetChanged();
-					getData(getView());
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				mode.finish();
-				break;
-			}
-			case R.id.edit: {
-				UnitItem unitItem = _adapter.getItem(--itemCurrentPosition);
-				if (unitItem.getCheckStatus() != Enums.NewlyAdded.getVal()
-						&& !Helper.IsUUID(unitItem.getUAVTNo())) {
-					Helper.giveNotification(getView().getContext(),
-							"Manuel eklenen veriler düzenlenebilir.");
-					mode.finish();
-					break;
-				}
-
-				AddNewUnitFragment df = new AddNewUnitFragment();
-				Bundle b = new Bundle();
-				//ilk item için indoor boþ olacak
-				if (unitItem.getIndoorNumber().isEmpty()||unitItem.getIndoorNumber()==null) {
-					b.putString(Constants.EDIT_INDOOR, "");
-				}
-				else {
-					b.putString(Constants.EDIT_INDOOR, unitItem.getIndoorNumber());
-				}
-				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
-				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
-				b.putString(Constants.STREET_CODE_TAG, streetCode);
-				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
-				b.putString(Constants.DISTRICT_NAME_TAG, districtName);
-				b.putString(Constants.VILLAGE_NAME_TAG, villageName);
-				b.putString(Constants.STREET_NAME_TAG, streetName);
-				b.putString(Constants.CSBM_NAME_TAG, csbmName);
-				b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
-				b.putString(Constants.SITE_NAME_TAG, siteName);
-				b.putString(Constants.BLOCK_NAME_TAG, blockName);
-
-				df.setArguments(b);
-
-				FragmentTransaction ft = getFragmentManager()
-						.beginTransaction();
-				ft.replace(R.id.frame_container, df);
-				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-				ft.addToBackStack(null);
-				ft.commit();
-				mode.finish();
-				break;
-			}
-
-			default:
-				return false;
-			}
-			return true;
-		}
-	};
 }

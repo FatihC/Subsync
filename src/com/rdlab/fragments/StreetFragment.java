@@ -38,6 +38,7 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 	String villageName;
 	String districtCode;
 	String districtName;
+	boolean forControl;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +56,7 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 		villageName = bund.getString(Constants.VILLAGE_NAME_TAG);
 		districtCode = bund.getString(Constants.DISTRICT_CODE_TAG);
 		districtName = bund.getString(Constants.DISTRICT_NAME_TAG);
+		forControl = bund.getBoolean(Constants.FOR_CONTROL);
 
 		StringBuilder sb = new StringBuilder();
 		// sb.append(String.format("%s > %s > %s", Constants.SelectedCountyName,
@@ -114,6 +116,7 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 				b.putString(Constants.DISTRICT_NAME_TAG, districtName);
 				b.putString(Constants.VILLAGE_NAME_TAG, villageName);
 				b.putString(Constants.STREET_NAME_TAG, item.GetName());
+				b.putBoolean(Constants.FOR_CONTROL, forControl);
 				df.setArguments(b);
 
 				FragmentTransaction ft = getFragmentManager()

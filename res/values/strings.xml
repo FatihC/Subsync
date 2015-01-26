@@ -13,6 +13,7 @@
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
         <item >Tesisat Eşleştirme</item>
+        <item >Eşleşme Veri Kontrol</item>
         <item >Veriyi Güncelle</item>
         <item >Kullanıcı Bilgileri</item>
         <item >Şifre Değiştir</item>
@@ -24,6 +25,7 @@
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
         <item>@drawable/ic_home</item>
+        <item>@drawable/ic_debug</item>
         <item>@drawable/ic_sync</item>
         <item>@drawable/ic_user</item>
         <item>@drawable/ic_pass</item>
@@ -91,6 +93,20 @@
     <string name="_al_lan_i_l_e_">Çalışılan İlçe:</string>
     <string name="i_l_e_de_i_i_m_i_lemleri_i_i_n_merkeze_gi_tmeni_z_gerekmektedi_r_">İLÇE DEĞİŞİM İŞLEMLERİ İÇİN MERKEZE GİTMENİZ GEREKMEKTEDİR.</string>
     <string name="yeni_ifre">Yeni Şifre</string>
+    <string name="se_ili_birim_ile_ilgili_i_lemler">Seçili birim ile ilgili işlemler</string>
+    <string name="tespit_yap">Tespit Yap</string>
+    <string name="veri_g_ncelle">Veri Güncelle</string>
+    <string name="yap_lan_tespitler">Yapılan Tespitler</string>
+    <string name="yap_lan_tespiti_se_iniz">Yapılan Tespiti Seçiniz</string>
+    <string name="zaten_abone_sayac_mbs_de_g_ncel">Zaten Abone - Sayacı MBS’de Güncel</string>
+    <string name="zaten_abone_sayac_mbs_de_g_ncel_de_il">Zaten Abone - Sayacı MBS’de Güncel Değil</string>
+    <string name="abone_de_il_abone_yap_ld_">Abone Değil – Abone Yapıldı</string>
+    <string name="abone_de_il_abone_yap_lamad_">Abone Değil – Abone Yapılamadı</string>
+    <string name="kontrol_edildi_girilen_bilgiler_do_ru">Kontrol Edildi – Girilen Bilgiler Doğru</string>
+    <string name="abone_yap_lmas_na_gerek_yok">Abone Yapılmasına Gerek Yok</string>
+    <string name="abone_denetim_formu">Abone Denetim Formu</string>
+    <string name="a_klama">Açıklama</string>
+    <string name="tespiti_kaydet">Tespiti Kaydet</string>
     
     
         
