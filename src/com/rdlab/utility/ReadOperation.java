@@ -17,13 +17,15 @@ public class ReadOperation extends
 	IRepository repository;
 	DataEvent delegate;
 	ItemConditions conditions;
+	boolean forControl;
 
 	public ReadOperation(Context context, DataEvent delegate,
-			ItemConditions conditions) {
+			ItemConditions conditions,boolean forControl) {
 		// TODO Auto-generated constructor stub
 		repository = new Repository();
 		this.delegate = delegate;
 		this.conditions = conditions;
+		this.forControl=forControl;
 
 		dialog = new ProgressDialog(context);
 		dialog.setTitle("Güncelleniyor");
@@ -40,7 +42,15 @@ public class ReadOperation extends
 	@Override
 	protected Object doInBackground(ItemType... arg0) {
 		// TODO Auto-generated method stub
-		switch (arg0[0]) {
+		if (forControl) {
+			return getItemsForControl(arg0[0]);
+		}
+		
+		return getItems(arg0[0]);
+	}
+
+	private Object getItems(ItemType itemType){
+		switch (itemType) {
 		case District:
 			return repository.getDistrictItems();
 		case Village:
@@ -59,7 +69,27 @@ public class ReadOperation extends
 			return null;
 		}
 	}
-
+	
+	private Object getItemsForControl(ItemType itemType)
+	{
+		switch (itemType) {
+		case District:
+			return repository.getDistrictItemsForControl();
+		case Village:
+			return repository.getVillageItemsForControl();
+		case Street:
+			return repository.getStreetItemsForControl();
+		case CSBM:
+			return repository.getCSBMItemsForControl(conditions.getStreetCode());
+		case Block:
+			return repository.getBlockItemsForControl(conditions.getStreetCode(),conditions.getCSBMCode());
+		case Indoor:
+			return repository.getUnitItemsForControl(conditions.getStreetCode(),conditions.getCSBMCode(),conditions.getDoorNumber());
+		default:
+			return null;
+		}
+	}
+	
 	@Override
 	protected void onPostExecute(Object result) {
 		// TODO Auto-generated method stub

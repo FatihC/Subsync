@@ -40,7 +40,7 @@ public class CSBMFragment extends BaseFragment implements DataEvent {
 	String villageName;
 	String districtCode;
 	String districtName;
-	boolean forControl;
+	boolean forControl=false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -164,7 +164,7 @@ public class CSBMFragment extends BaseFragment implements DataEvent {
 		cond.setStreetCode(streetCode);
 		cond.setDistrictCode(districtCode);
 		cond.setVillageCode(villageCode);
-		operation = new ReadOperation(rootView.getContext(), this, cond);
+		operation = new ReadOperation(rootView.getContext(), this, cond,forControl);
 		operation.execute(ItemType.CSBM);
 	}
 

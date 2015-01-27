@@ -117,26 +117,26 @@ public class MainActivity extends BaseActivity {
 			fragment = getFragment(false);
 			break;
 		case 1:
-			//control fragment
+			// control fragment
 			fragment = getFragment(true);
 			break;
 		case 2:
 			fragment = new SyncFragment();
 			break;
 		case 3:
-			//kullanýcý bilgi
-			fragment=new UserFragment();
+			// kullanýcý bilgi
+			fragment = new UserFragment();
 			break;
 		case 4:
-			//þifre degis
-			fragment=new UserPasswordFragment();
+			// þifre degis
+			fragment = new UserPasswordFragment();
 			break;
 		case 5:
-			//çýkýþ
+			// çýkýþ
 			// fragment = new PagesFragment();
-			Constants.LoggedUserFullname="";
-			Constants.LoggedUserName="";
-			Constants.LoggedUserSerno=null;
+			Constants.LoggedUserFullname = "";
+			Constants.LoggedUserName = "";
+			Constants.LoggedUserSerno = null;
 			this.finish();
 			break;
 		default:
@@ -163,26 +163,22 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private Fragment getFragment(boolean forControl) {
-//		ArrayList<String> result = Helper.checkIfOnlyCenterExist();
-//		if (result.size() > 0) {
-			StreetFragment df = new StreetFragment();
-			Bundle b = new Bundle();
-			if (forControl) {
-				b.putBoolean(Constants.FOR_CONTROL, forControl);
-			}
-//			b.putString(Constants.DISTRICT_CODE_TAG, result.get(0));
-//			b.putString(Constants.DISTRICT_NAME_TAG, result.get(1));
-//			b.putString(Constants.VILLAGE_CODE_TAG, result.get(2));
-//			b.putString(Constants.VILLAGE_NAME_TAG, result.get(3));
-			b.putString(Constants.DISTRICT_CODE_TAG,Constants.SelectedDistrictCode);
-			b.putString(Constants.DISTRICT_NAME_TAG, Constants.SelectedDistrictName);
-			b.putString(Constants.VILLAGE_CODE_TAG, Constants.SelectedVillageCode);
-			b.putString(Constants.VILLAGE_NAME_TAG, Constants.SelectedVillageName);
-			df.setArguments(b);
-			return df;
-//		}
+		StreetFragment df = new StreetFragment();
+		Bundle b = new Bundle();
+		if (forControl) {
+			b.putBoolean(Constants.FOR_CONTROL, forControl);
+		}
+		// b.putString(Constants.DISTRICT_CODE_TAG, result.get(0));
+		// b.putString(Constants.DISTRICT_NAME_TAG, result.get(1));
+		// b.putString(Constants.VILLAGE_CODE_TAG, result.get(2));
+		// b.putString(Constants.VILLAGE_NAME_TAG, result.get(3));
+		b.putString(Constants.DISTRICT_CODE_TAG, Constants.SelectedDistrictCode);
+		b.putString(Constants.DISTRICT_NAME_TAG, Constants.SelectedDistrictName);
+		b.putString(Constants.VILLAGE_CODE_TAG, Constants.SelectedVillageCode);
+		b.putString(Constants.VILLAGE_NAME_TAG, Constants.SelectedVillageName);
+		df.setArguments(b);
+		return df;
 
-//		return new DistrictFragment();
 	}
 
 	@Override
@@ -201,74 +197,63 @@ public class MainActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.action_settings:
 			return true;
-//		case R.id.action_bozova:
-//			setGlobalConstants("1209", getString(R.string.action_bozova),
-//					"com.rdlab.model.Bozova", "37");
-//			return true;
-//		case R.id.action_birecik:
-//			setGlobalConstants("1194", getString(R.string.action_birecik),
-//					"com.rdlab.model.Birecik", "36");
-//			return true;
-//		case R.id.action_akcakale:
-//			setGlobalConstants("1115", getString(R.string.action_akcakale),
-//					"com.rdlab.model.Akcakale", "35");
-//			return true;
-//		case R.id.action_haliliye:
-//			setGlobalConstants("2092", getString(R.string.action_haliliye),
-//					"com.rdlab.model.Haliliye", "33");
-//			return true;
-//		case R.id.action_eyyubiye:
-//			setGlobalConstants("2091", getString(R.string.action_eyyubiye),
-//					"com.rdlab.model.Eyyubiye", "32");
-//			return true;
-//		case R.id.action_siverek:
-//			setGlobalConstants("1630", getString(R.string.action_siverek),
-//					"com.rdlab.model.Siverek", "42");
-//			return true;
-//		case R.id.action_karakopru:
-//			setGlobalConstants("2093", getString(R.string.action_karakopru),
-//					"com.rdlab.model.Karakopru", "34");
-//			return true;
-//		case R.id.action_suruc:
-//			setGlobalConstants("1643", getString(R.string.action_suruc),
-//					"com.rdlab.model.Suruc", "43");
-//			return true;
-//		case R.id.action_ceylanpinar:
-//			setGlobalConstants("1220", getString(R.string.action_ceylanpinar),
-//					"com.rdlab.model.Ceylanpinar", "38");
-//			return true;
-//		case R.id.action_halfeti:
-//			setGlobalConstants("1378", getString(R.string.action_halfeti),
-//					"com.rdlab.model.Halfeti", "39");
-//			return true;
-//		case R.id.action_harran:
-//			setGlobalConstants("1800", getString(R.string.action_harran),
-//					"com.rdlab.model.Harran", "40");
-//			return true;
-//		case R.id.action_hilvan:
-//			setGlobalConstants("1393", getString(R.string.action_hilvan),
-//					"com.rdlab.model.Hilvan", "41");
-//			return true;
-//		case R.id.action_viransehir:
-//			setGlobalConstants("1713", getString(R.string.action_viransehir),
-//					"com.rdlab.model.Viransehir", "44");
-//			return true;
+			// case R.id.action_bozova:
+			// setGlobalConstants("1209", getString(R.string.action_bozova),
+			// "com.rdlab.model.Bozova", "37");
+			// return true;
+			// case R.id.action_birecik:
+			// setGlobalConstants("1194", getString(R.string.action_birecik),
+			// "com.rdlab.model.Birecik", "36");
+			// return true;
+			// case R.id.action_akcakale:
+			// setGlobalConstants("1115", getString(R.string.action_akcakale),
+			// "com.rdlab.model.Akcakale", "35");
+			// return true;
+			// case R.id.action_haliliye:
+			// setGlobalConstants("2092", getString(R.string.action_haliliye),
+			// "com.rdlab.model.Haliliye", "33");
+			// return true;
+			// case R.id.action_eyyubiye:
+			// setGlobalConstants("2091", getString(R.string.action_eyyubiye),
+			// "com.rdlab.model.Eyyubiye", "32");
+			// return true;
+			// case R.id.action_siverek:
+			// setGlobalConstants("1630", getString(R.string.action_siverek),
+			// "com.rdlab.model.Siverek", "42");
+			// return true;
+			// case R.id.action_karakopru:
+			// setGlobalConstants("2093", getString(R.string.action_karakopru),
+			// "com.rdlab.model.Karakopru", "34");
+			// return true;
+			// case R.id.action_suruc:
+			// setGlobalConstants("1643", getString(R.string.action_suruc),
+			// "com.rdlab.model.Suruc", "43");
+			// return true;
+			// case R.id.action_ceylanpinar:
+			// setGlobalConstants("1220",
+			// getString(R.string.action_ceylanpinar),
+			// "com.rdlab.model.Ceylanpinar", "38");
+			// return true;
+			// case R.id.action_halfeti:
+			// setGlobalConstants("1378", getString(R.string.action_halfeti),
+			// "com.rdlab.model.Halfeti", "39");
+			// return true;
+			// case R.id.action_harran:
+			// setGlobalConstants("1800", getString(R.string.action_harran),
+			// "com.rdlab.model.Harran", "40");
+			// return true;
+			// case R.id.action_hilvan:
+			// setGlobalConstants("1393", getString(R.string.action_hilvan),
+			// "com.rdlab.model.Hilvan", "41");
+			// return true;
+			// case R.id.action_viransehir:
+			// setGlobalConstants("1713", getString(R.string.action_viransehir),
+			// "com.rdlab.model.Viransehir", "44");
+			// return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-//	private void setGlobalConstants(String code, String name, String className,
-//			String universalDistrictCode) {
-//		Constants.SelectedCountyCode = code;
-//		Constants.SelectedCountyName = name;
-//		Constants.SelectedClassName = className;
-//		Constants.SelectedUniversalCountyCode = universalDistrictCode;
-//		Toast.makeText(this, "Þehir seçiminiz tamamlandý.", Toast.LENGTH_SHORT)
-//				.show();
-//		setTitle(_appTitle);
-//		displayView(0);
-//	}
 
 	/***
 	 * Called when invalidateOptionsMenu() is triggered

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import com.rdlab.model.AddressListItem;
 import com.rdlab.model.BlockItem;
+import com.rdlab.model.PushRequest;
 import com.rdlab.model.SubscriberItem;
 import com.rdlab.model.UnitItem;
 import com.rdlab.utility.Helper;
@@ -182,8 +183,8 @@ public class Repository implements IRepository {
 	public ArrayList<AddressListItem> getStreetItemsForControl(String... params) {
 		String[] fields = new String[] { "StreetCode", "StreetName" };
 		String sql = String
-				.format("SELECT DISTINCT STREET_CODE, STREET_NAME FROM %s WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s'",
-						Helper.getTableName(), params[0], params[1], params[2]);
+				.format("SELECT DISTINCT STREET_CODE, STREET_NAME FROM %s WHERE STREET_CODE IN (%s)",
+						Helper.getTableName(), getControlDataSql(null,null));
 
 		return (ArrayList<AddressListItem>) Helper.getResultWithSql(fields,
 				sql, OperationObjectType.AddressItem);
@@ -193,10 +194,10 @@ public class Repository implements IRepository {
 	@Override
 	public ArrayList<AddressListItem> getCSBMItemsForControl(String... params) {
 		String[] fields = new String[] { "CSBMCode", "CSBMName" };
+		String[] cols = new String[] { "STREET_CODE" };
 		String sql = String
-				.format("SELECT DISTINCT CSBM_CODE, CSBM_NAME FROM %s WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s'",
-						Helper.getTableName(), params[0], params[1], params[2],
-						params[3]);
+				.format("SELECT DISTINCT CSBM_CODE, CSBM_NAME FROM %s WHERE STREET_CODE IN (%s) ",
+						Helper.getTableName(), getControlDataSql(cols, params));
 
 		return (ArrayList<AddressListItem>) Helper.getResultWithSql(fields,
 				sql, OperationObjectType.AddressItem);
@@ -205,26 +206,45 @@ public class Repository implements IRepository {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<BlockItem> getBlockItemsForControl(String... params) {
+		String[] cols = new String[] { "STREET_CODE","CSBM_CODE" };
 		String sql = String
 				.format("SELECT DOOR_NUMBER,SITE_NAME,BLOCK_NAME,CHECK_STATUS,COUNT(1) AS 'UNIT_COUNT' FROM %s"
-						+ " WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'"
+						+ " WHERE STREET_CODE IN (%s)"
 						+ " GROUP BY DOOR_NUMBER,SITE_NAME,BLOCK_NAME,CHECK_STATUS",
-						Helper.getTableName(),params[0], params[1], params[2], params[3], params[4]);
+						Helper.getTableName(),getControlDataSql(cols,params) );
 
 		return (ArrayList<BlockItem>) Helper.getResultWithSql(null, sql,
 				OperationObjectType.BlockItem);
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<UnitItem> getUnitItemsForControl(String... params) {
+		String[] cols = new String[] { "STREET_CODE", "CSBM_CODE", "DOOR_NUMBER" };
 		String sql = String
 				.format("SELECT INDOOR_NUMBER,UAVT_ADDRESS_NO,CHECK_STATUS FROM %s"
-						+ " WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND "
-						+ " CSBM_CODE='%s' AND DOOR_NUMBER='%s' AND INDOOR_NUMBER='%s' AND UAVT_ADDRESS_NO='%s'",
-						Helper.getTableName(),params[0], params[1], params[2], params[3], params[4],params[5],params[6]);
+						+ " WHERE STREET_CODE IN (%s)",
+						Helper.getTableName(),getControlDataSql(cols,params) );
 		return (ArrayList<UnitItem>) Helper.getResultWithSql(null, sql,
 				OperationObjectType.UnitItem);
+	}
+
+	private String getControlDataSql(String[] conditions,String[] params) {
+		StringBuilder sb=new StringBuilder();
+		sb.append("SELECT DISTINCT STREET_CODE  FROM PUSH_REQUEST WHERE IFNULL(WIRING_NO,'')='' AND ( METER_NO IS NOT NULL OR CHECK_STATUS IS NOT NULL) AND PUSHED=1 ");
+		if (params.length>0) {
+			sb.append(getConditionSql(conditions, params));
+		}
+		
+		return sb.toString();
+	}
+	
+	private String getConditionSql(String[] conditions,String[] params){
+		String sql="";
+		for (int i = 0; i < params.length; i++) {
+			sql+=String.format("AND %s ='%s'", conditions[i],params[i]);
+		}
+		
+		return sql;
 	}
 }

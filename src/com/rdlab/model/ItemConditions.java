@@ -8,6 +8,8 @@ public class ItemConditions {
 	private String StreetCode;
 	private String CSBMCode;
 	private String DoorNumber;
+	private String IndoorNumber;
+	private String UavtAddressCode;
 	private Long TesisatNo;
 	private int CountyId;
 	private int DistrictId;
@@ -85,6 +87,18 @@ public class ItemConditions {
 	}
 	public void setTesisatNo(Long tesisatNo) {
 		TesisatNo = tesisatNo;
+	}
+	public String getIndoorNumber() {
+		return IndoorNumber;
+	}
+	public void setIndoorNumber(String indoorNumber) {
+		IndoorNumber = indoorNumber;
+	}
+	public String getUavtAddressCode() {
+		return UavtAddressCode;
+	}
+	public void setUavtAddressCode(String uavtAddressCode) {
+		UavtAddressCode = uavtAddressCode;
 	}
 
 }

@@ -42,6 +42,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 	String indoorNumber;
 	String siteName;
 	String blockName;
+	boolean forControl;
 	boolean isSync;
 
 	ReadOperation operator;
@@ -74,6 +75,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		siteName = bund.getString(Constants.SITE_NAME_TAG);
 		blockName = bund.getString(Constants.BLOCK_NAME_TAG);
 		isSync = bund.getBoolean(Constants.CHECKED_UAVT);
+		forControl = bund.getBoolean(Constants.FOR_CONTROL);
 
 		final View rootView = inflater.inflate(R.layout.fragment_add_unit,
 				container, false);
@@ -188,7 +190,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		}
 		ItemConditions cond = new ItemConditions();
 		cond.setTesisatNo(Long.parseLong(wiringNo.getText().toString()));
-		operator = new ReadOperation(rootView.getContext(), this, cond);
+		operator = new ReadOperation(rootView.getContext(), this, cond,forControl);
 		operator.execute(ItemType.Subscriber);
 	}
 

@@ -38,7 +38,7 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 	String villageName;
 	String districtCode;
 	String districtName;
-	boolean forControl;
+	boolean forControl=false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,17 +59,11 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 		forControl = bund.getBoolean(Constants.FOR_CONTROL);
 
 		StringBuilder sb = new StringBuilder();
-		// sb.append(String.format("%s > %s > %s", Constants.SelectedCountyName,
-		// districtName.trim(), villageName.trim()));
 		sb.append(String.format("%s > ", Constants.SelectedCountyName));
 
 		View rootView = inflater.inflate(R.layout.fragment_home, container,
 				false);
 
-		// ((TextView)
-		// rootView.findViewById(R.id.headerText)).setText(Constants.STREET_HEADER_TEXT);
-
-		// ((TextView)rootView.findViewById(R.id.selectedValues)).setText(sb.toString());
 		((TextView) rootView.findViewById(R.id.selectedValues))
 				.setVisibility(View.GONE);
 
@@ -170,7 +164,8 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 		ItemConditions cond = new ItemConditions();
 		cond.setDistrictCode(districtCode);
 		cond.setVillageCode(villageCode);
-		operation = new ReadOperation(rootView.getContext(), this, cond);
+		operation = new ReadOperation(rootView.getContext(), this, cond,forControl);
+		
 		operation.execute(ItemType.Street);
 	}
 

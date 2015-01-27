@@ -66,7 +66,6 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 	String siteName;
 	String blockName;
 	int itemCurrentPosition;
-	boolean forControl;
 
 	String message;
 	boolean backPressed = false;
@@ -97,7 +96,6 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 		doorNumber = bund.getString(Constants.DOOR_NUMBER_TAG);
 		siteName = bund.getString(Constants.SITE_NAME_TAG);
 		blockName = bund.getString(Constants.BLOCK_NAME_TAG);
-		forControl = bund.getBoolean(Constants.FOR_CONTROL);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("%s > %s > %s >", streetName.trim(),
@@ -153,7 +151,6 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
 				b.putString(Constants.SITE_NAME_TAG, siteName);
 				b.putString(Constants.BLOCK_NAME_TAG, blockName);
-				b.putBoolean(Constants.FOR_CONTROL, forControl);
 				b.putBoolean(Constants.CHECKED_UAVT, item.isSynced());
 
 				df.setArguments(b);

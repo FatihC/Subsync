@@ -21,6 +21,7 @@ import com.rdlab.utility.PendingItems;
 import com.rdlab.utility.ReadOperation;
 
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.Editable;
@@ -59,7 +60,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 	String districtCode;
 	String districtName;
 	int itemCurrentPosition;
-	boolean forControl;
+	boolean forControl=false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,26 +126,20 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 					long arg3) {
 				// TODO Auto-generated method stub
 				BlockItem item = (BlockItem) arg0.getItemAtPosition(arg2);
-
-				UnitFragment df = new UnitFragment();
-				Bundle b = new Bundle();
-				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
-				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
-				b.putString(Constants.STREET_CODE_TAG, streetCode);
-				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
-				b.putString(Constants.DISTRICT_NAME_TAG, districtName);
-				b.putString(Constants.VILLAGE_NAME_TAG, villageName);
-				b.putString(Constants.STREET_NAME_TAG, streetName);
-				b.putString(Constants.CSBM_NAME_TAG, csbmName);
-				b.putString(Constants.DOOR_NUMBER_TAG, item.getDoorNumber());
-				b.putString(Constants.SITE_NAME_TAG, item.getSiteName());
-				b.putBoolean(Constants.FOR_CONTROL, forControl);
-				b.putString(Constants.BLOCK_NAME_TAG, item.getBlockName());
-				df.setArguments(b);
+				Fragment frg;	
+				if (!forControl) {
+					frg= new UnitFragment();
+					frg.setArguments(getBundle(item));
+				}
+				else {
+					frg= new UnitControlFragment();
+					frg.setArguments(getBundle(item));
+				}
+				
 
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
-				ft.replace(R.id.frame_container, df);
+				ft.replace(R.id.frame_container, frg);
 				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
 				ft.addToBackStack(null);
 				ft.commit();
@@ -158,6 +153,9 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
+				if (forControl) {
+					return false;
+				}
 				arg0.startActionMode(modeCallback);
 				arg0.setSelected(true);
 				itemCurrentPosition = arg2;
@@ -169,40 +167,44 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		ab.setCustomView(R.layout.custom_action_bar);
 		TextView info = (TextView) ab.getCustomView().findViewById(
 				R.id.txtTitle);
-		addButton = (Button) ab.getCustomView().findViewById(R.id.btnAddNew);
-		addButton.setText("Dýþ Kapý Ekle");
-		addButton.setVisibility(View.VISIBLE);
-		addButton.setOnClickListener(new OnClickListener() {
+		if (!forControl) {
+			addButton = (Button) ab.getCustomView().findViewById(R.id.btnAddNew);
+			addButton.setText("Dýþ Kapý Ekle");
+			addButton.setVisibility(View.VISIBLE);
+			addButton.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				AddDoorFragment df = new AddDoorFragment();
-				Bundle b = new Bundle();
-				b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
-				b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
-				b.putString(Constants.STREET_CODE_TAG, streetCode);
-				b.putString(Constants.CSBM_CODE_TAG, csbmCode);
-				b.putString(Constants.DISTRICT_NAME_TAG, districtName);
-				b.putString(Constants.VILLAGE_NAME_TAG, villageName);
-				b.putString(Constants.STREET_NAME_TAG, streetName);
-				b.putString(Constants.CSBM_NAME_TAG, csbmName);
-				df.setArguments(b);
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+					AddDoorFragment df = new AddDoorFragment();
+					Bundle b = new Bundle();
+					b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
+					b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
+					b.putString(Constants.STREET_CODE_TAG, streetCode);
+					b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+					b.putString(Constants.DISTRICT_NAME_TAG, districtName);
+					b.putString(Constants.VILLAGE_NAME_TAG, villageName);
+					b.putString(Constants.STREET_NAME_TAG, streetName);
+					b.putString(Constants.CSBM_NAME_TAG, csbmName);
+					df.setArguments(b);
 
-				FragmentTransaction ft = getFragmentManager()
-						.beginTransaction();
-				ft.replace(R.id.frame_container, df);
-				ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-				ft.addToBackStack(null);
-				ft.commit();
-			}
-		});
+					FragmentTransaction ft = getFragmentManager()
+							.beginTransaction();
+					ft.replace(R.id.frame_container, df);
+					ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+					ft.addToBackStack(null);
+					ft.commit();
+				}
+			});
 
+		}
+		
 		info.setText(Constants.BLOCK_HEADER_TEXT);
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
 				| ActionBar.DISPLAY_SHOW_HOME | ActionBar.NAVIGATION_MODE_LIST
 				| ActionBar.DISPLAY_HOME_AS_UP);
 
+		//setting list view header
 		View header = inflater.inflate(R.layout.header_block_list_item, null);
 		header.setOnClickListener(new OnClickListener() {
 			
@@ -240,6 +242,23 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		searchResult.setAdapter(_adapter);
 	}
 	
+	private Bundle getBundle(BlockItem item){
+		Bundle b = new Bundle();
+		b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
+		b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
+		b.putString(Constants.STREET_CODE_TAG, streetCode);
+		b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+		b.putString(Constants.DISTRICT_NAME_TAG, districtName);
+		b.putString(Constants.VILLAGE_NAME_TAG, villageName);
+		b.putString(Constants.STREET_NAME_TAG, streetName);
+		b.putString(Constants.CSBM_NAME_TAG, csbmName);
+		b.putString(Constants.DOOR_NUMBER_TAG, item.getDoorNumber());
+		b.putString(Constants.SITE_NAME_TAG, item.getSiteName());
+		b.putBoolean(Constants.FOR_CONTROL, forControl);
+		b.putString(Constants.BLOCK_NAME_TAG, item.getBlockName());
+		return b;
+	}
+	
 	@SuppressWarnings("unused")
 	private void setProperStatus(ArrayList<BlockItem> items)
 	{
@@ -251,7 +270,6 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		}
 	}
 	
-
 	private void getData(View rootView) {
 
 		ItemConditions cond = new ItemConditions();
@@ -259,7 +277,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		cond.setStreetCode(streetCode);
 		cond.setDistrictCode(districtCode);
 		cond.setVillageCode(villageCode);
-		operation = new ReadOperation(rootView.getContext(), this, cond);
+		operation = new ReadOperation(rootView.getContext(), this, cond,forControl);
 		operation.execute(ItemType.Block);
 	}
 

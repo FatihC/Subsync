@@ -62,7 +62,6 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 	String siteName;
 	String blockName;
 	int itemCurrentPosition;
-	boolean forControl;
 
 	String message;
 	boolean backPressed = false;
@@ -92,7 +91,6 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 		doorNumber = bund.getString(Constants.DOOR_NUMBER_TAG);
 		siteName = bund.getString(Constants.SITE_NAME_TAG);
 		blockName = bund.getString(Constants.BLOCK_NAME_TAG);
-		forControl = bund.getBoolean(Constants.FOR_CONTROL);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("%s > %s > %s >", streetName.trim(),
@@ -134,13 +132,12 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				// TODO Auto-generated method stub
-
-				final int itemPosition=--arg2;
 				
 				final Dialog dlg=new Dialog(getView().getContext());
 				dlg.setContentView(R.layout.dialog_unit_control);
 				dlg.setTitle("Uyarý");
+				
+				final UnitItem item = addressList.get(--arg2);
 				
 				Button btnUpdate=(Button)dlg.findViewById(R.id.btnUpdateData);
 				Button btnMakeAudit=(Button)dlg.findViewById(R.id.btnMakeAudit);
@@ -151,25 +148,10 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 					
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
 						dlg.dismiss();
-						UnitItem item = addressList.get(itemPosition);
 
 						AddWiringFragment df = new AddWiringFragment();
-						Bundle b = new Bundle();
-						b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
-						b.putString(Constants.UAVT_TAG, item.getUAVTNo());
-						b.putString(Constants.INDOOR_TAG, item.getIndoorNumber());
-						b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
-						b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
-						b.putString(Constants.STREET_CODE_TAG, streetCode);
-						b.putString(Constants.CSBM_CODE_TAG, csbmCode);
-						b.putString(Constants.SITE_NAME_TAG, siteName);
-						b.putString(Constants.BLOCK_NAME_TAG, blockName);
-						b.putBoolean(Constants.FOR_CONTROL, forControl);
-						b.putBoolean(Constants.CHECKED_UAVT, item.isSynced());
-
-						df.setArguments(b);
+						df.setArguments(getBundle(item));
 
 						FragmentTransaction ft = getFragmentManager()
 								.beginTransaction();
@@ -184,8 +166,11 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 					
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
+						dlg.dismiss();
+						
 						AuditFormFragment frg=new AuditFormFragment();
+						frg.setArguments(getBundle(item));
+						
 						FragmentTransaction ft = getFragmentManager()
 								.beginTransaction();
 						ft.replace(R.id.frame_container, frg);
@@ -199,8 +184,11 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 					
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
+						dlg.dismiss();
+						
 						AuditListFragment frg=new AuditListFragment();
+						frg.setArguments(getBundle(item));
+						
 						FragmentTransaction ft = getFragmentManager()
 								.beginTransaction();
 						ft.replace(R.id.frame_container, frg);
@@ -236,81 +224,11 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 			}
 		});
 		searchResult.addHeaderView(header);
-
-		//back button implementation
-		rootView.setFocusableInTouchMode(true);
-		rootView.requestFocus();
-		rootView.setOnKeyListener(new View.OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (keyCode == KeyEvent.KEYCODE_BACK) {
-					backPressed = true;
-					message = "Tüm eþleþmeler yapýlmadan çýkarsanýz verileriniz silinecektir. Çýkmak istediðinize emin misiniz?";
-					if (checkItemsForMatch()) {
-						try {
-							doBulkOperations();
-							Helper.updateStatus(districtCode, villageCode,
-									streetCode, csbmCode, doorNumber, "",
-									Enums.ReadyToSync,false);
-						} catch (ClassNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						getActivity().getFragmentManager().popBackStack();
-					} else if (!dialogShowed) {
-						warnUser();
-
-					}
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
-
+		
 		getData(rootView);
 		return rootView;
 	}
-
-	private void doBulkOperations() {
-		for (PushRequest pr : PendingItems.PushRequests) {
-			String sql="SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='"+pr.uavtCode+"'";
-			List<PushRequest> prList=PushRequest.findWithQuery(PushRequest.class, sql, null);
-			if (prList.size()>0) {
-				PushRequest itemToUpdate=prList.get(0);
-				itemToUpdate.setPushed(false);
-				itemToUpdate.wiringNo=pr.wiringNo;
-				itemToUpdate.customerName=pr.customerName;
-				itemToUpdate.meterBrand=pr.meterBrand;
-				itemToUpdate.meterBrandCode=pr.meterBrandCode;
-				itemToUpdate.meterNo=pr.meterNo;
-				itemToUpdate.checkStatus=pr.checkStatus;
-				itemToUpdate.blockName=pr.blockName;
-				itemToUpdate.siteName=pr.siteName;
-				itemToUpdate.doorNumber=pr.doorNumber;
-				itemToUpdate.indoorNumber=pr.indoorNumber;
-				PushRequest.save(itemToUpdate);
-			}
-			else {
-				PushRequest.save(pr);	
-			}
-		}
-
-		for (String str : PendingItems.IndoorNumbers) {
-			try {
-				Helper.updateStatus(districtCode, villageCode, streetCode,
-						csbmCode, doorNumber, str, Enums.ReadyToSync,false);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				Log.e("Update wiring error", "hata oluþtu update ederken");
-				e.printStackTrace();
-			}
-		}
-
-		PendingItems.PushRequests.clear();
-		PendingItems.IndoorNumbers.clear();
-	}
-
+	
 	@Override
 	public void OnDataChanged(Object items) {
 		// TODO Auto-generated method stub
@@ -331,16 +249,6 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 		addressList = items;
 		searchResult.setAdapter(_adapter);
 		// searchResult.setAdapter(_altAdapter);
-	}
-
-	private boolean checkItemsForMatch() {
-		for (UnitItem unt : addressList) {
-			if (!unt.isSynced()) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	private void getMatches(ArrayList<UnitItem> items) {
@@ -404,40 +312,23 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 		cond.setDistrictCode(districtCode);
 		cond.setVillageCode(villageCode);
 		cond.setDoorNumber(doorNumber);
-		operation = new ReadOperation(rootView.getContext(), this, cond);
+		operation = new ReadOperation(rootView.getContext(), this, cond,true);
 		operation.execute(ItemType.Indoor);
 	}
 
-	private void warnUser() {
-		dialogShowed = true;
-		AlertDialog dlg = new AlertDialog.Builder(getView().getContext())
-				.create();
-		dlg.setCancelable(false);
-		dlg.setTitle("Uyarý");
-		dlg.setMessage(message);
-		dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Evet",
-				new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						PendingItems.PushRequests.clear();
-						PendingItems.IndoorNumbers.clear();
-						getActivity().getFragmentManager().popBackStack();
-						dialogShowed = false;
-					}
-				});
-
-		dlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Hayýr",
-				new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						dialogShowed = false;
-						return;
-					}
-				});
-		dlg.show();
+	private Bundle getBundle(UnitItem item){
+		Bundle b = new Bundle();
+		b.putString(Constants.DOOR_NUMBER_TAG, doorNumber);
+		b.putString(Constants.UAVT_TAG, item.getUAVTNo());
+		b.putString(Constants.INDOOR_TAG, item.getIndoorNumber());
+		b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
+		b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
+		b.putString(Constants.STREET_CODE_TAG, streetCode);
+		b.putString(Constants.CSBM_CODE_TAG, csbmCode);
+		b.putString(Constants.SITE_NAME_TAG, siteName);
+		b.putString(Constants.BLOCK_NAME_TAG, blockName);
+		b.putBoolean(Constants.FOR_CONTROL, true);
+		b.putBoolean(Constants.CHECKED_UAVT, item.isSynced());
+		return b;
 	}
-
 }
