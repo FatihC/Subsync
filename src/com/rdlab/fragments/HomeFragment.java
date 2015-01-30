@@ -142,7 +142,7 @@ public class HomeFragment extends BaseFragment implements DataEvent {
 
 		ItemConditions cond = new ItemConditions();
 		cond.setCityCode(Constants.CITY_CODE);
-		operation = new ReadOperation(rootView.getContext(), this, cond);
+		operation = new ReadOperation(rootView.getContext(), this, cond,false);
 		operation.execute(ItemType.County);
 	}
 

@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.orm.SugarRecord;
 import com.orm.util.NamingHelper;
 import com.rdlab.adapters.BlockItemAdapter;
@@ -43,6 +45,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class BlockFragment extends BaseFragment implements DataEvent {
+	private final static Logger log = Logger.getLogger(BlockFragment.class);
 
 	BlockItemAdapter _adapter;
 	ArrayList<BlockItem> addressList;
@@ -60,7 +63,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 	String districtCode;
 	String districtName;
 	int itemCurrentPosition;
-	boolean forControl=false;
+	boolean forControl = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,16 +129,18 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 					long arg3) {
 				// TODO Auto-generated method stub
 				BlockItem item = (BlockItem) arg0.getItemAtPosition(arg2);
-				Fragment frg;	
+				Fragment frg;
 				if (!forControl) {
-					frg= new UnitFragment();
+					frg = new UnitFragment();
+					frg.setArguments(getBundle(item));
+				} else {
+					frg = new UnitControlFragment();
 					frg.setArguments(getBundle(item));
 				}
-				else {
-					frg= new UnitControlFragment();
-					frg.setArguments(getBundle(item));
-				}
-				
+
+				log.info(String
+						.format("Item clicked for detail with controlValue = [{%b}] and doorNubmer = [{%s}]",
+								forControl, item.getDoorNumber()));
 
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
@@ -168,7 +173,8 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		TextView info = (TextView) ab.getCustomView().findViewById(
 				R.id.txtTitle);
 		if (!forControl) {
-			addButton = (Button) ab.getCustomView().findViewById(R.id.btnAddNew);
+			addButton = (Button) ab.getCustomView()
+					.findViewById(R.id.btnAddNew);
 			addButton.setText("Dýþ Kapý Ekle");
 			addButton.setVisibility(View.VISIBLE);
 			addButton.setOnClickListener(new OnClickListener() {
@@ -188,6 +194,8 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 					b.putString(Constants.CSBM_NAME_TAG, csbmName);
 					df.setArguments(b);
 
+					log.info("New item creation linked clicked for block item");
+
 					FragmentTransaction ft = getFragmentManager()
 							.beginTransaction();
 					ft.replace(R.id.frame_container, df);
@@ -198,16 +206,16 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 			});
 
 		}
-		
+
 		info.setText(Constants.BLOCK_HEADER_TEXT);
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
 				| ActionBar.DISPLAY_SHOW_HOME | ActionBar.NAVIGATION_MODE_LIST
 				| ActionBar.DISPLAY_HOME_AS_UP);
 
-		//setting list view header
+		// setting list view header
 		View header = inflater.inflate(R.layout.header_block_list_item, null);
 		header.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
@@ -241,8 +249,8 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		addressList = items;
 		searchResult.setAdapter(_adapter);
 	}
-	
-	private Bundle getBundle(BlockItem item){
+
+	private Bundle getBundle(BlockItem item) {
 		Bundle b = new Bundle();
 		b.putString(Constants.DISTRICT_CODE_TAG, districtCode);
 		b.putString(Constants.VILLAGE_CODE_TAG, villageCode);
@@ -258,18 +266,19 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		b.putString(Constants.BLOCK_NAME_TAG, item.getBlockName());
 		return b;
 	}
-	
+
 	@SuppressWarnings("unused")
-	private void setProperStatus(ArrayList<BlockItem> items)
-	{
+	private void setProperStatus(ArrayList<BlockItem> items) {
 		for (BlockItem blockItem : items) {
-			boolean exist=Helper.checkBlockUnitExist(districtCode, villageCode, streetCode, csbmCode, blockItem.getDoorNumber());
+			boolean exist = Helper.checkBlockUnitExist(districtCode,
+					villageCode, streetCode, csbmCode,
+					blockItem.getDoorNumber());
 			if (exist) {
 				blockItem.setCheckStatus(Enums.ReadyToSync.getVal());
 			}
 		}
 	}
-	
+
 	private void getData(View rootView) {
 
 		ItemConditions cond = new ItemConditions();
@@ -277,7 +286,8 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 		cond.setStreetCode(streetCode);
 		cond.setDistrictCode(districtCode);
 		cond.setVillageCode(villageCode);
-		operation = new ReadOperation(rootView.getContext(), this, cond,forControl);
+		operation = new ReadOperation(rootView.getContext(), this, cond,
+				forControl);
 		operation.execute(ItemType.Block);
 	}
 
@@ -302,7 +312,6 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 			return true;
 		}
 
-
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 			switch (item.getItemId()) {
@@ -310,53 +319,68 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 				try {
 					BlockItem blockItem = _adapter
 							.getItem(--itemCurrentPosition);
-					boolean containsNewlyAdded=Helper.checkBlockUnitsNewlyAdded(districtCode, villageCode, streetCode, csbmCode, blockItem.getDoorNumber());
-					
-					if (blockItem.getCheckStatus() != Enums.NewlyAdded.getVal()&&!containsNewlyAdded) {
+					boolean containsNewlyAdded = Helper
+							.checkBlockUnitsNewlyAdded(districtCode,
+									villageCode, streetCode, csbmCode,
+									blockItem.getDoorNumber());
+					log.info(String
+							.format("Item delete action clicked for item item doornubmer = [{%s}] and item contains newly added item [{%b}]",
+									blockItem.getDoorNumber(),
+									containsNewlyAdded));
+
+					if (blockItem.getCheckStatus() != Enums.NewlyAdded.getVal()
+							&& !containsNewlyAdded) {
 						Helper.giveNotification(getView().getContext(),
 								"Manuel eklenen veriler silinebilir.");
+						log.warn("Item is newly added item unless synchronization you cant delete item");
 						mode.finish();
 						break;
 					}
-					
-					Class<?> t=Class.forName(Constants.SelectedClassName);
+
+					Class<?> t = Class.forName(Constants.SelectedClassName);
 					StringBuilder sb = new StringBuilder();
 					String tableName = NamingHelper.toSQLName(t);
 					sb.append(String
 							.format("SELECT UAVT_ADDRESS_NO FROM %s WHERE DISTRICT_CODE='%s' AND "
 									+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
-									tableName, districtCode, villageCode, streetCode,
-									csbmCode, blockItem.getDoorNumber()));
-					
-					List<?> listT=SugarRecord.findWithQuery(t, sb.toString(), null);
-					
+									tableName, districtCode, villageCode,
+									streetCode, csbmCode,
+									blockItem.getDoorNumber()));
+
+					List<?> listT = SugarRecord.findWithQuery(t, sb.toString(),
+							null);
+
 					for (PushRequest prItem : PendingItems.PushRequests) {
 						for (Object object : listT) {
-							Field f=object.getClass().getDeclaredField("UavtAddressNo");
+							Field f = object.getClass().getDeclaredField(
+									"UavtAddressNo");
 							f.setAccessible(true);
-							String value=f.get(object).toString();
-							String uavt=prItem.uavtCode;
+							String value = f.get(object).toString();
+							String uavt = prItem.uavtCode;
 							if (uavt.equals(value)) {
 								PendingItems.PushRequests.remove(prItem);
 							}
 						}
-						
-//						String prDoor = prItem.doorNumber;
-//						String checDoor = blockItem.getDoorNumber();
-//						String prVil= prItem.villageCode;
-//						String prStree = prItem.streetCode;
-//						String prCsbm= prItem.csbmCode;
-//						if (prDoor.equals(checDoor)&&prVil.equals(villageCode)&&prStree.equals(streetCode)&&prCsbm.equals(csbmCode)) {
-//							PendingItems.PushRequests.remove(prItem);
-//						}
+
+						// String prDoor = prItem.doorNumber;
+						// String checDoor = blockItem.getDoorNumber();
+						// String prVil= prItem.villageCode;
+						// String prStree = prItem.streetCode;
+						// String prCsbm= prItem.csbmCode;
+						// if
+						// (prDoor.equals(checDoor)&&prVil.equals(villageCode)&&prStree.equals(streetCode)&&prCsbm.equals(csbmCode))
+						// {
+						// PendingItems.PushRequests.remove(prItem);
+						// }
 
 					}
-					
-					
-					Helper.deleteItem(districtCode, villageCode, streetCode, csbmCode, blockItem.getDoorNumber(), "","");
+
+					Helper.deleteItem(districtCode, villageCode, streetCode,
+							csbmCode, blockItem.getDoorNumber(), "", "");
 					_adapter.notifyDataSetChanged();
 					getData(getView());
-				} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+				} catch (ClassNotFoundException | NoSuchFieldException
+						| IllegalAccessException | IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -365,9 +389,12 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 			}
 			case R.id.edit: {
 				BlockItem blockItem = _adapter.getItem(--itemCurrentPosition);
-				boolean containsNewlyAdded=Helper.checkBlockUnitsNewlyAdded(districtCode, villageCode, streetCode, csbmCode, blockItem.getDoorNumber());
-				
-				if (blockItem.getCheckStatus() != Enums.NewlyAdded.getVal()&&!containsNewlyAdded) {
+				boolean containsNewlyAdded = Helper.checkBlockUnitsNewlyAdded(
+						districtCode, villageCode, streetCode, csbmCode,
+						blockItem.getDoorNumber());
+
+				if (blockItem.getCheckStatus() != Enums.NewlyAdded.getVal()
+						&& !containsNewlyAdded) {
 					Helper.giveNotification(getView().getContext(),
 							"Manuel eklenen veriler düzenlenebilir.");
 					mode.finish();

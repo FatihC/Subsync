@@ -1,6 +1,5 @@
 package com.rdlab.utility;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,10 +11,10 @@ import java.util.UUID;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,6 +27,7 @@ import com.rdlab.model.Birecik;
 import com.rdlab.model.BlockItem;
 import com.rdlab.model.Bozova;
 import com.rdlab.model.Ceylanpinar;
+import com.rdlab.model.Configuration;
 import com.rdlab.model.Enums;
 import com.rdlab.model.Eyyubiye;
 import com.rdlab.model.Halfeti;
@@ -45,12 +45,12 @@ import de.mindpipe.android.logging.log4j.LogConfigurator;
 
 /**
  * @author N04155-1013
- *
+ * 
  */
 public class Helper {
 
 	private final static Logger log = Logger.getLogger(Helper.class);
-	
+
 	public static <T> AddressListItem mapAddressItemToListItem(T addressItem,
 			String[] fields) {
 		String code = "", name = "";
@@ -87,7 +87,9 @@ public class Helper {
 			return f.get(item);
 		} catch (ReflectiveOperationException | IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			log.error(String.format("Error occured while getting field value for %s class and %s field", item.getClass().getName(),fieldName));
+			log.error(String
+					.format("Error occured while getting field value for %s class and %s field",
+							item.getClass().getName(), fieldName));
 			return "";
 		}
 	}
@@ -123,30 +125,40 @@ public class Helper {
 
 		ArrayList<?> items = (ArrayList<?>) invokeMethodAnonymous(
 				"selectDistinct", new Class[] { Class.class, String[].class },
-				1, cols);
+				1, getClassName(), cols);
 		return Helper.mapAddressItemListToListItemList(items, fields);
 	}
 
 	public static Object invokeMethodAnonymous(String methodName,
-			Class<?>[] methodArgs, int paramCount, Object[]... params) {
+			Class<?>[] methodArgs, int paramCount, Object... params) {
 		Class<?> selectedClass;
 		try {
 			selectedClass = getClassName();
 			Method m = selectedClass.getMethod(methodName, methodArgs);
 
-			if (paramCount > 1) {
-				return m.invoke(null, selectedClass, params[0], params[1],
-						params[2]);
-			}
-			return m.invoke(null, selectedClass, params[0]);
+			return m.invoke(null, params);
+			//
+			// if (paramCount > 1) {
+			// return m.invoke(null, selectedClass, params[0], params[1],
+			// params[2]);
+			// }
+			// return m.invoke(null, selectedClass, params[0]);
 		} catch (NoSuchMethodException e) {
-			log.error(String.format("NoSuchMethodException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("NoSuchMethodException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		} catch (IllegalAccessException e) {
-			log.error(String.format("IllegalAccessException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("IllegalAccessException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		} catch (IllegalArgumentException e) {
-			log.error(String.format("IllegalArgumentException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("IllegalArgumentException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		} catch (InvocationTargetException e) {
-			log.error(String.format("InvocationTargetException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("InvocationTargetException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		}
 
 		return null;
@@ -165,15 +177,25 @@ public class Helper {
 			}
 			return m.invoke(null, selectedClass, params[0]);
 		} catch (ClassNotFoundException e) {
-			log.error(String.format("ClassNotFoundException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("ClassNotFoundException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		} catch (NoSuchMethodException e) {
-			log.error(String.format("NoSuchMethodException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("NoSuchMethodException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		} catch (IllegalAccessException e) {
-			log.error(String.format("IllegalAccessException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("IllegalAccessException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		} catch (IllegalArgumentException e) {
-			log.error(String.format("IllegalArgumentException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("IllegalArgumentException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		} catch (InvocationTargetException e) {
-			log.error(String.format("InvocationTargetException Error occured invokeMethodAnonymous for %s method and %s class", methodName,getClassName().getName()));
+			log.error(String
+					.format("InvocationTargetException Error occured invokeMethodAnonymous for %s method and %s class",
+							methodName, getClassName().getName()));
 		}
 
 		return null;
@@ -185,7 +207,7 @@ public class Helper {
 		ArrayList<?> items = (ArrayList<?>) invokeMethodAnonymous(
 				"selectDistinctWithWhere", new Class[] { Class.class,
 						String[].class, String[].class, String[].class }, 3,
-				cols, whereColumns, params);
+				getClassName(), cols, whereColumns, params);
 		return Helper.mapAddressItemListToListItemList(items, fields);
 	}
 
@@ -211,6 +233,20 @@ public class Helper {
 		Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 	}
 
+	private static void setFieldValue(Object t, String fieldName, Object value) {
+		Field checkField;
+		try {
+			checkField = t.getClass().getField(fieldName);
+			checkField.setAccessible(true);
+			checkField.set(t, value);
+		} catch (NoSuchFieldException | IllegalAccessException
+				| IllegalArgumentException e) {
+			log.warn(String
+					.format("Error occured during setting field value with exception %s",
+							e.getMessage()));
+		}
+	}
+
 	public static void updateStatus(String districtCode, String villageCode,
 			String streetCode, String csbmCode, String doorNumber,
 			String indoorNumber, Enums value, boolean updateAll)
@@ -220,10 +256,9 @@ public class Helper {
 		if (updateAll) {
 			sb.append(String
 					.format("SELECT * FROM %s WHERE  VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
-							tableName, villageCode, streetCode,
-							csbmCode, doorNumber));
-		}
-		else {
+							tableName, villageCode, streetCode, csbmCode,
+							doorNumber));
+		} else {
 			sb.append(String
 					.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
 							+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
@@ -234,278 +269,299 @@ public class Helper {
 			sb.append(String.format(" AND INDOOR_NUMBER='%s'", indoorNumber));
 		}
 
-		if (Constants.SelectedUniversalCountyCode.equals("32")) {
-			List<Eyyubiye> result = Eyyubiye.findWithQuery(Eyyubiye.class,
-					sb.toString(), null);
-
-			if (result.size() > 1) {
-				for (Eyyubiye getx : result) {
-					Eyyubiye item = getx;
-					item.setCheckStatus(value.getVal());
-					Eyyubiye.save(item);
-				}
-			} else if(result.size() == 1){
-				Eyyubiye item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Eyyubiye.save(item);
+		List<?> listOfT = SugarRecord.findWithQuery(getClassName(),
+				sb.toString(), null);
+		if (listOfT.size() > 1) {
+			for (Object object : listOfT) {
+				setFieldValue(object, "CheckStatus", value.getVal());
+				invokeMethodAnonymous("save", new Class[] { Object.class }, 1,
+						new Object[] { object });
 			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("33")) {
-			List<Haliliye> result = Haliliye.findWithQuery(Haliliye.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Haliliye getx : result) {
-					Haliliye item = getx;
-					item.setCheckStatus(value.getVal());
-					Haliliye.save(item);
-				}
-			} else if(result.size() == 1){
-				Haliliye item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Haliliye.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("34")) {
-			List<Karakopru> result = Karakopru.findWithQuery(Karakopru.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Karakopru getx : result) {
-					Karakopru item = getx;
-					item.setCheckStatus(value.getVal());
-					Karakopru.save(item);
-				}
-			} else if(result.size() == 1){
-				Karakopru item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Karakopru.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("35")) {
-			List<Akcakale> result = Akcakale.findWithQuery(Akcakale.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Akcakale getx : result) {
-					Akcakale item = getx;
-					item.setCheckStatus(value.getVal());
-					Akcakale.save(item);
-				}
-			} else if(result.size() == 1){
-				Akcakale item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Akcakale.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("36")) {
-			List<Birecik> result = Birecik.findWithQuery(Birecik.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Birecik getx : result) {
-					Birecik item = getx;
-					item.setCheckStatus(value.getVal());
-					Birecik.save(item);
-				}
-			} else if(result.size() == 1){
-				Birecik item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Birecik.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("37")) {
-			List<Bozova> result = Bozova.findWithQuery(Bozova.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Bozova getx : result) {
-					Bozova item = getx;
-					item.setCheckStatus(value.getVal());
-					Bozova.save(item);
-				}
-			} else if(result.size() == 1){
-				Bozova item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Bozova.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("38")) {
-			List<Ceylanpinar> result = Ceylanpinar.findWithQuery(
-					Ceylanpinar.class, sb.toString(), null);
-			if (result.size() > 1) {
-				for (Ceylanpinar getx : result) {
-					Ceylanpinar item = getx;
-					item.setCheckStatus(value.getVal());
-					Ceylanpinar.save(item);
-				}
-			} else if(result.size() == 1){
-				Ceylanpinar item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Ceylanpinar.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("39")) {
-			List<Halfeti> result = Halfeti.findWithQuery(Halfeti.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Halfeti getx : result) {
-					Halfeti item = getx;
-					item.setCheckStatus(value.getVal());
-					Halfeti.save(item);
-				}
-			} else if(result.size() == 1){
-				Halfeti item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Halfeti.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("40")) {
-			List<Harran> result = Harran.findWithQuery(Harran.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Harran getx : result) {
-					Harran item = getx;
-					item.setCheckStatus(value.getVal());
-					Harran.save(item);
-				}
-			} else if(result.size() == 1){
-				Harran item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Harran.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("41")) {
-			List<Hilvan> result = Hilvan.findWithQuery(Hilvan.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Hilvan getx : result) {
-					Hilvan item = getx;
-					item.setCheckStatus(value.getVal());
-					Hilvan.save(item);
-				}
-			} else if(result.size() == 1){
-				Hilvan item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Hilvan.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("42")) {
-			List<Siverek> result = Siverek.findWithQuery(Siverek.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Siverek getx : result) {
-					Siverek item = getx;
-					item.setCheckStatus(value.getVal());
-					Siverek.save(item);
-				}
-			} else if(result.size() == 1){
-				Siverek item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Siverek.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("43")) {
-			List<Suruc> result = Suruc.findWithQuery(Suruc.class,
-					sb.toString(), null);
-			if (result.size() > 1) {
-				for (Suruc getx : result) {
-					Suruc item = getx;
-					item.setCheckStatus(value.getVal());
-					Suruc.save(item);
-				}
-			} else if(result.size() == 1){
-				Suruc item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Suruc.save(item);
-			}
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("44")) {
-			List<Viransehir> result = Viransehir.findWithQuery(
-					Viransehir.class, sb.toString(), null);
-			if (result.size() > 1) {
-				for (Viransehir getx : result) {
-					Viransehir item = getx;
-					item.setCheckStatus(value.getVal());
-					Viransehir.save(item);
-				}
-			} else if(result.size() == 1){
-				Viransehir item = result.get(0);
-				item.setCheckStatus(value.getVal());
-				Viransehir.save(item);
-			}
+			return;
 		}
+
+		Object t = listOfT.get(0);
+		setFieldValue(t, "CheckStatus", value.getVal());
+		invokeMethodAnonymous("save", new Class[] { Object.class }, 1,
+				new Object[] { t });
+
+		// if (Constants.SelectedUniversalCountyCode.equals("32")) {
+		// List<Eyyubiye> result = Eyyubiye.findWithQuery(Eyyubiye.class,
+		// sb.toString(), null);
+		//
+		// if (result.size() > 1) {
+		// for (Eyyubiye getx : result) {
+		// Eyyubiye item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Eyyubiye.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Eyyubiye item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Eyyubiye.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("33")) {
+		// List<Haliliye> result = Haliliye.findWithQuery(Haliliye.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Haliliye getx : result) {
+		// Haliliye item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Haliliye.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Haliliye item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Haliliye.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("34")) {
+		// List<Karakopru> result = Karakopru.findWithQuery(Karakopru.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Karakopru getx : result) {
+		// Karakopru item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Karakopru.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Karakopru item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Karakopru.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("35")) {
+		// List<Akcakale> result = Akcakale.findWithQuery(Akcakale.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Akcakale getx : result) {
+		// Akcakale item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Akcakale.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Akcakale item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Akcakale.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("36")) {
+		// List<Birecik> result = Birecik.findWithQuery(Birecik.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Birecik getx : result) {
+		// Birecik item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Birecik.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Birecik item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Birecik.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("37")) {
+		// List<Bozova> result = Bozova.findWithQuery(Bozova.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Bozova getx : result) {
+		// Bozova item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Bozova.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Bozova item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Bozova.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("38")) {
+		// List<Ceylanpinar> result = Ceylanpinar.findWithQuery(
+		// Ceylanpinar.class, sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Ceylanpinar getx : result) {
+		// Ceylanpinar item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Ceylanpinar.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Ceylanpinar item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Ceylanpinar.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("39")) {
+		// List<Halfeti> result = Halfeti.findWithQuery(Halfeti.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Halfeti getx : result) {
+		// Halfeti item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Halfeti.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Halfeti item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Halfeti.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("40")) {
+		// List<Harran> result = Harran.findWithQuery(Harran.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Harran getx : result) {
+		// Harran item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Harran.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Harran item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Harran.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("41")) {
+		// List<Hilvan> result = Hilvan.findWithQuery(Hilvan.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Hilvan getx : result) {
+		// Hilvan item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Hilvan.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Hilvan item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Hilvan.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("42")) {
+		// List<Siverek> result = Siverek.findWithQuery(Siverek.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Siverek getx : result) {
+		// Siverek item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Siverek.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Siverek item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Siverek.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("43")) {
+		// List<Suruc> result = Suruc.findWithQuery(Suruc.class,
+		// sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Suruc getx : result) {
+		// Suruc item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Suruc.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Suruc item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Suruc.save(item);
+		// }
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("44")) {
+		// List<Viransehir> result = Viransehir.findWithQuery(
+		// Viransehir.class, sb.toString(), null);
+		// if (result.size() > 1) {
+		// for (Viransehir getx : result) {
+		// Viransehir item = getx;
+		// item.setCheckStatus(value.getVal());
+		// Viransehir.save(item);
+		// }
+		// } else if(result.size() == 1){
+		// Viransehir item = result.get(0);
+		// item.setCheckStatus(value.getVal());
+		// Viransehir.save(item);
+		// }
+		// }
 	}
-	
+
 	public static void deleteItem(String districtCode, String villageCode,
 			String streetCode, String csbmCode, String doorNumber,
-			String indoorNumber,String uavtNo)
-			throws ClassNotFoundException {
+			String indoorNumber, String uavtNo) throws ClassNotFoundException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(String
 				.format("DISTRICT_CODE='%s' AND "
 						+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
-						 districtCode, villageCode, streetCode,
-						csbmCode, doorNumber));
+						districtCode, villageCode, streetCode, csbmCode,
+						doorNumber));
 		if (!indoorNumber.isEmpty()) {
-			sb.append(String.format(" AND INDOOR_NUMBER='%s' AND UAVT_ADDRESS_NO='%s'", indoorNumber,uavtNo));
+			sb.append(String.format(
+					" AND INDOOR_NUMBER='%s' AND UAVT_ADDRESS_NO='%s'",
+					indoorNumber, uavtNo));
 		}
 
-		if (Constants.SelectedUniversalCountyCode.equals("32")) {
-			Eyyubiye.deleteAll(Eyyubiye.class,
-					sb.toString(), null);
-		} else if (Constants.SelectedUniversalCountyCode.equals("33")) {
-			Haliliye.deleteAll(Haliliye.class,
-					sb.toString(), null);
+		invokeMethodAnonymous("deleteAll", new Class[] { Class.class,
+				String.class, String[].class }, 3, getClassName(),
+				sb.toString(), null);
 
-		} else if (Constants.SelectedUniversalCountyCode.equals("34")) {
-			Karakopru.deleteAll(Karakopru.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("35")) {
-			Akcakale.deleteAll(Akcakale.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("36")) {
-			Birecik.deleteAll(Birecik.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("37")) {
-			Bozova.deleteAll(Bozova.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("38")) {
-			Ceylanpinar.deleteAll(Ceylanpinar.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("39")) {
-			Halfeti.deleteAll(Halfeti.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("40")) {
-			Harran.deleteAll(Harran.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("41")) {
-			Hilvan.deleteAll(Hilvan.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("42")) {
-			Siverek.deleteAll(Siverek.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("43")) {
-			Suruc.deleteAll(Suruc.class,
-					sb.toString(), null);
-
-		} else if (Constants.SelectedUniversalCountyCode.equals("44")) {
-			Viransehir.deleteAll(Viransehir.class,
-					sb.toString(), null);
-		}
+		// if (Constants.SelectedUniversalCountyCode.equals("32")) {
+		// Eyyubiye.deleteAll(Eyyubiye.class,
+		// sb.toString(), null);
+		// } else if (Constants.SelectedUniversalCountyCode.equals("33")) {
+		// Haliliye.deleteAll(Haliliye.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("34")) {
+		// Karakopru.deleteAll(Karakopru.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("35")) {
+		// Akcakale.deleteAll(Akcakale.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("36")) {
+		// Birecik.deleteAll(Birecik.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("37")) {
+		// Bozova.deleteAll(Bozova.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("38")) {
+		// Ceylanpinar.deleteAll(Ceylanpinar.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("39")) {
+		// Halfeti.deleteAll(Halfeti.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("40")) {
+		// Harran.deleteAll(Harran.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("41")) {
+		// Hilvan.deleteAll(Hilvan.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("42")) {
+		// Siverek.deleteAll(Siverek.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("43")) {
+		// Suruc.deleteAll(Suruc.class,
+		// sb.toString(), null);
+		//
+		// } else if (Constants.SelectedUniversalCountyCode.equals("44")) {
+		// Viransehir.deleteAll(Viransehir.class,
+		// sb.toString(), null);
+		// }
 	}
 
 	public static void updateData(String districtCode, String villageCode,
 			String streetCode, String csbmCode, String doorNumber,
 			String indoorNumber, String newDoorNum, String newSiteName,
-			String newBlockName, String newIndoorNum,boolean fromUnit)
+			String newBlockName, String newIndoorNum, boolean fromUnit)
 			throws ClassNotFoundException {
 		StringBuilder sb = new StringBuilder();
-		String tableName =getTableName();
+		String tableName = getTableName();
 		sb.append(String
 				.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
 						+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
@@ -767,44 +823,52 @@ public class Helper {
 		return isGuid;
 	}
 
-	public static boolean IsIntParseable(String val)
-	{
+	public static boolean IsIntParseable(String val) {
 		try {
 			@SuppressWarnings("unused")
-			int x=Integer.parseInt(val);
+			int x = Integer.parseInt(val);
 			return true;
 		} catch (Exception e) {
 			// TODO: handle exception
-			Log.w("Integer parse warning", "Unable to parse string value to int");
+			Log.w("Integer parse warning",
+					"Unable to parse string value to int");
 			return false;
 		}
 	}
 
-	public static Class<?> getClassName(){
+	public static Class<?> getClassName() {
 		try {
 			return Class.forName(Constants.SelectedClassName);
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
 	}
-	
-	public static String getTableName(){
+
+	public static String getTableName() {
 		return NamingHelper.toSQLName(getClassName());
 	}
 
 	/**
 	 * Getting result from sugarrecord with given sql query
-	 * @param fields - for only addressýtem operation for other operation types you can enter null value
-	 * @param sql - sql query for getting data from database
-	 * @param operationType - operation type enum declared in repository class.ç
-	 * @return for addressýtem - List<AddressItem> for block item - List<BlockItem> for  unit item - List<UnitItem>
+	 * 
+	 * @param fields
+	 *            - for only addressýtem operation for other operation types you
+	 *            can enter null value
+	 * @param sql
+	 *            - sql query for getting data from database
+	 * @param operationType
+	 *            - operation type enum declared in repository class.ç
+	 * @return for addressýtem - List<AddressItem> for block item -
+	 *         List<BlockItem> for unit item - List<UnitItem>
 	 */
-	public static ArrayList<?> getResultWithSql(String[] fields,String sql,Repository.OperationObjectType operationType) {
-		
-		List<?> listOfT=SugarRecord.findWithQuery(Helper.getClassName(),sql,null);
+	public static ArrayList<?> getResultWithSql(String[] fields, String sql,
+			Repository.OperationObjectType operationType) {
+
+		List<?> listOfT = SugarRecord.findWithQuery(Helper.getClassName(), sql,
+				null);
 		switch (operationType) {
 		case AddressItem:
-			ArrayList<AddressListItem> result=new ArrayList<AddressListItem>();
+			ArrayList<AddressListItem> result = new ArrayList<AddressListItem>();
 			for (Object object : listOfT) {
 				result.add(Helper.mapAddressItemToListItem(object, fields));
 			}
@@ -816,11 +880,10 @@ public class Helper {
 		default:
 			return null;
 		}
-		
-		
+
 	}
-	
-	public static ArrayList<BlockItem> mapItemsToBlockItemList(List<?> items){
+
+	public static ArrayList<BlockItem> mapItemsToBlockItemList(List<?> items) {
 		ArrayList<BlockItem> result = new ArrayList<BlockItem>();
 
 		try {
@@ -867,11 +930,11 @@ public class Helper {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
-	} 
-	
-	public static ArrayList<UnitItem> mapItemsToUnitItemList(List<?> items){
+	}
+
+	public static ArrayList<UnitItem> mapItemsToUnitItemList(List<?> items) {
 		ArrayList<UnitItem> result = new ArrayList<UnitItem>();
 		try {
 
@@ -912,13 +975,94 @@ public class Helper {
 
 		return result;
 	}
-	
-	public static void configureLog4J(){
+
+	@SuppressLint("SdCardPath")
+	public static void configureLog4J() {
 		final LogConfigurator logConfigurator = new LogConfigurator();
 
-		logConfigurator.setFileName(Environment.getExternalStorageDirectory() + File.separator + "uavt.log");
+		logConfigurator.setFileName("/sdcard/Download/uavt.log");
+		logConfigurator.setUseFileAppender(true);
 		logConfigurator.setRootLevel(Level.ALL);
 		logConfigurator.setLevel("org.apache", Level.ALL);
 		logConfigurator.configure();
 	}
+
+	public static void updateLastSyncDate(boolean forFirst) {
+		List<Configuration> cf = Configuration.listAll(Configuration.class);
+		boolean contains = false;
+		if (cf.size() > 0) {
+			// check et varmý
+			for (Configuration configuration : cf) {
+				String cfKey = configuration.getKey();
+				if (cfKey.equals(Constants.LAST_SYNC_TAG)) {
+					configuration.setValue(DateUtils.nowLong().toString());
+					Configuration.save(configuration);
+					contains = true;
+					break;
+				}
+			}
+		}
+
+		if (cf.size() == 0 && !contains) {
+			Configuration cfNew = new Configuration();
+			cfNew.setKey(Constants.LAST_SYNC_TAG);
+			if (forFirst) {
+				cfNew.setValue(DateUtils.nowLong().toString());
+			}
+			Configuration.save(cfNew);
+		}
+
+	}
+
+	public static String getLastSyncDate() {
+		String date = "";
+		List<Configuration> cf = Configuration.listAll(Configuration.class);
+		if (cf.size() > 0) {
+			// check et varmý
+			for (Configuration configuration : cf) {
+				String cfKey = configuration.getKey();
+				if (cfKey.equals(Constants.LAST_SYNC_TAG)) {
+					try {
+						return configuration.getValue();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+			}
+		}
+
+		return date;
+	}
+
+	public static long getMaxSbsDate(){
+		
+		try {
+			Class<?> t= Class.forName(Constants.SelectedClassName + "Mbs");
+			StringBuilder sb = new StringBuilder();
+			sb.append(String
+					.format("select max(ILK_SOZLESME_TARIHI)as ILK_SOZLESME_TARIHI from %s",
+							NamingHelper.toSQLName(t)));
+			List<?> listOft = SugarRecord.findWithQuery(t, sb.toString(), null);
+			if (listOft.size() > 0) {
+				Object obj = listOft.get(0);
+				Field f = obj.getClass().getDeclaredField("IlkSozlesmeTarihi");
+				f.setAccessible(true);
+				Number n1 = (Number) f.get(obj);
+				if (n1 != null) {
+					return n1.longValue();
+				}
+				return 0;
+			} else
+				return 0;
+		} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+			log.error("Error occured in getting Max Subscriber Contract date");
+			return 0;
+		}
+		
+
+	}
+
 }

@@ -2,6 +2,8 @@ package com.rdlab.fragments;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import com.rdlab.adapters.AddressItemAdapter;
 import com.rdlab.dependencyInjection.BaseFragment;
 import com.rdlab.events.DataEvent;
@@ -27,7 +29,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class CSBMFragment extends BaseFragment implements DataEvent {
-
+	private final static Logger log = Logger.getLogger(CSBMFragment.class);
+	
 	AddressItemAdapter _adapter;
 	ArrayList<AddressListItem> addressList;
 	ArrayList<AddressListItem> filteredList;
@@ -116,6 +119,8 @@ public class CSBMFragment extends BaseFragment implements DataEvent {
 				b.putString(Constants.CSBM_NAME_TAG, item.GetName());
 				b.putBoolean(Constants.FOR_CONTROL, forControl);
 				df.setArguments(b);
+				
+				log.info(String.format("Item clicked for detail in block vals with csbmcode = [{%s}]",item.GetCode()));
 
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();

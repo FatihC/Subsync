@@ -128,7 +128,7 @@ public class DistrictFragment extends BaseFragment implements DataEvent {
 		}*/
 
 		ItemConditions cond = new ItemConditions();
-		operation = new ReadOperation(rootView.getContext(), this,cond);
+		operation = new ReadOperation(rootView.getContext(), this,cond,false);
 		operation.execute(ItemType.District);
 	}
 

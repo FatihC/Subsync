@@ -2,6 +2,8 @@ package com.rdlab.fragments;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import com.rdlab.adapters.AddressItemAdapter;
 import com.rdlab.dependencyInjection.BaseFragment;
 import com.rdlab.events.DataEvent;
@@ -28,6 +30,8 @@ import android.widget.TextView;
 
 public class StreetFragment extends BaseFragment implements DataEvent {
 
+	private final static Logger log = Logger.getLogger(StreetFragment.class);
+	
 	AddressItemAdapter _adapter;
 	ArrayList<AddressListItem> addressList;
 	ArrayList<AddressListItem> filteredList;
@@ -112,6 +116,8 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 				b.putString(Constants.STREET_NAME_TAG, item.GetName());
 				b.putBoolean(Constants.FOR_CONTROL, forControl);
 				df.setArguments(b);
+				
+				log.info(String.format("Item clicked for detail with streetcode = [{%s}]",item.GetCode()));
 
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
@@ -141,6 +147,7 @@ public class StreetFragment extends BaseFragment implements DataEvent {
 		// TODO Auto-generated method stub
 		@SuppressWarnings("unchecked")
 		ArrayList<AddressListItem> castedItems = (ArrayList<AddressListItem>) items;
+		log.info(String.format("Data retrieved from database with length [%d]",castedItems.size()));
 		setListView(castedItems);
 	}
 

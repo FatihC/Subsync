@@ -2,7 +2,7 @@ package com.rdlab.model;
 
 public enum AuditProgressStatus {
 	Initial(0),
-	Progress(0),
+	Progress(1),
 	Finished(2);
 	
 	public int Type=0;
@@ -14,4 +14,8 @@ public enum AuditProgressStatus {
 	public int getVal() {
         return Type;
     }
+	
+	public String getStringVal(){
+		return String.valueOf(this.Type);
+	}
 }

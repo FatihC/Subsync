@@ -67,6 +67,11 @@ public class BaseActivity extends Activity {
 		else {
 			assignConfigVals();
 		}
+		if (!Constants.Log4JConfigured) {
+			Helper.configureLog4J();	
+			Constants.Log4JConfigured=true;
+		}
+		
 		
 	}
 	

@@ -1,5 +1,7 @@
 package com.rdlab.fragments;
 
+import java.util.ArrayList;
+
 import com.rdlab.events.DataEvent;
 import com.rdlab.subssync.R;
 import com.rdlab.utility.Constants;
@@ -42,7 +44,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 	String indoorNumber;
 	String siteName;
 	String blockName;
-	boolean forControl;
+	boolean forControl = false;
 	boolean isSync;
 
 	ReadOperation operator;
@@ -185,17 +187,19 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 
 	private void searchWiring(View rootView) {
 		if (wiringNo.getText().toString().isEmpty()) {
-			Helper.giveNotification(getView().getContext(), "Abone numarasý girmeniz gerekmektedir.");
+			Helper.giveNotification(getView().getContext(),
+					"Abone numarasý girmeniz gerekmektedir.");
 			return;
 		}
 		ItemConditions cond = new ItemConditions();
 		cond.setTesisatNo(Long.parseLong(wiringNo.getText().toString()));
-		operator = new ReadOperation(rootView.getContext(), this, cond,forControl);
+		operator = new ReadOperation(rootView.getContext(), this, cond,
+				forControl);
 		operator.execute(ItemType.Subscriber);
 	}
 
 	private void warnUser() {
-		dialogShowed=true;
+		dialogShowed = true;
 		AlertDialog dlg = new AlertDialog.Builder(getView().getContext())
 				.create();
 		dlg.setCancelable(false);
@@ -209,7 +213,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 						// TODO Auto-generated method stub
 						if (backPressed) {
 							getActivity().getFragmentManager().popBackStack();
-							dialogShowed=false;
+							dialogShowed = false;
 						}
 					}
 				});
@@ -220,7 +224,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
-						dialogShowed=false;
+						dialogShowed = false;
 						return;
 					}
 				});
@@ -233,10 +237,8 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		PushRequest pr = new PushRequest();
 		// pr.setUserSerno(Constants.LoggedUserSerno);
 		pr.setUserSerno(Constants.LoggedUserSerno);
-//		pr.setDistrictCode(districtCode);
-		
-		
-		
+		// pr.setDistrictCode(districtCode);
+
 		pr.setDistrictCode(Constants.SelectedUniversalCountyCode);
 		pr.setCsbmCode(csbmCode);
 		pr.setIndoorNumber(indoorNumber);
@@ -266,7 +268,8 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 			if (meterNo.length() > 0 && selectedBrand.length() > 0) {
 				pr.setMeterNo(meterNo);
 				pr.setMeterBrand(selectedBrand);
-				pr.setMeterBrandCode(Constants.METER_BRAND_CODES.get(selectedBrand));
+				pr.setMeterBrandCode(Constants.METER_BRAND_CODES
+						.get(selectedBrand));
 			} else if (selectedStatus.length() > 0) {
 				pr.setCheckStatus(""
 						+ AddWiringFragment.this.statuses.getSelectedItemId());
@@ -276,43 +279,69 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 				return;
 			}
 		}
-		boolean found=false;
-		
-		for (PushRequest prItem : PendingItems.PushRequests) {
-			String prUavt=prItem.uavtCode;
-			String match=pr.uavtCode;
-			if (prUavt.equals(match)) {
-				found=true;
-				prItem.wiringNo=pr.wiringNo;
-				prItem.meterBrand=pr.meterBrand;
-				prItem.meterBrandCode=pr.meterBrandCode;
-				prItem.meterNo=pr.meterNo;
-				prItem.blockName=pr.blockName;
-				prItem.siteName=pr.siteName;
-				prItem.doorNumber=pr.doorNumber;
-				prItem.indoorNumber=pr.indoorNumber;
-				prItem.customerName=pr.customerName;
-				prItem.checkStatus=pr.checkStatus;
-			}
+		// for control implementation
+		if (forControl) {
+			updateOrInsertPushRequestToDb(pr);
+		} else {
+			updateOrInsertPushRequestToQueue(pr);
 		}
 		
-		if (!found) {
-			PendingItems.PushRequests.add(pr);
-			PendingItems.IndoorNumbers.add(indoorNumber);	
+		getActivity().getFragmentManager().popBackStack();
+	}
+
+	private void updateOrInsertPushRequestToDb(PushRequest pr) {
+		String sql = String.format(
+				"SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='%s'", pr.uavtCode);
+		ArrayList<PushRequest> prList = (ArrayList<PushRequest>) PushRequest
+				.findWithQuery(PushRequest.class, sql, null);
+		if (prList == null || prList.size() < 1) {
+			// there is no specific item
+			// TODO analyze business flow for this decision
+		} else {
+			PushRequest itemToUpdate = prList.get(0);
+			itemToUpdate.setPushed(false);
+			itemToUpdate.wiringNo = pr.wiringNo;
+			itemToUpdate.customerName = pr.customerName;
+			itemToUpdate.meterBrand = pr.meterBrand;
+			itemToUpdate.meterBrandCode = pr.meterBrandCode;
+			itemToUpdate.meterNo = pr.meterNo;
+			itemToUpdate.checkStatus = pr.checkStatus;
+			itemToUpdate.blockName = pr.blockName;
+			itemToUpdate.siteName = pr.siteName;
+			itemToUpdate.doorNumber = pr.doorNumber;
+			itemToUpdate.indoorNumber = pr.indoorNumber;
+			PushRequest.save(itemToUpdate);
 		}
 
-//		PushRequest.save(pr);
-//		try {
-//			Helper.updateStatus(districtCode, villageCode, streetCode,
-//					csbmCode, doorNumber, indoorNumber, Enums.Completed);
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			Log.e("Update wiring error", "hata oluþtu update ederken");
-//			e.printStackTrace();
-//		}
+	}
+
+	private void updateOrInsertPushRequestToQueue(PushRequest pr) {
+		boolean found = false;
+
+		for (PushRequest prItem : PendingItems.PushRequests) {
+			String prUavt = prItem.uavtCode;
+			String match = pr.uavtCode;
+			if (prUavt.equals(match)) {
+				found = true;
+				prItem.wiringNo = pr.wiringNo;
+				prItem.meterBrand = pr.meterBrand;
+				prItem.meterBrandCode = pr.meterBrandCode;
+				prItem.meterNo = pr.meterNo;
+				prItem.blockName = pr.blockName;
+				prItem.siteName = pr.siteName;
+				prItem.doorNumber = pr.doorNumber;
+				prItem.indoorNumber = pr.indoorNumber;
+				prItem.customerName = pr.customerName;
+				prItem.checkStatus = pr.checkStatus;
+			}
+		}
+
+		if (!found) {
+			PendingItems.PushRequests.add(pr);
+			PendingItems.IndoorNumbers.add(indoorNumber);
+		}
 
 		Toast.makeText(getActivity().getApplicationContext(), "Bilgi Eklendi",
 				Toast.LENGTH_LONG).show();
-		getActivity().getFragmentManager().popBackStack();
 	}
 }

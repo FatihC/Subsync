@@ -321,7 +321,7 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 	private void setListView(ArrayList<UnitItem> items) {
 		getMatches(items);
 		_adapter = new UnitItemAdapter(getActivity().getApplicationContext(),
-				0, items);
+				0, items,false);
 		addressList = items;
 		searchResult.setAdapter(_adapter);
 		// searchResult.setAdapter(_altAdapter);
@@ -398,7 +398,7 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 		cond.setDistrictCode(districtCode);
 		cond.setVillageCode(villageCode);
 		cond.setDoorNumber(doorNumber);
-		operation = new ReadOperation(rootView.getContext(), this, cond);
+		operation = new ReadOperation(rootView.getContext(), this, cond,false);
 		operation.execute(ItemType.Indoor);
 	}
 

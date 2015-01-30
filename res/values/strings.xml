@@ -107,6 +107,10 @@
     <string name="abone_denetim_formu">Abone Denetim Formu</string>
     <string name="a_klama">Açıklama</string>
     <string name="tespiti_kaydet">Tespiti Kaydet</string>
+    <string name="tespit">Tespit</string>
+    <string name="tespit_tarihi">Tespit Tarihi</string>
+    <string name="tespit_durumu">Tespit Durumu</string>
+    <string name="tespit_yap_lan_durum">Tespit Yapılan Durum</string>
     
     
         

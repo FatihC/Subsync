@@ -2,6 +2,8 @@ package com.rdlab.subssync;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import com.rdlab.adapters.NavigationDrawerAdapter;
 import com.rdlab.dependencyInjection.BaseActivity;
 import com.rdlab.fragments.StreetFragment;
@@ -10,6 +12,7 @@ import com.rdlab.fragments.UserFragment;
 import com.rdlab.fragments.UserPasswordFragment;
 import com.rdlab.model.NavigationDrawerItem;
 import com.rdlab.utility.Constants;
+import com.rdlab.utility.Helper;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -28,6 +31,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class MainActivity extends BaseActivity {
+	
+	private final static Logger log = Logger.getLogger(Helper.class);
+	
 	private DrawerLayout _drawerLayout;
 	private ListView _drawerList;
 	private ActionBarDrawerToggle _drawerToggle;
@@ -134,6 +140,7 @@ public class MainActivity extends BaseActivity {
 		case 5:
 			// çýkýþ
 			// fragment = new PagesFragment();
+			log.info("User logged out from system");
 			Constants.LoggedUserFullname = "";
 			Constants.LoggedUserName = "";
 			Constants.LoggedUserSerno = null;

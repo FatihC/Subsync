@@ -77,6 +77,19 @@ public class DateUtils {
 		return "";
 	}
 	
+	public static final String FormatLongToStringDate(Long date) {
+		try {
+			Date dt=parse(yyyyMMddHHmmss, date);
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+			sdf1.setTimeZone(TimeZone.getTimeZone("Europe/Istanbul"));
+			return sdf1.format(dt);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
 	public static final String ConvertDateToString(Date date) {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
 		sdf1.setTimeZone(TimeZone.getTimeZone("Europe/Istanbul"));

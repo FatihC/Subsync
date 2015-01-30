@@ -2,11 +2,12 @@ package com.rdlab.model;
 
 public enum AuditOptions {
 	AlreadySubscribedMeterUpToDate(0),
-	AlreadySubscribedMeterNotUpToDate(0),
+	AlreadySubscribedMeterNotUpToDate(1),
 	NotSubscribeSubscribed(2),
 	NotSubscriberCouldntSubscribed(3),
 	CheckInfoCorrect(4),
-	NoNeedForSubscription(5);
+	NoNeedForSubscription(5),
+	DataChanged(6);
 	
 	public int Type=0;
 	private AuditOptions(int type) {

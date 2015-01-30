@@ -153,7 +153,7 @@ public class VillageFragment extends BaseFragment implements DataEvent {
 
 		ItemConditions cond = new ItemConditions();
 		cond.setDistrictCode(districtCode);
-		operation = new ReadOperation(rootView.getContext(), this,cond);
+		operation = new ReadOperation(rootView.getContext(), this,cond,false);
 		operation.execute(ItemType.Village);
 	}
 

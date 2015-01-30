@@ -1,5 +1,6 @@
 package com.rdlab.fragments;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +10,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.rdlab.dependencyInjection.BaseFragment;
 import com.rdlab.model.AuditLog;
 import com.rdlab.model.AuditOptions;
+import com.rdlab.model.AuditProgressStatus;
+import com.rdlab.model.AuditStatus;
 import com.rdlab.model.ControlStatus;
 import com.rdlab.model.PushRequest;
+import com.rdlab.model.RecordStatus;
 import com.rdlab.subssync.R;
 import com.rdlab.utility.Constants;
 import com.rdlab.utility.DateUtils;
@@ -136,45 +141,67 @@ public class AuditFormFragment extends BaseFragment {
 				});
 
 		btnSaveAudit.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				createAuditLog();
-				Helper.giveNotification(getView().getContext(), "Tespit baþarýyla sisteme eklenmiþtir.");
+				Helper.giveNotification(getView().getContext(),
+						"Tespit baþarýyla sisteme eklenmiþtir.");
 
 			}
 		});
+
+		// Action bar overriden
+		ActionBar ab = getActivity().getActionBar();
+		ab.setCustomView(R.layout.custom_action_bar);
+		TextView info = (TextView) ab.getCustomView().findViewById(
+				R.id.txtTitle);
+		info.setText(Constants.AUDIT_LOG_FORM);
+		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
+				| ActionBar.DISPLAY_SHOW_HOME | ActionBar.NAVIGATION_MODE_LIST
+				| ActionBar.DISPLAY_HOME_AS_UP);
+
 		return rootView;
 	}
 
-	private void createAuditLog(){
-		AuditLog log= new AuditLog();
-		log.UserSerno=Constants.LoggedUserSerno;
-		log.AuditFormDescription=txtFormDescription.getText().toString();
-		log.AuditFormSerno=txtFormSerNo.getText().toString();
-		log.AuditOptionSelection=selectedOptions.getValString();
-		//TODO: implement progress status according to selection
-		//log.AuditProgressStatus
-		log.BlockName=blockName;
-		log.CreateDate=DateUtils.nowLong();
-		log.CsbmCode=csbmCode;
-		log.DistrictCode=districtCode;
-		log.DoorNumber=doorNumber;
-		log.IndoorNumber=indoorNumber;
-		log.SiteName=siteName;
-		log.StreetCode=streetCode;
-		log.UavtCode=uavtAddresNo;
-		log.VillageCode=villageCode;
+	private void createAuditLog() {
+		AuditLog log = new AuditLog();
+		log.UserSerno = Constants.LoggedUserSerno;
+		log.AuditFormDescription = txtFormDescription.getText().toString();
+		log.AuditFormSerno = txtFormSerNo.getText().toString();
+		log.AuditOptionSelection = selectedOptions.getValString();
+		log.AuditProgressStatus = defineProgressStatus(selectedOptions);
+		log.AuditedCheckStatus=getCheckStatusOfElement();
+		log.AuditStatus=AuditStatus.Active.getStringVal();
+		log.RecordStatus=RecordStatus.Active.getVal();
+		log.BlockName = blockName;
+		log.CreateDate = DateUtils.nowLong();
+		log.CsbmCode = csbmCode;
+		log.DistrictCode = districtCode;
+		log.DoorNumber = doorNumber;
+		log.IndoorNumber = indoorNumber;
+		log.SiteName = siteName;
+		log.StreetCode = streetCode;
+		log.UavtCode = uavtAddresNo;
+		log.VillageCode = villageCode;
 		AuditLog.save(log);
 	}
-	
+
+	private String defineProgressStatus(AuditOptions selectedOption) {
+		switch (selectedOption) {
+		case AlreadySubscribedMeterUpToDate:
+		case CheckInfoCorrect:
+		case NoNeedForSubscription:
+		case NotSubscribeSubscribed:
+			return AuditProgressStatus.Finished.getStringVal();
+		default:
+			return AuditProgressStatus.Progress.getStringVal();
+		}
+	}
+
 	private ControlStatus getControlStatus() {
-		String sql = String
-				.format("SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='%s'",
-						uavtAddresNo);
-		PushRequest pr = PushRequest
-				.findWithQuery(PushRequest.class, sql, null).get(0);
+		PushRequest pr=getRelatedPushRequest();
 		if ((pr.wiringNo == null || pr.wiringNo.equals(""))
 				&& (pr.meterNo != null && !pr.meterNo.equals(""))) {
 			return ControlStatus.NoWiringMeterExist;
@@ -189,4 +216,19 @@ public class AuditFormFragment extends BaseFragment {
 			return ControlStatus.ClosedOrMeterUnreachable;
 		}
 	}
+	
+	private String getCheckStatusOfElement(){
+		PushRequest pr=getRelatedPushRequest();
+		return pr.checkStatus;
+	}
+	
+	private PushRequest getRelatedPushRequest(){
+		String sql = String
+				.format("SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='%s'",
+						uavtAddresNo);
+		PushRequest pr = PushRequest
+				.findWithQuery(PushRequest.class, sql, null).get(0);
+		return pr;
+	}
+	
 }

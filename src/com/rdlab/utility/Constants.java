@@ -56,6 +56,7 @@ public class Constants {
 	public static final String HARRAN = "12";
 	public static final String HILVAN = "13";
 	public static final String INITIAL_SYNC_DATE = "20141215000000";
+	
 
 	/*
 	 * Fragments Headers
@@ -66,6 +67,8 @@ public class Constants {
 	public static final String CSBM_HEADER_TEXT = "LÜTFEN CADDE/SOKAK/BULVAR/MEYDAN/MEZRA SEÇÝNÝZ";
 	public static final String BLOCK_HEADER_TEXT = "LÜTFEN DIÞ KAPI NUMARASI SEÇÝNÝZ";
 	public static final String UNIT_HEADER_TEXT = "LÜTFEN ÝÇ KAPI NO SEÇÝNÝZ";
+	public static final String AUDIT_LOG_LIST = "TESPÝT LÝSTESÝ";
+	public static final String AUDIT_LOG_FORM = "LÜTFEN TESPÝT VERÝLERÝNÝ DOLDURUNUZ";
 	public static final String MATCH_TEXT = "EÞLEÞTÝRME";
 	public static final String SYNC_HEADER_TEXT = "VERÝ GÜNCELLEME";
 
@@ -97,6 +100,18 @@ public class Constants {
 					"Sayaç yok - Enerjisiz Birim",
 					"Sayaç Yok - Ortak Kullaným", "Sayaç Yok - Süzme Sayaç",
 					"Sayaç Yok - Abonesiz"));
+	
+	public static final ArrayList<String> AUDITSELECTION = new ArrayList<String>(
+			Arrays.asList("Zaten Abone - Sayacý MBS’de Güncel", 
+					"Zaten Abone - Sayacý MBS’de Güncel Deðil", 
+					"Abone Deðil – Abone Yapýldý", 
+					"Abone Deðil – Abone Yapýlamadý",
+					"Kontrol Edildi – Girilen Bilgiler Doðru",
+					"Abone Yapýlmasýna Gerek Yok",
+					"Veri güncellemesi yapýldý"));
+	
+	public static final ArrayList<String> AUDITPROGRESSTYPE = new ArrayList<String>(
+			Arrays.asList("-","Devam Ediyor", "Tamamlandý"));
 
 	public static String SelectedCountyCode = "1115";
 	public static String SelectedUniversalCountyCode = "35";
@@ -106,6 +121,7 @@ public class Constants {
 	public static String SelectedDistrictName = "";
 	public static String SelectedVillageCode = "";
 	public static String SelectedVillageName = "";
+	public static boolean Log4JConfigured=false;
 	
 	
 	

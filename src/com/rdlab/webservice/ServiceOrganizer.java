@@ -4,21 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.rdlab.events.ServiceTaskEvent;
 import com.rdlab.utility.Helper;
@@ -29,6 +27,8 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 //	private static final String API_URL = "http://10.34.61.33/UAVTWebapi/api/v1/uavt/";
 //	private static final String API_URL = "http://192.168.2.238/UAVTWebapi/api/v1/uavt/";
 	
+ 	private final static Logger log = Logger.getLogger(ServiceOrganizer.class);
+	 
 	private ServiceTaskEvent delegate;
 	private ProgressDialog dialog;
 	private static Context context;
@@ -55,9 +55,7 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 	public String getJSONFromUrl(String methodName, List<NameValuePair> params) {
 
 		InputStream is = null;
-		// JSONObject json = null;
 		String outPut = "error";
-		// Making the HTTP request
 		try {
 
 			this.requestMethodName = methodName;
@@ -70,20 +68,12 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 			is = httpEntity.getContent();
 
 			outPut = convertStreamToString(is);
-			Log.e("JSON", outPut.toString());
+			log.debug("Response retrieved from webservice");
 
-			// json = new JSONObject(outPut);
-
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
+			log.error(String.format("Error occured during web service with message %s",e.getMessage()));
 			Helper.giveNotification(context, "Beklenmeyen hata oluþtu");
-			e.printStackTrace();
-		} catch (ClientProtocolException e) {
-			Helper.giveNotification(context, "Beklenmeyen hata oluþtu");
-			e.printStackTrace();
-		} catch (IOException e) {
-			Helper.giveNotification(context, "Beklenmeyen hata oluþtu");
-			e.printStackTrace();
-		}
+		} 
 
 		return outPut;
 
@@ -99,14 +89,14 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 				sb.append(line + "\n");
 			}
 		} catch (IOException e) {
-			Log.e("x" + "ERROR", e.toString());
+			log.error(String.format("Error occured during convertStreamToString with message %s",e.getMessage()));
 
 		} finally {
 			try {
 				is.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				Log.e("x" + "ERRO", e.toString());
+				log.error(String.format("Error occured during convertStreamToString with message %s",e.getMessage()));
 			}
 		}
 		return sb.toString();
@@ -127,6 +117,7 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 			return getJSONFromUrl(param.methodName, param.params);	
 		} catch (Exception e) {
 			// TODO: handle exception
+			log.error(String.format("Error occured during doInBackground with message %s",e.getMessage()));
 			if (dialog.isShowing()) {
 				dialog.dismiss();
 			}
@@ -142,6 +133,7 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 		
 		ServiceResult res=new ServiceResult();
 		if (result==null||result.toString().equals("error")) {
+			log.warn("Response null or server side error occured");
 			res.setOperation(ServiceOperation.Error);
 			res.setData("");
 		}
@@ -163,6 +155,12 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 			}
 			else if(this.requestMethodName.equals("fetchNew")){
 				res.setOperation(ServiceOperation.FetchNewUavt);
+			}
+			else if (this.requestMethodName.equals("pushLogs")) {
+				res.setOperation(ServiceOperation.PushLogs);
+			}
+			else if (this.requestMethodName.equals("fetchLogs")) {
+				res.setOperation(ServiceOperation.FetchLogs);
 			}
 			else {
 				res.setOperation(ServiceOperation.Error);

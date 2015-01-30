@@ -3,20 +3,19 @@ package com.rdlab.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +24,6 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.rdlab.adapters.UnitItemAdapter;
-import com.rdlab.adapters.UnitMatchItemAdapter;
 import com.rdlab.dependencyInjection.BaseFragment;
 import com.rdlab.events.DataEvent;
 import com.rdlab.model.Enums;
@@ -41,8 +39,10 @@ import com.rdlab.utility.ReadOperation;
 
 public class UnitControlFragment extends BaseFragment implements DataEvent {
 
+	private final static Logger log = Logger.getLogger(UnitControlFragment.class);
+	
 	UnitItemAdapter _adapter;
-	UnitMatchItemAdapter _altAdapter;
+	
 	ArrayList<UnitItem> addressList;
 	ArrayList<PushRequest> requestList;
 	EditText searchText;
@@ -137,6 +137,10 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 				dlg.setContentView(R.layout.dialog_unit_control);
 				dlg.setTitle("Uyarý");
 				
+				WindowManager.LayoutParams lp=dlg.getWindow().getAttributes();
+				lp.width=400;
+				lp.height=250;
+				
 				final UnitItem item = addressList.get(--arg2);
 				
 				Button btnUpdate=(Button)dlg.findViewById(R.id.btnUpdateData);
@@ -208,7 +212,7 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 		ab.setCustomView(R.layout.custom_action_bar);
 		TextView info = (TextView) ab.getCustomView().findViewById(
 				R.id.txtTitle);
-		info.setText(Constants.STREET_HEADER_TEXT);
+		info.setText(Constants.UNIT_HEADER_TEXT);
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
 				| ActionBar.DISPLAY_SHOW_HOME | ActionBar.NAVIGATION_MODE_LIST
 				| ActionBar.DISPLAY_HOME_AS_UP);
@@ -231,7 +235,9 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 	
 	@Override
 	public void OnDataChanged(Object items) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub		
+		log.info("Data gathered from unit control");
+		
 		@SuppressWarnings("unchecked")
 		ArrayList<UnitItem> castedItems = (ArrayList<UnitItem>) items;
 		setListView(castedItems);
@@ -245,7 +251,7 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 	private void setListView(ArrayList<UnitItem> items) {
 		getMatches(items);
 		_adapter = new UnitItemAdapter(getActivity().getApplicationContext(),
-				0, items);
+				0, items,true);
 		addressList = items;
 		searchResult.setAdapter(_adapter);
 		// searchResult.setAdapter(_altAdapter);

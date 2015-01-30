@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -35,18 +36,20 @@ import android.widget.TextView;
 
 public class SyncFragment extends Fragment implements ServiceTaskEvent {
 
-	// TODO:Ýleride fetch geldiðinde last sync date i alýp ve date.now yollayýp
-	// aralýk data alacaksýn
-	// TODO:Þuanlýk buna gerek yok.
+	private final static Logger log = Logger.getLogger(SyncFragment.class);
+	
 	ImageButton sync;
 	ImageButton push;
 	TextView txtPending;
 	TextView txtLastSyncDate;
 	ServiceOrganizer organizer;
+	
 	boolean pushedCalled = false;
 	boolean fetchCalled = false;
 	boolean fetchUserCalled = false;
-	// String startDate;
+	boolean fetchLogsCalled=false;
+	boolean pushLogsCalled=false;
+	
 	boolean updateSyncDate = true;
 	boolean forFirst = true;
 
@@ -65,7 +68,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		txtLastSyncDate = (TextView) rootView
 				.findViewById(R.id.txtLastSyncDate);
 
-		String dt = getLastSyncDate();
+		String dt = Helper.getLastSyncDate();
 		if (!dt.isEmpty()) {
 			txtLastSyncDate.setText("Son güncelleme tarihi : "
 					+ DateUtils.FormatLongStringDateToString(dt));
@@ -86,7 +89,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 				// TODO Auto-generated method stub
 				push.setClickable(false);
 				// startDate = getLastSyncDate();
-				sendPendingItems();
+				push();
 			}
 		});
 
@@ -113,7 +116,8 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			break;
 		case FetchRequest:
 			doPostFetchOperation(result.data);
-			updateLastSyncDate();
+			//All operations done update last sync date in order to obtain new datas
+			Helper.updateLastSyncDate(forFirst);
 			doPostPushOperation();
 			push.setClickable(false);
 			Helper.giveNotification(getView().getContext(),
@@ -124,10 +128,17 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			doPostFetchUserOperation(result.data);
 			fetchMbs();
 			break;
-		case FetchNewUavt:
-			// fetch new data
-			doPostFetchNewUavtOperation(result.data);
+		case PushLogs:
+			Helper.giveNotification(getView().getContext(),"Tespit verisi gönderim iþlemi tamamlandý.");
+			fetchLogs();
+			break;
+		case FetchLogs:
+			//do post fetching logs operations
 			fetchData();
+			break;
+		case FetchNewUavt:
+			doPostFetchNewUavtOperation(result.data);
+			pushLogs();
 			break;
 		case Login:
 			break;
@@ -506,95 +517,13 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	}
 
 	private List<PushRequest> getPendingRequests() {
-		// List<PushRequest> pushRequestList = PushRequest
-		// .listAll(PushRequest.class);
 		List<PushRequest> pushRequestList = PushRequest.findWithQuery(
 				PushRequest.class, "SELECT * FROM PUSH_REQUEST WHERE PUSHED=0",
 				null);
-		// List<PushRequest> result = new ArrayList<PushRequest>();
-		// for (PushRequest pushRequest : pushRequestList) {
-		// if (pushRequest.isPushed()) {
-		// continue;
-		// }
-		// result.add(pushRequest);
-		// }
 		return pushRequestList;
 	}
 
-	private long getMaxSbsDate() throws ClassNotFoundException,
-			NoSuchFieldException, IllegalAccessException,
-			IllegalArgumentException {
-		Class<?> t = Class.forName(Constants.SelectedClassName + "Mbs");
-		StringBuilder sb = new StringBuilder();
-		sb.append(String
-				.format("select max(ILK_SOZLESME_TARIHI)as ILK_SOZLESME_TARIHI from %s",
-						NamingHelper.toSQLName(t)));
-		List<?> listOft = SugarRecord.findWithQuery(t, sb.toString(), null);
-		if (listOft.size() > 0) {
-			Object obj = listOft.get(0);
-			Field f = obj.getClass().getDeclaredField("IlkSozlesmeTarihi");
-			f.setAccessible(true);
-			Number n1 = (Number) f.get(obj);
-			if (n1 != null) {
-				return n1.longValue();
-			}
-			return 0;
-		} else
-			return 0;
-
-	}
-
-	private void updateLastSyncDate() {
-		List<Configuration> cf = Configuration.listAll(Configuration.class);
-		boolean contains = false;
-		if (cf.size() > 0) {
-			// check et varmý
-			for (Configuration configuration : cf) {
-				String cfKey = configuration.getKey();
-				if (cfKey.equals(Constants.LAST_SYNC_TAG)) {
-					configuration.setValue(DateUtils.nowLong().toString());
-					Configuration.save(configuration);
-					contains = true;
-					break;
-				}
-			}
-		}
-
-		if (cf.size() == 0 && !contains) {
-			Configuration cfNew = new Configuration();
-			cfNew.setKey(Constants.LAST_SYNC_TAG);
-			if (forFirst) {
-				cfNew.setValue(DateUtils.nowLong().toString());
-			}
-			Configuration.save(cfNew);
-		}
-
-	}
-
-	private String getLastSyncDate() {
-		String date = "";
-		List<Configuration> cf = Configuration.listAll(Configuration.class);
-		if (cf.size() > 0) {
-			// check et varmý
-			for (Configuration configuration : cf) {
-				String cfKey = configuration.getKey();
-				if (cfKey.equals(Constants.LAST_SYNC_TAG)) {
-					try {
-						return configuration.getValue();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					break;
-				}
-			}
-		}
-
-		return date;
-	}
-
-	private void sendPendingItems() {
+	private void push() {
 		List<PushRequest> pushRequestList = getPendingRequests();
 		if (pushRequestList == null || pushRequestList.isEmpty()) {
 			Helper.giveNotification(getView().getContext(),
@@ -610,18 +539,43 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			paramsx.add(new BasicNameValuePair("", converted));
 		}
 
+		log.debug(String.format("push ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("push", paramsx);
 		new ServiceOrganizer(this, getView().getContext(), "Eþleþme gönderim",
 				"Eþleþme verileri gönderiliyor.").execute(req);
 		pushedCalled = true;
+	}
+	
+	private void pushLogs() {
+		List<PushRequest> pushRequestList = getPendingRequests();
+		if (pushRequestList == null || pushRequestList.isEmpty()) {
+			Helper.giveNotification(getView().getContext(),
+					"Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
+			return;
+		}
+
+		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
+		for (PushRequest pr : pushRequestList) {
+
+			Gson g = new Gson();
+			String converted = g.toJson(pr, PushRequest.class);
+			paramsx.add(new BasicNameValuePair("", converted));
+		}
+
+		log.debug(String.format("pushLogs ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		ServiceRequest req = new ServiceRequest("pushLogs", paramsx);
+		new ServiceOrganizer(this, getView().getContext(), "Tespit veri gönderim",
+				"Tespit verileri gönderiliyor.").execute(req);
+		pushLogsCalled = true;
 	}
 
 	private void fetchNewUavt() {
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
 		paramsx.add(new BasicNameValuePair("DistrictCode",
 				Constants.SelectedCountyCode));
-		paramsx.add(new BasicNameValuePair("LastProcessDate", getLastSyncDate()));
+		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper.getLastSyncDate()));
 
+		log.debug(String.format("FetchNewUavt ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetchNew", paramsx);
 		new ServiceOrganizer(this, getView().getContext(),
 				"Yeni UAVT güncelleme", "Eþleþme verileri güncelleniyor")
@@ -633,8 +587,9 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
 		paramsx.add(new BasicNameValuePair("DistrictCode",
 				Constants.SelectedUniversalCountyCode));
-		paramsx.add(new BasicNameValuePair("LastProcessDate", getLastSyncDate()));
+		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper.getLastSyncDate()));
 
+		log.debug(String.format("fetchData ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetch", paramsx);
 		new ServiceOrganizer(this, getView().getContext(), "Veri güncelleme",
 				"Eþleþme verileri güncelleniyor").execute(req);
@@ -646,17 +601,11 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		paramsx.add(new BasicNameValuePair("DistrictCode",
 				Constants.SelectedUniversalCountyCode));
 
-		long date = 0;
-		try {
-			date = getMaxSbsDate();
-		} catch (ClassNotFoundException | NoSuchFieldException
-				| IllegalAccessException | IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		long date = Helper.getMaxSbsDate();
 		paramsx.add(new BasicNameValuePair("LastProcessDate", String
 				.valueOf(date)));
 
+		log.debug(String.format("fetchMbs ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetchMbs", paramsx);
 		new ServiceOrganizer(this, getView().getContext(), "Abone güncelleme",
 				"Abone verileri güncelleniyor").execute(req);
@@ -668,10 +617,26 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
 		paramsx.add(new BasicNameValuePair("DistrictCode", "35"));
 
+		log.debug(String.format("fetchUserData ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetchUsers", paramsx);
 		new ServiceOrganizer(this, getView().getContext(),
 				"Kullanýcý verisi güncelleme",
 				"Kullanýcý verisi güncelleme iþlemi yapýlýyor.").execute(req);
 		fetchUserCalled = true;
+	}
+	
+	private void fetchLogs() {
+
+		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
+		paramsx.add(new BasicNameValuePair("DistrictCode",
+				Constants.SelectedUniversalCountyCode));
+		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper.getLastSyncDate()));
+
+		log.debug(String.format("fetchLogs ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		ServiceRequest req = new ServiceRequest("fetchLogs", paramsx);
+		new ServiceOrganizer(this, getView().getContext(),
+				"Tespit verisi güncelleme",
+				"Tespit verisi güncelleme iþlemi yapýlýyor.").execute(req);
+		fetchLogsCalled = true;
 	}
 }

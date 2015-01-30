@@ -8,7 +8,9 @@ public enum ServiceOperation {
 	FetchUserRequest(4),
 	FetchMBS(5),
 	FetchNewUavt(6),
-	Error(5);
+	PushLogs(7),
+	FetchLogs(8),
+	Error(9);
 	
 	private int Value;
 	private ServiceOperation(int value) {
