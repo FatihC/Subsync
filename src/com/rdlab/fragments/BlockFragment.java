@@ -11,6 +11,7 @@ import com.orm.util.NamingHelper;
 import com.rdlab.adapters.BlockItemAdapter;
 import com.rdlab.dependencyInjection.BaseFragment;
 import com.rdlab.events.DataEvent;
+import com.rdlab.model.AuditStatus;
 import com.rdlab.model.BlockItem;
 import com.rdlab.model.Enums;
 import com.rdlab.model.ItemConditions;
@@ -377,6 +378,7 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 
 					Helper.deleteItem(districtCode, villageCode, streetCode,
 							csbmCode, blockItem.getDoorNumber(), "", "");
+					Helper.updateLogStatus(districtCode, villageCode, streetCode, csbmCode, blockItem.getDoorNumber(),"",AuditStatus.Passive.getStringVal());
 					_adapter.notifyDataSetChanged();
 					getData(getView());
 				} catch (ClassNotFoundException | NoSuchFieldException

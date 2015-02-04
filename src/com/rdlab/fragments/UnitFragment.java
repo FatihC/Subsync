@@ -32,6 +32,7 @@ import com.rdlab.adapters.UnitItemAdapter;
 import com.rdlab.adapters.UnitMatchItemAdapter;
 import com.rdlab.dependencyInjection.BaseFragment;
 import com.rdlab.events.DataEvent;
+import com.rdlab.model.AuditStatus;
 import com.rdlab.model.Enums;
 import com.rdlab.model.ItemConditions;
 import com.rdlab.model.ItemType;
@@ -267,6 +268,25 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 	}
 
 	private void doBulkOperations() {
+		
+		saveOrUpdatePushRequests();
+		
+		for (String str : PendingItems.IndoorNumbers) {
+			try {
+				Helper.updateStatus(districtCode, villageCode, streetCode,
+						csbmCode, doorNumber, str, Enums.ReadyToSync,false);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				Log.e("Update wiring error", "hata oluþtu update ederken");
+				e.printStackTrace();
+			}
+		}
+
+		PendingItems.PushRequests.clear();
+		PendingItems.IndoorNumbers.clear();
+	}
+	
+	private void saveOrUpdatePushRequests(){
 		for (PushRequest pr : PendingItems.PushRequests) {
 			String sql="SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='"+pr.uavtCode+"'";
 			List<PushRequest> prList=PushRequest.findWithQuery(PushRequest.class, sql, null);
@@ -288,21 +308,10 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 			else {
 				PushRequest.save(pr);	
 			}
+			
+			//if there is previous status audit log make them passive in order to enter again
+			Helper.updateLogStatus(districtCode, villageCode, streetCode, csbmCode, doorNumber, pr.uavtCode, AuditStatus.Passive.getStringVal());
 		}
-
-		for (String str : PendingItems.IndoorNumbers) {
-			try {
-				Helper.updateStatus(districtCode, villageCode, streetCode,
-						csbmCode, doorNumber, str, Enums.ReadyToSync,false);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				Log.e("Update wiring error", "hata oluþtu update ederken");
-				e.printStackTrace();
-			}
-		}
-
-		PendingItems.PushRequests.clear();
-		PendingItems.IndoorNumbers.clear();
 	}
 
 	@Override
@@ -489,6 +498,8 @@ public class UnitFragment extends BaseFragment implements DataEvent {
 					}
 					
 					Helper.deleteItem(districtCode, villageCode, streetCode, csbmCode, doorNumber, unitItem.getIndoorNumber(),unitItem.getUAVTNo());
+					Helper.updateLogStatus(districtCode, villageCode, streetCode, csbmCode, doorNumber,unitItem.getUAVTNo(),AuditStatus.Passive.getStringVal());
+					
 					
 					_adapter.notifyDataSetChanged();
 					getData(getView());

@@ -66,5 +66,18 @@
         android:layout_weight="0.10"
         android:text="@string/tespit_yap_lan_durum"
         android:textColor="@color/address_item_text" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.10"
+        android:text="@string/dash"
+        android:textColor="@color/address_item_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.10"
+        android:text="@string/durum"
+        android:textColor="@color/address_item_text" />
 
 </LinearLayout>

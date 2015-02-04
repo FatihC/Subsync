@@ -20,7 +20,6 @@ public class Constants {
 	public static final String UAVT_TAG = "UAVT_ADDRESS_NO";
 	public static final String INDOOR_TAG = "INDOOR_NUMBER";
 	public static final String CHECKED_UAVT = "CHECK_STATUS";
-	public static final String LAST_SYNC_TAG = "LAST_SYNC_DATE";
 	public static final String SELECTED_COUNTY_CODE = "SELECTED_COUNTY_CODE";
 	public static final String SELECTED_COUNTY_NAME = "SELECTED_COUNTY_NAME";
 	public static final String SELECTED_COUNTY_DB_CODE = "SELECTED_COUNTY_DB_CODE";
@@ -57,6 +56,11 @@ public class Constants {
 	public static final String HILVAN = "13";
 	public static final String INITIAL_SYNC_DATE = "20141215000000";
 	
+	/*
+	 * Configuration Keys
+	 */
+	public static final String LAST_SYNC_TAG = "LAST_SYNC_DATE";
+	public static final String LAST_PUSH_TAG = "LAST_PUSH_DATE";
 
 	/*
 	 * Fragments Headers

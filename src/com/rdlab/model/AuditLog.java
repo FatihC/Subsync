@@ -21,6 +21,7 @@ public class AuditLog extends SugarRecord {
 	public String IndoorNumber;
 	public String UavtCode;
 	public Long CreateDate;
+	public boolean Pushed;
 	public Integer RecordStatus;
 
 	@Override

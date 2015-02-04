@@ -279,6 +279,7 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 				return;
 			}
 		}
+		
 		// for control implementation
 		if (forControl) {
 			updateOrInsertPushRequestToDb(pr);
@@ -297,21 +298,24 @@ public class AddWiringFragment extends Fragment implements DataEvent {
 		if (prList == null || prList.size() < 1) {
 			// there is no specific item
 			// TODO analyze business flow for this decision
-		} else {
-			PushRequest itemToUpdate = prList.get(0);
-			itemToUpdate.setPushed(false);
-			itemToUpdate.wiringNo = pr.wiringNo;
-			itemToUpdate.customerName = pr.customerName;
-			itemToUpdate.meterBrand = pr.meterBrand;
-			itemToUpdate.meterBrandCode = pr.meterBrandCode;
-			itemToUpdate.meterNo = pr.meterNo;
-			itemToUpdate.checkStatus = pr.checkStatus;
-			itemToUpdate.blockName = pr.blockName;
-			itemToUpdate.siteName = pr.siteName;
-			itemToUpdate.doorNumber = pr.doorNumber;
-			itemToUpdate.indoorNumber = pr.indoorNumber;
-			PushRequest.save(itemToUpdate);
 		}
+		
+		PushRequest itemToUpdate = prList.get(0);
+		itemToUpdate.setPushed(false);
+		itemToUpdate.wiringNo = pr.wiringNo;
+		itemToUpdate.customerName = pr.customerName;
+		itemToUpdate.meterBrand = pr.meterBrand;
+		itemToUpdate.meterBrandCode = pr.meterBrandCode;
+		itemToUpdate.meterNo = pr.meterNo;
+		itemToUpdate.checkStatus = pr.checkStatus;
+		itemToUpdate.blockName = pr.blockName;
+		itemToUpdate.siteName = pr.siteName;
+		itemToUpdate.doorNumber = pr.doorNumber;
+		itemToUpdate.indoorNumber = pr.indoorNumber;
+		PushRequest.save(itemToUpdate);
+		
+		//if there is previous status audit log make them passive in order to enter again
+		Helper.updateLogStatus(districtCode, villageCode, streetCode, csbmCode, doorNumber, pr.uavtCode, AuditStatus.Passive.getStringVal());
 
 	}
 

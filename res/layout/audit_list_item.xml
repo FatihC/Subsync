@@ -71,5 +71,20 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.10"
         android:text="@string/pre_text" />
+    
+    <TextView
+        android:textColor="@color/address_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.10"
+        android:text="@string/dash" />
+
+    <TextView
+        android:id="@+id/txtAuditStatus"
+        android:textColor="@color/address_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.10"
+        android:text="@string/pre_text" />
 
 </LinearLayout>

@@ -37,21 +37,28 @@ import android.widget.TextView;
 public class SyncFragment extends Fragment implements ServiceTaskEvent {
 
 	private final static Logger log = Logger.getLogger(SyncFragment.class);
-	
-	ImageButton sync;
+
+	ImageButton updateConfig;
+	ImageButton fetch;
 	ImageButton push;
 	TextView txtPending;
 	TextView txtLastSyncDate;
+	TextView txtLastPushDate;
 	ServiceOrganizer organizer;
+
+	boolean pushCallResponsed=false;
+	boolean pushLogsCallResponsed=false;
 	
-	boolean pushedCalled = false;
-	boolean fetchCalled = false;
-	boolean fetchUserCalled = false;
-	boolean fetchLogsCalled=false;
-	boolean pushLogsCalled=false;
+	boolean fetchNewUavtCallResponsed=false;
+	boolean fetchMbsCallResponsed=false;
+	boolean fetchLogsCallResponsed=false;
+	boolean fetchDataCallResponsed=false;
 	
+	boolean fetchUserCallResponsed=false;
+
 	boolean updateSyncDate = true;
-	boolean forFirst = true;
+	boolean forFirstSync = true;
+	boolean forFirstPush = true;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,36 +70,54 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 				"Ýþlemler yapýlýyor.");
 
 		push = (ImageButton) rootView.findViewById(R.id.push);
+		fetch = (ImageButton) rootView.findViewById(R.id.fetch);
+		updateConfig = (ImageButton) rootView.findViewById(R.id.updateConfig);
 		txtPending = (TextView) rootView
 				.findViewById(R.id.txtPendingRequestCount);
 		txtLastSyncDate = (TextView) rootView
 				.findViewById(R.id.txtLastSyncDate);
+		txtLastPushDate = (TextView) rootView
+				.findViewById(R.id.txtLastPushDate);
 
-		String dt = Helper.getLastSyncDate();
-		if (!dt.isEmpty()) {
-			txtLastSyncDate.setText("Son güncelleme tarihi : "
-					+ DateUtils.FormatLongStringDateToString(dt));
-			forFirst = false;
-		}
+		// setting sync date to text view
+		setLastProcessDates();
 
-		int pendingCount = getPendingRequestSize();
-		if (pendingCount == 0) {
-			txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
-		} else {
-			txtPending.append(String.format(": %d", pendingCount));
-		}
+		// setting pending request size to text view
+		setPendingRequestSize();
 
+		//set click methods
 		push.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				push.setClickable(false);
-				// startDate = getLastSyncDate();
+				updatePushButtonView(false);
 				push();
+				pushLogs();
+			}
+		});
+		
+		fetch.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				updateFetchButtonView(false);
+				fetchNewUavt();
+				fetchMbs();
+				fetchLogs();
+				fetchData();
+			}
+		});
+		
+		updateConfig.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				updateConfigButtonView(false);
+				fetchUserData();
 			}
 		});
 
+		//overriding action bar for current fragment
 		ActionBar ab = getActivity().getActionBar();
 		ab.setCustomView(R.layout.custom_action_bar);
 		TextView info = (TextView) ab.getCustomView().findViewById(
@@ -112,48 +137,184 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			Helper.giveNotification(getView().getContext(),
 					"Ýþlem sýrasýnda hata oluþtu. Kýsa süre sonra tekrar deneyiniz.");
 			updateSyncDate = false;
-			push.setClickable(true);
-			break;
-		case FetchRequest:
-			doPostFetchOperation(result.data);
-			//All operations done update last sync date in order to obtain new datas
-			Helper.updateLastSyncDate(forFirst);
-			doPostPushOperation();
-			push.setClickable(false);
-			Helper.giveNotification(getView().getContext(),
-					"Ýþleminiz baþarýyla tamamlanmýþtýr.");
-			txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
-			break;
-		case FetchUserRequest:
-			doPostFetchUserOperation(result.data);
-			fetchMbs();
-			break;
-		case PushLogs:
-			Helper.giveNotification(getView().getContext(),"Tespit verisi gönderim iþlemi tamamlandý.");
-			fetchLogs();
-			break;
-		case FetchLogs:
-			//do post fetching logs operations
-			fetchData();
+			//refreshing user interface buttons in order to send it again
+			updateConfigButtonView(true);
+			updateFetchButtonView(true);
+			updatePushButtonView(true);
 			break;
 		case FetchNewUavt:
 			doPostFetchNewUavtOperation(result.data);
-			pushLogs();
-			break;
-		case Login:
+			finishFetchProcess();
 			break;
 		case FetchMBS:
 			doPostFetchMbsOperation(result.data);
-			fetchNewUavt();
+			finishFetchProcess();
+			break;
+		case FetchLogs:
+			doPostFetchLogsOperation(result.data);
+			finishFetchProcess();
+			break;
+		case FetchRequest:
+			doPostFetchOperation(result.data);
+			finishFetchProcess();
+			break;
+		case FetchUserRequest:
+			doPostFetchUserOperation(result.data);
 			break;
 		case Push:
 			Helper.giveNotification(getView().getContext(),
 					"Veri gönderim iþlemi tamamlandý.");
-			fetchUserData();
+			
+			finishPushProcess();
+			break;
+		case PushLogs:
+			Helper.giveNotification(getView().getContext(),"Tespit verisi gönderim iþlemi tamamlandý.");
+			
+			finishPushProcess();
 			break;
 		default:
 			break;
 		}
+	}
+	
+	private void finishPushProcess(){
+		if (!pushCallResponsed) {
+			return;
+		}
+		if (!pushLogsCallResponsed) {
+			return;
+		}
+		
+		doPostPushOperation();
+		doPostPushLogOperation();
+		Helper.updateLastPushDate(forFirstPush);
+		updatePushButtonView(true);
+		
+		Helper.giveNotification(getView().getContext(),
+				"Ýþleminiz baþarýyla tamamlanmýþtýr.");
+		txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
+	}
+	
+	private void finishFetchProcess(){
+		if (!fetchDataCallResponsed) {
+			return;
+		}
+		if (!fetchLogsCallResponsed) {
+			return;
+		}
+		if (!fetchMbsCallResponsed) {
+			return;
+		}
+		if (!fetchNewUavtCallResponsed) {
+			return;
+		}
+		
+		Helper.updateLastSyncDate(forFirstSync);
+		updateFetchButtonView(true);
+	}
+	
+	private void updatePushButtonView(boolean state){
+		push.setClickable(state);
+	}
+
+	private void updateFetchButtonView(boolean state){
+		fetch.setClickable(state);
+	}
+	
+	private void updateConfigButtonView(boolean state){
+		updateConfig.setClickable(state);
+	}
+	
+	private void setLastProcessDates() {
+		String dt = Helper.getLastSyncDate();
+		if (!dt.isEmpty()) {
+			txtLastSyncDate.setText("Son güncelleme tarihi : "
+					+ DateUtils.FormatLongStringDateToString(dt));
+			forFirstSync = false;
+		}
+		
+		dt = Helper.getLastPushDate();
+		if (!dt.isEmpty()) {
+			txtLastPushDate.setText("Son güncelleme tarihi : "
+					+ DateUtils.FormatLongStringDateToString(dt));
+			forFirstPush = false;
+		}
+	}
+
+	/**
+	 * Check retrieved uavt from ws exist in current db
+	 * @param params
+	 * With order 0-VillageCode,1-StreetCode,2-csbmCode,3-uavtCode
+	 * @return
+	 */
+	private boolean checkRetrievedUavtExist(String...params){
+		String sql = "";
+
+		sql = String.format("SELECT ID FROM %s WHERE VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND UAVT_ADDRESS_NO='%s'",
+						Helper.getTableName(), params);
+
+		List<?> listOfT = SugarRecord.findWithQuery(
+				Helper.getClassName(), sql, null);
+		if (!listOfT.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+	
+	private void setPendingRequestSize() {
+		int pendingCount = getPendingRequestSize();
+		if (pendingCount == 0) {
+			txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
+		} else {
+			txtPending.append(String.format(": %d", pendingCount));
+		}
+	}
+	
+	private void doPostFetchLogsOperation(Object data){
+		ProgressDialog prg = new ProgressDialog(getView().getContext());
+		prg.setCancelable(false);
+		prg.setTitle("Tespit Güncelleme");
+		prg.setMessage("Yeni tespit verileri güncelleniyor.");
+		
+		Gson g = new Gson();
+		ArrayList<AuditLog> vals = g.fromJson(data.toString(),
+				new TypeToken<ArrayList<AuditLog>>() {
+				}.getType());
+		if (vals == null) {
+			return;
+		}
+		
+		prg.show();
+
+		for (AuditLog auditLog : vals) {
+			String sql=String.format("SELECT * FROM AUDIT_LOGS WHERE UAVT_CODE='%s' AND CREATE_DATE>=%s",auditLog.UavtCode,
+					String.valueOf(auditLog.CreateDate));
+			List<AuditLog> existedAuditLogs=AuditLog.findWithQuery(AuditLog.class, sql, null);
+			if (existedAuditLogs!=null&&existedAuditLogs.size()>0) {
+				// contains newer item
+				for (AuditLog existedAuditItem : existedAuditLogs) {
+					existedAuditItem.AuditedCheckStatus = auditLog.AuditedCheckStatus;
+					existedAuditItem.AuditFormDescription = auditLog.AuditFormDescription;
+					existedAuditItem.AuditFormSerno = auditLog.AuditFormSerno;
+					existedAuditItem.AuditOptionSelection = auditLog.AuditOptionSelection;
+					existedAuditItem.AuditProgressStatus = auditLog.AuditProgressStatus;
+					existedAuditItem.AuditStatus = auditLog.AuditStatus;
+					existedAuditItem.Pushed = auditLog.Pushed;
+					existedAuditItem.RecordStatus = auditLog.RecordStatus;
+					AuditLog.save(existedAuditItem);
+				}
+			}
+			else {
+				AuditLog.save(auditLog);
+			}
+		}
+		
+		
+		String sql = "UPDATE AUDIT_LOG SET PUSHED=1 WHERE ID IN (SELECT ID FROM AUDIT_LOG WHERE PUSHED=0)";
+		PushRequest.executeQuery(sql, null);
+
+		prg.dismiss();
+
 	}
 
 	private void doPostPushOperation() {
@@ -163,11 +324,23 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		prg.setMessage("Yeni eþleþme verileri güncelleniyor.");
 		prg.show();
 
-		List<PushRequest> pushRequestList = PushRequest.findWithQuery(PushRequest.class, "SELECT * FROM PUSH_REQUEST WHERE PUSHED=0", null);
-		for (PushRequest pushRequest : pushRequestList) {
-			pushRequest.setPushed(true);
-			PushRequest.save(pushRequest);
-		}
+		String sql = "UPDATE PUSH_REQUEST SET PUSHED=1 WHERE ID IN (SELECT ID FROM PUSH_REQUEST WHERE PUSHED=0)";
+
+		PushRequest.executeQuery(sql, null);
+
+		prg.dismiss();
+	}
+
+	private void doPostPushLogOperation() {
+		ProgressDialog prg = new ProgressDialog(getView().getContext());
+		prg.setCancelable(false);
+		prg.setTitle("Tespit Güncelleme");
+		prg.setMessage("Yeni tespit verileri güncelleniyor.");
+		prg.show();
+
+		String sql = "UPDATE AUDIT_LOG SET PUSHED=1 WHERE ID IN (SELECT ID FROM AUDIT_LOG WHERE PUSHED=0)";
+
+		AuditLog.executeQuery(sql, null);
 
 		prg.dismiss();
 	}
@@ -175,49 +348,44 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	private void doPostFetchOperation(Object data) {
 		ProgressDialog prg = new ProgressDialog(getView().getContext());
 		prg.setCancelable(false);
-		prg.setTitle("Adres Güncelleme");
-		prg.setMessage("Adres verileri güncelleniyor.");
+		prg.setTitle("Veri Güncelleme");
+		prg.setMessage("Diðer eþleþme verileri güncelleniyor.");
 
 		Gson g = new Gson();
 		ArrayList<PushRequest> vals = g.fromJson(data.toString(),
 				new TypeToken<ArrayList<PushRequest>>() {
 				}.getType());
 		if (vals == null) {
-			// prg.dismiss();
 			return;
 		}
 
 		prg.show();
+
 		for (PushRequest pushRequest : vals) {
-			String sql = "SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='"
-					+ pushRequest.uavtCode + "'";
+
+			// String sql = "SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='"+
+			// pushRequest.uavtCode + "'";
+			String sql = String
+					.format("SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='%s' AND CREATE_DATE >= %s",
+							pushRequest.uavtCode,
+							String.valueOf(pushRequest.createDate));
 			List<PushRequest> existedPr = PushRequest.findWithQuery(
 					PushRequest.class, sql, null);
-			if (existedPr.size() > 0) {
-				// exist on db check for date
-				boolean containsNewerItem = true;
-				for (PushRequest existedPrItem : existedPr) {
-					if (existedPrItem.createDate >= pushRequest.createDate) {
-						containsNewerItem = false;
-					}
-				}
 
-				if (containsNewerItem) {
-					// do nothing because we have newer item
-					for (PushRequest existedPrItem : existedPr) {
-						existedPrItem.customerName = pushRequest.customerName;
-						existedPrItem.wiringNo = pushRequest.wiringNo;
-						existedPrItem.meterBrand = pushRequest.meterBrand;
-						existedPrItem.meterBrandCode = pushRequest.meterBrandCode;
-						existedPrItem.meterNo = pushRequest.meterNo;
-						existedPrItem.checkStatus = pushRequest.checkStatus;
-						existedPrItem.setPushed(true);
-						PushRequest.save(existedPrItem);
-						updateOrSaveOnUavt(pushRequest);
-					}
+			if (existedPr != null && existedPr.size() > 0) {
+				// contains newer item
+				for (PushRequest existedPrItem : existedPr) {
+					existedPrItem.customerName = pushRequest.customerName;
+					existedPrItem.wiringNo = pushRequest.wiringNo;
+					existedPrItem.meterBrand = pushRequest.meterBrand;
+					existedPrItem.meterBrandCode = pushRequest.meterBrandCode;
+					existedPrItem.meterNo = pushRequest.meterNo;
+					existedPrItem.checkStatus = pushRequest.checkStatus;
+					existedPrItem.setPushed(true);
+					PushRequest.save(existedPrItem);
+					updateOrSaveOnUavt(pushRequest);
 				}
 			} else {
-				// new data so we add to table
 				PushRequest.save(pushRequest);
 				updateOrSaveOnUavt(pushRequest);
 			}
@@ -315,14 +483,15 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		for (UavtModel uavtModel : vals) {
 			try {
 				Class<?> t = Class.forName(Constants.SelectedClassName);
-				
-				String sql="SELECT * FROM "+NamingHelper.toSQLName(t)+" WHERE CSBM_CODE='"+uavtModel.CSBMCode+"'";
-				List<?> listOfT=SugarRecord.findWithQuery(t, sql, null);
-				if (listOfT.size()>0) {
-					//böyle eleman var bunu yazma
+
+				String sql = "SELECT * FROM " + NamingHelper.toSQLName(t)
+						+ " WHERE CSBM_CODE='" + uavtModel.CSBMCode + "'";
+				List<?> listOfT = SugarRecord.findWithQuery(t, sql, null);
+				if (listOfT.size() > 0) {
+					// böyle eleman var bunu yazma
 					continue;
 				}
-				
+
 				Object entity = t.getDeclaredConstructor(
 						new Class[] { String.class, String.class, String.class,
 								String.class, String.class, String.class,
@@ -364,87 +533,58 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 				if (itemClassName == null || itemClassName.isEmpty()) {
 					return;
 				}
-				Class<?> t = Class.forName(itemClassName);
-				StringBuilder sb = new StringBuilder();
-				sb.append(String.format("SELECT * FROM %s",
-						NamingHelper.toSQLName(t)));
-				sb.append(" WHERE ");
-				sb.append(String
-						.format("VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND UAVT_ADDRESS_NO='%s'",
-								pushRequest.villageCode,
-								pushRequest.streetCode, pushRequest.csbmCode,
-								pushRequest.uavtCode));
-				List<?> listOfT = SugarRecord.findWithQuery(t, sb.toString(),
-						null);
-				if (listOfT.isEmpty()) {
-					// böyle bir kayýt yok ekle
-					// get district name,villagename,streetname,csbmname
-					sb = new StringBuilder();
-					sb.append(String
-							.format("SELECT DISTRICT_NAME,DISTRICT_CODE,VILLAGE_NAME,STREET_NAME,CSBM_NAME FROM %s",
-									NamingHelper.toSQLName(t)));
-					sb.append(" WHERE ");
-					sb.append(String
-							.format(" VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s'",
-									pushRequest.villageCode,
-									pushRequest.streetCode,
-									pushRequest.csbmCode));
 
-					List<?> forNameList = SugarRecord.findWithQuery(t,
-							sb.toString(), null);
-					for (Object object : forNameList) {
-						Field dName;
-
-						dName = object.getClass().getDeclaredField(
-								"DistrictName");
-						dName.setAccessible(true);
-						Field vName = object.getClass().getDeclaredField(
-								"VillageName");
-						vName.setAccessible(true);
-						Field sName = object.getClass().getDeclaredField(
-								"StreetName");
-						sName.setAccessible(true);
-						Field cName = object.getClass().getDeclaredField(
-								"CSBMName");
-						cName.setAccessible(true);
-
-						Field dCode = object.getClass().getDeclaredField(
-								"DistrictCode");
-						dCode.setAccessible(true);
-
-						saveItem(dCode.get(object).toString(), dName
-								.get(object).toString(), vName.get(object)
-								.toString(), sName.get(object).toString(),
-								cName.get(object).toString(),
-								pushRequest.siteName, pushRequest.blockName,
-								pushRequest, itemClassName);
-					}
-
-				} else {
-					// böyle bir kayýt var
-
+				if (checkRetrievedUavtExist(pushRequest.villageCode,
+								pushRequest.streetCode, pushRequest.csbmCode,pushRequest.uavtCode)) {
+					return;
 				}
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (java.lang.InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+				// böyle bir kayýt yok ekle
+				// get district name,villagename,streetname,csbmname
+				String sql = String
+						.format("SELECT DISTRICT_NAME,DISTRICT_CODE,VILLAGE_NAME,STREET_NAME,CSBM_NAME FROM %s WHERE  VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' LIMIT 2",
+								Helper.getTableName(), pushRequest.villageCode,
+								pushRequest.streetCode, pushRequest.csbmCode);
+
+				List<?> forNameList = SugarRecord.findWithQuery(
+						Helper.getClassName(), sql, null);
+				if (forNameList == null || forNameList.isEmpty()) {
+					return;
+				}
+
+				Object firstObj = forNameList.get(0);
+				Field dCode, dName, vName, sName, cName;
+				String dCodeVal, dNameVal, vNameVal, sNameVal, cNameVal;
+
+				dName = firstObj.getClass().getDeclaredField("DistrictName");
+				dName.setAccessible(true);
+				dNameVal = dName.get(firstObj).toString();
+
+				vName = firstObj.getClass().getDeclaredField("VillageName");
+				vName.setAccessible(true);
+				vNameVal = vName.get(firstObj).toString();
+
+				sName = firstObj.getClass().getDeclaredField("StreetName");
+				sName.setAccessible(true);
+				sNameVal = sName.get(firstObj).toString();
+
+				cName = firstObj.getClass().getDeclaredField("CSBMName");
+				cName.setAccessible(true);
+				cNameVal = cName.get(firstObj).toString();
+
+				dCode = firstObj.getClass().getDeclaredField("DistrictCode");
+				dCode.setAccessible(true);
+				dCodeVal = dCode.get(firstObj).toString();
+
+				saveItem(dCodeVal, dNameVal, vNameVal, sNameVal, cNameVal,
+						pushRequest.siteName, pushRequest.blockName,
+						pushRequest, itemClassName);
+
+			} catch (NoSuchFieldException | IllegalArgumentException
+					| IllegalAccessException e) {
+				log.error(String
+						.format("Error occured in update or save uavt with an exception %s",
+								e.getMessage()));
 			}
 		} else {
 			try {
@@ -453,8 +593,9 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 						pushRequest.streetCode, pushRequest.csbmCode,
 						pushRequest.doorNumber, "", Enums.ReadyToSync, true);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(String
+						.format("Error occured in update or save uavt with an exception %s",
+								e.getMessage()));
 			}
 		}
 	}
@@ -462,28 +603,35 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	private void saveItem(String districtCode, String districtName,
 			String villageName, String streetName, String csbmName,
 			String siteName, String blockName, PushRequest pushRequest,
-			String className) throws ClassNotFoundException,
-			java.lang.InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException {
-		if (className.isEmpty()) {
-			return;
+			String className) {
+
+		try {
+			if (className.isEmpty()) {
+				return;
+			}
+			Class<?> t = Class.forName(className);
+			Object entity = t.getDeclaredConstructor(
+					new Class[] { String.class, String.class, String.class,
+							String.class, String.class, String.class,
+							String.class, String.class, String.class,
+							String.class, String.class, String.class,
+							String.class, String.class, String.class,
+							String.class, int.class }).newInstance(
+					Constants.SelectedCountyCode, Constants.SelectedCountyName,
+					districtCode, districtName, pushRequest.villageCode,
+					villageName, pushRequest.streetCode, streetName,
+					pushRequest.csbmCode, csbmName, "", pushRequest.doorNumber,
+					siteName, blockName, pushRequest.uavtCode,
+					pushRequest.indoorNumber, Enums.ReadyToSync.getVal());
+			entity.getClass().getMethod("save", new Class[] { Object.class })
+					.invoke(null, entity);
+		} catch (java.lang.InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | ClassNotFoundException e) {
+			log.error(String
+					.format("Error occured in update or save uavt with an exception %s",
+							e.getMessage()));
 		}
-		Class<?> t = Class.forName(className);
-		Object entity = t.getDeclaredConstructor(
-				new Class[] { String.class, String.class, String.class,
-						String.class, String.class, String.class, String.class,
-						String.class, String.class, String.class, String.class,
-						String.class, String.class, String.class, String.class,
-						String.class, int.class }).newInstance(
-				Constants.SelectedCountyCode, Constants.SelectedCountyName,
-				districtCode, districtName, pushRequest.villageCode,
-				villageName, pushRequest.streetCode, streetName,
-				pushRequest.csbmCode, csbmName, "", pushRequest.doorNumber,
-				siteName, blockName, pushRequest.uavtCode,
-				pushRequest.indoorNumber, Enums.ReadyToSync.getVal());
-		entity.getClass().getMethod("save", new Class[] { Object.class })
-				.invoke(null, entity);
 
 	}
 
@@ -523,6 +671,12 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		return pushRequestList;
 	}
 
+	private List<AuditLog> getPendingLogs() {
+		List<AuditLog> logList = AuditLog.findWithQuery(AuditLog.class,
+				"SELECT * FROM AUDIT_LOG WHERE PUSHED=0", null);
+		return logList;
+	}
+
 	private void push() {
 		List<PushRequest> pushRequestList = getPendingRequests();
 		if (pushRequestList == null || pushRequestList.isEmpty()) {
@@ -539,61 +693,64 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			paramsx.add(new BasicNameValuePair("", converted));
 		}
 
-		log.debug(String.format("push ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		log.debug(String.format("push ws called with %s",
+				new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("push", paramsx);
 		new ServiceOrganizer(this, getView().getContext(), "Eþleþme gönderim",
 				"Eþleþme verileri gönderiliyor.").execute(req);
-		pushedCalled = true;
 	}
-	
+
 	private void pushLogs() {
-		List<PushRequest> pushRequestList = getPendingRequests();
-		if (pushRequestList == null || pushRequestList.isEmpty()) {
+		List<AuditLog> logList = getPendingLogs();
+		if (logList == null || logList.isEmpty()) {
 			Helper.giveNotification(getView().getContext(),
 					"Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
 			return;
 		}
 
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
-		for (PushRequest pr : pushRequestList) {
+		for (AuditLog pr : logList) {
 
 			Gson g = new Gson();
-			String converted = g.toJson(pr, PushRequest.class);
+			String converted = g.toJson(pr, AuditLog.class);
 			paramsx.add(new BasicNameValuePair("", converted));
 		}
 
-		log.debug(String.format("pushLogs ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		log.debug(String.format("pushLogs ws called with %s",
+				new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("pushLogs", paramsx);
-		new ServiceOrganizer(this, getView().getContext(), "Tespit veri gönderim",
-				"Tespit verileri gönderiliyor.").execute(req);
-		pushLogsCalled = true;
+		new ServiceOrganizer(this, getView().getContext(),
+				"Tespit veri gönderim", "Tespit verileri gönderiliyor.")
+				.execute(req);
 	}
 
 	private void fetchNewUavt() {
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
 		paramsx.add(new BasicNameValuePair("DistrictCode",
 				Constants.SelectedCountyCode));
-		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper.getLastSyncDate()));
+		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper
+				.getLastSyncDate()));
 
-		log.debug(String.format("FetchNewUavt ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		log.debug(String.format("FetchNewUavt ws called with %s",
+				new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetchNew", paramsx);
 		new ServiceOrganizer(this, getView().getContext(),
 				"Yeni UAVT güncelleme", "Eþleþme verileri güncelleniyor")
 				.execute(req);
-		fetchCalled = true;
 	}
 
 	private void fetchData() {
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
 		paramsx.add(new BasicNameValuePair("DistrictCode",
 				Constants.SelectedUniversalCountyCode));
-		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper.getLastSyncDate()));
+		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper
+				.getLastSyncDate()));
 
-		log.debug(String.format("fetchData ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		log.debug(String.format("fetchData ws called with %s",
+				new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetch", paramsx);
 		new ServiceOrganizer(this, getView().getContext(), "Veri güncelleme",
 				"Eþleþme verileri güncelleniyor").execute(req);
-		fetchCalled = true;
 	}
 
 	private void fetchMbs() {
@@ -605,11 +762,11 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		paramsx.add(new BasicNameValuePair("LastProcessDate", String
 				.valueOf(date)));
 
-		log.debug(String.format("fetchMbs ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		log.debug(String.format("fetchMbs ws called with %s",
+				new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetchMbs", paramsx);
 		new ServiceOrganizer(this, getView().getContext(), "Abone güncelleme",
 				"Abone verileri güncelleniyor").execute(req);
-		fetchCalled = true;
 	}
 
 	private void fetchUserData() {
@@ -617,26 +774,27 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
 		paramsx.add(new BasicNameValuePair("DistrictCode", "35"));
 
-		log.debug(String.format("fetchUserData ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		log.debug(String.format("fetchUserData ws called with %s",
+				new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetchUsers", paramsx);
 		new ServiceOrganizer(this, getView().getContext(),
 				"Kullanýcý verisi güncelleme",
 				"Kullanýcý verisi güncelleme iþlemi yapýlýyor.").execute(req);
-		fetchUserCalled = true;
 	}
-	
+
 	private void fetchLogs() {
 
 		List<NameValuePair> paramsx = new ArrayList<NameValuePair>();
 		paramsx.add(new BasicNameValuePair("DistrictCode",
 				Constants.SelectedUniversalCountyCode));
-		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper.getLastSyncDate()));
+		paramsx.add(new BasicNameValuePair("LastProcessDate", Helper
+				.getLastSyncDate()));
 
-		log.debug(String.format("fetchLogs ws called with %s", new Gson().toJson(paramsx, paramsx.getClass())));
+		log.debug(String.format("fetchLogs ws called with %s",
+				new Gson().toJson(paramsx, paramsx.getClass())));
 		ServiceRequest req = new ServiceRequest("fetchLogs", paramsx);
 		new ServiceOrganizer(this, getView().getContext(),
 				"Tespit verisi güncelleme",
 				"Tespit verisi güncelleme iþlemi yapýlýyor.").execute(req);
-		fetchLogsCalled = true;
 	}
 }

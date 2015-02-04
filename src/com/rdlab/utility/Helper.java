@@ -22,24 +22,11 @@ import com.orm.SugarRecord;
 import com.orm.util.NamingHelper;
 import com.rdlab.data.Repository;
 import com.rdlab.model.AddressListItem;
-import com.rdlab.model.Akcakale;
-import com.rdlab.model.Birecik;
+import com.rdlab.model.AuditLog;
 import com.rdlab.model.BlockItem;
-import com.rdlab.model.Bozova;
-import com.rdlab.model.Ceylanpinar;
 import com.rdlab.model.Configuration;
 import com.rdlab.model.Enums;
-import com.rdlab.model.Eyyubiye;
-import com.rdlab.model.Halfeti;
-import com.rdlab.model.Haliliye;
-import com.rdlab.model.Harran;
-import com.rdlab.model.Hilvan;
-import com.rdlab.model.Karakopru;
-import com.rdlab.model.PushRequest;
-import com.rdlab.model.Siverek;
-import com.rdlab.model.Suruc;
 import com.rdlab.model.UnitItem;
-import com.rdlab.model.Viransehir;
 
 import de.mindpipe.android.logging.log4j.LogConfigurator;
 
@@ -233,254 +220,36 @@ public class Helper {
 		Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 	}
 
-	private static void setFieldValue(Object t, String fieldName, Object value) {
-		Field checkField;
-		try {
-			checkField = t.getClass().getField(fieldName);
-			checkField.setAccessible(true);
-			checkField.set(t, value);
-		} catch (NoSuchFieldException | IllegalAccessException
-				| IllegalArgumentException e) {
-			log.warn(String
-					.format("Error occured during setting field value with exception %s",
-							e.getMessage()));
-		}
-	}
-
 	public static void updateStatus(String districtCode, String villageCode,
 			String streetCode, String csbmCode, String doorNumber,
 			String indoorNumber, Enums value, boolean updateAll)
 			throws ClassNotFoundException {
-		StringBuilder sb = new StringBuilder();
-		String tableName = getTableName();
-		if (updateAll) {
-			sb.append(String
-					.format("SELECT * FROM %s WHERE  VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
+		try {
+			String sql = "", innerQuery = "", tableName = getTableName();
+
+			// Preparing sql statement for update purpose
+			innerQuery = String
+					.format("SELECT ID FROM %s WHERE  VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
 							tableName, villageCode, streetCode, csbmCode,
-							doorNumber));
-		} else {
-			sb.append(String
-					.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
-							+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
-							tableName, districtCode, villageCode, streetCode,
-							csbmCode, doorNumber));
-		}
-		if (!indoorNumber.isEmpty()) {
-			sb.append(String.format(" AND INDOOR_NUMBER='%s'", indoorNumber));
-		}
-
-		List<?> listOfT = SugarRecord.findWithQuery(getClassName(),
-				sb.toString(), null);
-		if (listOfT.size() > 1) {
-			for (Object object : listOfT) {
-				setFieldValue(object, "CheckStatus", value.getVal());
-				invokeMethodAnonymous("save", new Class[] { Object.class }, 1,
-						new Object[] { object });
+							doorNumber);
+			if (!updateAll) {
+				innerQuery += String.format(" AND DISTRICT_CODE='%s'",
+						districtCode);
 			}
-			return;
+			if (!indoorNumber.isEmpty()) {
+				innerQuery += String.format(" AND INDOOR_NUMBER='%s'",
+						indoorNumber);
+			}
+			sql = String.format(
+					"UPDATE %s SET CHECK_STATUS='%d' WHERE ID IN (%s)",
+					tableName, value.getVal(), innerQuery);
+
+			SugarRecord.executeQuery(sql, null);
+		} catch (Exception e) {
+			log.error(String
+					.format("Error occured while updating status with given StreetCode {%s} and CsbmCode {%s} and exc is {%s}",
+							streetCode, csbmCode, e.getMessage()));
 		}
-
-		Object t = listOfT.get(0);
-		setFieldValue(t, "CheckStatus", value.getVal());
-		invokeMethodAnonymous("save", new Class[] { Object.class }, 1,
-				new Object[] { t });
-
-		// if (Constants.SelectedUniversalCountyCode.equals("32")) {
-		// List<Eyyubiye> result = Eyyubiye.findWithQuery(Eyyubiye.class,
-		// sb.toString(), null);
-		//
-		// if (result.size() > 1) {
-		// for (Eyyubiye getx : result) {
-		// Eyyubiye item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Eyyubiye.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Eyyubiye item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Eyyubiye.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("33")) {
-		// List<Haliliye> result = Haliliye.findWithQuery(Haliliye.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Haliliye getx : result) {
-		// Haliliye item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Haliliye.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Haliliye item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Haliliye.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("34")) {
-		// List<Karakopru> result = Karakopru.findWithQuery(Karakopru.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Karakopru getx : result) {
-		// Karakopru item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Karakopru.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Karakopru item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Karakopru.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("35")) {
-		// List<Akcakale> result = Akcakale.findWithQuery(Akcakale.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Akcakale getx : result) {
-		// Akcakale item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Akcakale.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Akcakale item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Akcakale.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("36")) {
-		// List<Birecik> result = Birecik.findWithQuery(Birecik.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Birecik getx : result) {
-		// Birecik item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Birecik.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Birecik item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Birecik.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("37")) {
-		// List<Bozova> result = Bozova.findWithQuery(Bozova.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Bozova getx : result) {
-		// Bozova item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Bozova.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Bozova item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Bozova.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("38")) {
-		// List<Ceylanpinar> result = Ceylanpinar.findWithQuery(
-		// Ceylanpinar.class, sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Ceylanpinar getx : result) {
-		// Ceylanpinar item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Ceylanpinar.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Ceylanpinar item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Ceylanpinar.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("39")) {
-		// List<Halfeti> result = Halfeti.findWithQuery(Halfeti.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Halfeti getx : result) {
-		// Halfeti item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Halfeti.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Halfeti item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Halfeti.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("40")) {
-		// List<Harran> result = Harran.findWithQuery(Harran.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Harran getx : result) {
-		// Harran item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Harran.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Harran item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Harran.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("41")) {
-		// List<Hilvan> result = Hilvan.findWithQuery(Hilvan.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Hilvan getx : result) {
-		// Hilvan item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Hilvan.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Hilvan item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Hilvan.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("42")) {
-		// List<Siverek> result = Siverek.findWithQuery(Siverek.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Siverek getx : result) {
-		// Siverek item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Siverek.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Siverek item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Siverek.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("43")) {
-		// List<Suruc> result = Suruc.findWithQuery(Suruc.class,
-		// sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Suruc getx : result) {
-		// Suruc item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Suruc.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Suruc item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Suruc.save(item);
-		// }
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("44")) {
-		// List<Viransehir> result = Viransehir.findWithQuery(
-		// Viransehir.class, sb.toString(), null);
-		// if (result.size() > 1) {
-		// for (Viransehir getx : result) {
-		// Viransehir item = getx;
-		// item.setCheckStatus(value.getVal());
-		// Viransehir.save(item);
-		// }
-		// } else if(result.size() == 1){
-		// Viransehir item = result.get(0);
-		// item.setCheckStatus(value.getVal());
-		// Viransehir.save(item);
-		// }
-		// }
 	}
 
 	public static void deleteItem(String districtCode, String villageCode,
@@ -501,58 +270,6 @@ public class Helper {
 		invokeMethodAnonymous("deleteAll", new Class[] { Class.class,
 				String.class, String[].class }, 3, getClassName(),
 				sb.toString(), null);
-
-		// if (Constants.SelectedUniversalCountyCode.equals("32")) {
-		// Eyyubiye.deleteAll(Eyyubiye.class,
-		// sb.toString(), null);
-		// } else if (Constants.SelectedUniversalCountyCode.equals("33")) {
-		// Haliliye.deleteAll(Haliliye.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("34")) {
-		// Karakopru.deleteAll(Karakopru.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("35")) {
-		// Akcakale.deleteAll(Akcakale.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("36")) {
-		// Birecik.deleteAll(Birecik.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("37")) {
-		// Bozova.deleteAll(Bozova.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("38")) {
-		// Ceylanpinar.deleteAll(Ceylanpinar.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("39")) {
-		// Halfeti.deleteAll(Halfeti.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("40")) {
-		// Harran.deleteAll(Harran.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("41")) {
-		// Hilvan.deleteAll(Hilvan.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("42")) {
-		// Siverek.deleteAll(Siverek.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("43")) {
-		// Suruc.deleteAll(Suruc.class,
-		// sb.toString(), null);
-		//
-		// } else if (Constants.SelectedUniversalCountyCode.equals("44")) {
-		// Viransehir.deleteAll(Viransehir.class,
-		// sb.toString(), null);
-		// }
 	}
 
 	public static void updateData(String districtCode, String villageCode,
@@ -560,173 +277,27 @@ public class Helper {
 			String indoorNumber, String newDoorNum, String newSiteName,
 			String newBlockName, String newIndoorNum, boolean fromUnit)
 			throws ClassNotFoundException {
-		StringBuilder sb = new StringBuilder();
-		String tableName = getTableName();
-		sb.append(String
-				.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
-						+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
-						tableName, districtCode, villageCode, streetCode,
-						csbmCode, doorNumber));
-		if (fromUnit) {
-			sb.append(String.format(" AND INDOOR_NUMBER='%s'", indoorNumber));
-		}
-
-		if (Constants.SelectedUniversalCountyCode.equals("32")) {
-			List<Eyyubiye> result = Eyyubiye.findWithQuery(Eyyubiye.class,
-					sb.toString(), null);
-			Eyyubiye item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
+		String sql="",innerQuery="",tableName=getTableName();
+		
+		try {
+			innerQuery=String
+					.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
+							+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
+							tableName, districtCode, villageCode, streetCode,
+							csbmCode, doorNumber);
+			
+			if (fromUnit) {
+				innerQuery+=String.format(" AND INDOOR_NUMBER='%s'", indoorNumber);
+				sql=String.format("UPDATE %s SET INDOOR_NUMBER='%s' WHERE ID IN (%s)",tableName,newIndoorNum,innerQuery);
+				
+				SugarRecord.executeQuery(sql, null);
+				return;
 			}
-			Eyyubiye.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("33")) {
-			List<Haliliye> result = Haliliye.findWithQuery(Haliliye.class,
-					sb.toString(), null);
-			Haliliye item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Haliliye.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("34")) {
-			List<Karakopru> result = Karakopru.findWithQuery(Karakopru.class,
-					sb.toString(), null);
-			Karakopru item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Karakopru.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("35")) {
-			List<Akcakale> result = Akcakale.findWithQuery(Akcakale.class,
-					sb.toString(), null);
-			Akcakale item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Akcakale.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("36")) {
-			List<Birecik> result = Birecik.findWithQuery(Birecik.class,
-					sb.toString(), null);
-			Birecik item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Birecik.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("37")) {
-			List<Bozova> result = Bozova.findWithQuery(Bozova.class,
-					sb.toString(), null);
-			Bozova item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Bozova.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("38")) {
-			List<Ceylanpinar> result = Ceylanpinar.findWithQuery(
-					Ceylanpinar.class, sb.toString(), null);
-			Ceylanpinar item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Ceylanpinar.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("39")) {
-			List<Halfeti> result = Halfeti.findWithQuery(Halfeti.class,
-					sb.toString(), null);
-			Halfeti item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Halfeti.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("40")) {
-			List<Harran> result = Harran.findWithQuery(Harran.class,
-					sb.toString(), null);
-			Harran item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Harran.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("41")) {
-			List<Hilvan> result = Hilvan.findWithQuery(Hilvan.class,
-					sb.toString(), null);
-			Hilvan item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Hilvan.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("42")) {
-			List<Siverek> result = Siverek.findWithQuery(Siverek.class,
-					sb.toString(), null);
-			Siverek item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Siverek.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("43")) {
-			List<Suruc> result = Suruc.findWithQuery(Suruc.class,
-					sb.toString(), null);
-			Suruc item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Suruc.save(item);
-		} else if (Constants.SelectedUniversalCountyCode.equals("44")) {
-			List<Viransehir> result = Viransehir.findWithQuery(
-					Viransehir.class, sb.toString(), null);
-			Viransehir item = result.get(0);
-			if (!fromUnit) {
-				item.DoorNumber = newDoorNum;
-				item.BlockName = newBlockName;
-				item.SiteName = newSiteName;
-			} else {
-				item.IndoorNumber = newIndoorNum;
-			}
-			Viransehir.save(item);
+			
+			sql=String.format("UPDATE %s SET DOOR_NUMBER='%s',BLOCK_NAME='%s',SITE_NAME='%s' WHERE ID IN (%s)", tableName,newDoorNum,newBlockName,newSiteName,innerQuery);
+			SugarRecord.executeQuery(sql, null);
+		} catch (Exception e) {
+			log.error(String.format("Error occured in updating data function with exc is {%s}",e.getMessage()));
 		}
 	}
 
@@ -754,17 +325,9 @@ public class Helper {
 					return true;
 				}
 			}
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (NoSuchFieldException | IllegalAccessException |IllegalArgumentException e) {
+			log.error(String.format("Error occured in checkBlockUnitsNewlyAdded with an exception {%s}",e.getMessage()));
 		}
-
 		return false;
 	}
 
@@ -774,41 +337,24 @@ public class Helper {
 
 		try {
 			Class<?> t = getClassName();
-			StringBuilder sb = new StringBuilder();
-			sb.append(String.format("SELECT UAVT_ADDRESS_NO FROM %s",
-					getTableName()));
-			sb.append(" WHERE ");
-			sb.append(String
-					.format("DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
-							districtCode, villageCode, streetCode, csbmCode,
-							doorNumber));
+			String sql="",innerQuery="",tableName=getTableName();
+			
+			innerQuery=String.format("SELECT UAVT_ADDRESS_NO FROM %s WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
+					tableName,districtCode, villageCode, streetCode, csbmCode,
+					doorNumber);
+			
+			sql=String.format("SELECT ID FROM PUSH_REQUEST WHERE UAVT_CODE IN (%s)",innerQuery);
 
-			List<?> listOfT = SugarRecord.findWithQuery(t, sb.toString(), null);
-			for (Object object : listOfT) {
-				Field f = object.getClass().getDeclaredField("UAVTAddressNo");
-				f.setAccessible(true);
-				String value = f.get(object).toString();
-				List<PushRequest> pr = PushRequest.findWithQuery(
-						PushRequest.class,
-						"SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='" + value
-								+ "'", null);
-				if (pr.isEmpty()) {
-					return false;
-				}
+			List<?> listOfT = SugarRecord.findWithQuery(t, sql,null);
+			if (listOfT.isEmpty()) {
+				return false;
 			}
+			
 			return true;
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error(String.format("Error occured in checkBlockUnitExist an exception is {%s}",e.getMessage()));
+			return false;
 		}
-
-		return false;
 	}
 
 	public static boolean IsUUID(String value) {
@@ -817,7 +363,7 @@ public class Helper {
 			UUID.fromString(value);
 			isGuid = true;
 		} catch (Exception e) {
-			// TODO: handle exception
+			log.error(String.format("Error occured in IsUUID an exception is {%s}",e.getMessage()));
 		}
 
 		return isGuid;
@@ -1013,6 +559,33 @@ public class Helper {
 		}
 
 	}
+	
+	public static void updateLastPushDate(boolean forFirst) {
+		List<Configuration> cf = Configuration.listAll(Configuration.class);
+		boolean contains = false;
+		if (cf.size() > 0) {
+			// check et varmý
+			for (Configuration configuration : cf) {
+				String cfKey = configuration.getKey();
+				if (cfKey.equals(Constants.LAST_PUSH_TAG)) {
+					configuration.setValue(DateUtils.nowLong().toString());
+					Configuration.save(configuration);
+					contains = true;
+					break;
+				}
+			}
+		}
+
+		if (cf.size() == 0 && !contains) {
+			Configuration cfNew = new Configuration();
+			cfNew.setKey(Constants.LAST_PUSH_TAG);
+			if (forFirst) {
+				cfNew.setValue(DateUtils.nowLong().toString());
+			}
+			Configuration.save(cfNew);
+		}
+
+	}
 
 	public static String getLastSyncDate() {
 		String date = "";
@@ -1025,7 +598,28 @@ public class Helper {
 					try {
 						return configuration.getValue();
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+			}
+		}
+
+		return date;
+	}
+	
+	public static String getLastPushDate() {
+		String date = "";
+		List<Configuration> cf = Configuration.listAll(Configuration.class);
+		if (cf.size() > 0) {
+			// check et varmý
+			for (Configuration configuration : cf) {
+				String cfKey = configuration.getKey();
+				if (cfKey.equals(Constants.LAST_PUSH_TAG)) {
+					try {
+						return configuration.getValue();
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 
@@ -1037,10 +631,10 @@ public class Helper {
 		return date;
 	}
 
-	public static long getMaxSbsDate(){
-		
+	public static long getMaxSbsDate() {
+
 		try {
-			Class<?> t= Class.forName(Constants.SelectedClassName + "Mbs");
+			Class<?> t = Class.forName(Constants.SelectedClassName + "Mbs");
 			StringBuilder sb = new StringBuilder();
 			sb.append(String
 					.format("select max(ILK_SOZLESME_TARIHI)as ILK_SOZLESME_TARIHI from %s",
@@ -1057,12 +651,25 @@ public class Helper {
 				return 0;
 			} else
 				return 0;
-		} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+		} catch (ClassNotFoundException | NoSuchFieldException
+				| IllegalAccessException | IllegalArgumentException e) {
 			log.error("Error occured in getting Max Subscriber Contract date");
 			return 0;
 		}
-		
 
 	}
 
+	public static void updateLogStatus(String districtCode, String villageCode,
+			String streetCode, String csbmCode, String doorNumber,
+			String uavtCode, String value) {
+		String sql = String
+				.format("UPDATE AUDIT_LOG SET AUDIT_STATUS='%s' WHERE DISTRICT_CODE='%s' AND VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
+						value, districtCode, villageCode, streetCode, csbmCode,
+						doorNumber);
+		if (uavtCode.length() > 1) {
+			sql += String.format(" AND UAVT_CODE='%s'", uavtCode);
+		}
+
+		AuditLog.executeQuery(sql, null);
+	}
 }

@@ -267,7 +267,6 @@ public class Repository implements IRepository {
 		return sb.toString();
 	}
 	
-
 	private String getConditionSql(String[] conditions, String[] params) {
 		String sql = "";
 		for (int i = 0; i < params.length; i++) {

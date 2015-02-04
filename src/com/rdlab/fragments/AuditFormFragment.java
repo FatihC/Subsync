@@ -185,6 +185,7 @@ public class AuditFormFragment extends BaseFragment {
 		log.StreetCode = streetCode;
 		log.UavtCode = uavtAddresNo;
 		log.VillageCode = villageCode;
+		log.Pushed=false;
 		AuditLog.save(log);
 	}
 

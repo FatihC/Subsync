@@ -70,17 +70,20 @@ public class AuditItemAdapter  extends ArrayAdapter<AuditLog> {
 		TextView txtAuditCreateDate = (TextView) arg1.findViewById(R.id.txtAuditCreateDate);
 		TextView txtAuditProgressStatus = (TextView) arg1.findViewById(R.id.txtAuditProgressStatus);
 		TextView txtAuditedCheckStatus = (TextView) arg1.findViewById(R.id.txtAuditedCheckStatus);
+		TextView txtAuditStatus = (TextView) arg1.findViewById(R.id.txtAuditStatus);
 		
 		
 		int progressId=Integer.valueOf(audit.AuditProgressStatus);
 		int selectionId=Integer.valueOf(audit.AuditOptionSelection);
 		int auditedCheckId=Integer.valueOf(audit.AuditedCheckStatus);
+		String status=audit.AuditStatus.equals("1")?"Aktif":"Pasif";
 		
 		txtAuditIndoorNumber.setText(audit.IndoorNumber);
 		txtAuditSelectionName.setText(Constants.AUDITSELECTION.get(selectionId));
 		txtAuditCreateDate.setText(DateUtils.FormatLongToStringDate(audit.CreateDate));
 		txtAuditProgressStatus.setText(Constants.AUDITPROGRESSTYPE.get(progressId));
 		txtAuditedCheckStatus.setText(Constants.STATUSES.get(auditedCheckId));
+		txtAuditStatus.setText(status);
 		
 		return arg1;
 	}

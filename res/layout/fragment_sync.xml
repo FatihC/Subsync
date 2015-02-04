@@ -12,20 +12,37 @@
             android:id="@+id/txtPendingRequestCount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:text="@string/bekleyen_i_emri_say_s_"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="28sp" />
 
-        <TextView
-            android:id="@+id/txtLastSyncDate"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/g_ncelle_yap_lmad_"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
+            <TextView
+                android:id="@+id/txtLastSyncDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/g_ncelle_yap_lmad_"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/txtLastPushDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/g_ncelle_yap_lmad_"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        </LinearLayout>
     </TableRow>
 
     <TableRow
@@ -39,16 +56,17 @@
             android:layout_height="100dp"
             android:layout_margin="20dp"
             android:layout_marginLeft="20dp"
+            android:layout_weight="0.3"
             android:background="@drawable/border"
             android:contentDescription="@string/pre_text"
             android:maxHeight="200dp"
             android:src="@drawable/syncadd" />
 
         <TextView
-            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_weight="0.7"
             android:text="@string/e_le_me_veri_si_ni_merkeze_yolla"
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </TableRow>
@@ -59,23 +77,24 @@
         android:layout_weight="1" >
 
         <ImageButton
-            android:id="@+id/syncDb"
+            android:id="@+id/fetch"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:layout_margin="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="0.3"
+            android:background="@drawable/border"
             android:contentDescription="@string/pre_text"
             android:maxHeight="200dp"
-            android:src="@drawable/dsync"
-            android:visibility="invisible" />
+            android:src="@drawable/dsync" />
 
         <TextView
-            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/uavt_veri_si_g_ncelle"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:visibility="invisible" />
+            android:layout_weight="0.7"
+            android:text="@string/merkez_verisi_al"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </TableRow>
 
     <TableRow
@@ -84,13 +103,24 @@
         android:layout_weight="1" >
 
         <ImageButton
-            android:id="@+id/get"
+            android:id="@+id/updateConfig"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
+            android:layout_margin="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="0.3"
+            android:background="@drawable/border"
             android:contentDescription="@string/pre_text"
             android:maxHeight="200dp"
-            android:src="@drawable/down"
-            android:visibility="invisible" />
+            android:src="@drawable/down" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.7"
+            android:text="@string/ayar_g_ncelle"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </TableRow>
 
 </TableLayout>
