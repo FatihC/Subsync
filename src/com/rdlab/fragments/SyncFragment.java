@@ -42,6 +42,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	ImageButton fetch;
 	ImageButton push;
 	TextView txtPending;
+	TextView txtPendingAuditCount;
 	TextView txtLastSyncDate;
 	TextView txtLastPushDate;
 	ServiceOrganizer organizer;
@@ -74,6 +75,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		updateConfig = (ImageButton) rootView.findViewById(R.id.updateConfig);
 		txtPending = (TextView) rootView
 				.findViewById(R.id.txtPendingRequestCount);
+		txtPendingAuditCount=(TextView)rootView.findViewById(R.id.txtPendingAuditCount);
 		txtLastSyncDate = (TextView) rootView
 				.findViewById(R.id.txtLastSyncDate);
 		txtLastPushDate = (TextView) rootView
@@ -90,9 +92,14 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 
 			@Override
 			public void onClick(View arg0) {
+				if (!checkPushAvailable()) {
+					Helper.giveNotification(getView().getContext(), "1 günden fazla senkronizasyon yapmadan gönderim yapamazsýnýz.");
+					return;
+				}
 				updatePushButtonView(false);
 				push();
 				pushLogs();
+				
 			}
 		});
 		
@@ -144,32 +151,37 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			break;
 		case FetchNewUavt:
 			doPostFetchNewUavtOperation(result.data);
+			fetchNewUavtCallResponsed=true;
 			finishFetchProcess();
 			break;
 		case FetchMBS:
 			doPostFetchMbsOperation(result.data);
+			fetchMbsCallResponsed=true;
 			finishFetchProcess();
 			break;
 		case FetchLogs:
 			doPostFetchLogsOperation(result.data);
+			fetchLogsCallResponsed=true;
 			finishFetchProcess();
 			break;
 		case FetchRequest:
 			doPostFetchOperation(result.data);
+			fetchDataCallResponsed=true;
 			finishFetchProcess();
 			break;
 		case FetchUserRequest:
 			doPostFetchUserOperation(result.data);
+			fetchUserCallResponsed=true;
 			break;
 		case Push:
 			Helper.giveNotification(getView().getContext(),
 					"Veri gönderim iþlemi tamamlandý.");
-			
+			pushCallResponsed=true;
 			finishPushProcess();
 			break;
 		case PushLogs:
 			Helper.giveNotification(getView().getContext(),"Tespit verisi gönderim iþlemi tamamlandý.");
-			
+			pushLogsCallResponsed=true;
 			finishPushProcess();
 			break;
 		default:
@@ -193,6 +205,9 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		Helper.giveNotification(getView().getContext(),
 				"Ýþleminiz baþarýyla tamamlanmýþtýr.");
 		txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
+		
+		pushCallResponsed=false;
+		pushLogsCallResponsed=false;
 	}
 	
 	private void finishFetchProcess(){
@@ -211,6 +226,11 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		
 		Helper.updateLastSyncDate(forFirstSync);
 		updateFetchButtonView(true);
+		
+		fetchDataCallResponsed=false;
+		fetchLogsCallResponsed=false;
+		fetchMbsCallResponsed=false;
+		fetchNewUavtCallResponsed=false;
 	}
 	
 	private void updatePushButtonView(boolean state){
@@ -235,7 +255,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		
 		dt = Helper.getLastPushDate();
 		if (!dt.isEmpty()) {
-			txtLastPushDate.setText("Son güncelleme tarihi : "
+			txtLastPushDate.setText("Son gönderim tarihi : "
 					+ DateUtils.FormatLongStringDateToString(dt));
 			forFirstPush = false;
 		}
@@ -267,6 +287,13 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 			txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
 		} else {
 			txtPending.append(String.format(": %d", pendingCount));
+		}
+		
+		pendingCount=getPendingLogRequestSize();
+		if (pendingCount == 0) {
+			txtPendingAuditCount.setText("Bekleyen tespit bulunmamaktadýr");
+		} else {
+			txtPendingAuditCount.append(String.format(": %d", pendingCount));
 		}
 	}
 	
@@ -311,7 +338,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		
 		
 		String sql = "UPDATE AUDIT_LOG SET PUSHED=1 WHERE ID IN (SELECT ID FROM AUDIT_LOG WHERE PUSHED=0)";
-		PushRequest.executeQuery(sql, null);
+		PushRequest.executeQuery(sql);
 
 		prg.dismiss();
 
@@ -326,7 +353,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 
 		String sql = "UPDATE PUSH_REQUEST SET PUSHED=1 WHERE ID IN (SELECT ID FROM PUSH_REQUEST WHERE PUSHED=0)";
 
-		PushRequest.executeQuery(sql, null);
+		PushRequest.executeQuery(sql);
 
 		prg.dismiss();
 	}
@@ -340,7 +367,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 
 		String sql = "UPDATE AUDIT_LOG SET PUSHED=1 WHERE ID IN (SELECT ID FROM AUDIT_LOG WHERE PUSHED=0)";
 
-		AuditLog.executeQuery(sql, null);
+		AuditLog.executeQuery(sql);
 
 		prg.dismiss();
 	}
@@ -663,6 +690,16 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		return val;
 
 	}
+	
+	private int getPendingLogRequestSize() {
+		Integer val = AuditLog.getListCount("SELECT COUNT(*) AS COUNT FROM AUDIT_LOG WHERE PUSHED=0");
+		if (val == null) {
+			// no data
+			return 0;
+		}
+		return val;
+
+	}
 
 	private List<PushRequest> getPendingRequests() {
 		List<PushRequest> pushRequestList = PushRequest.findWithQuery(
@@ -677,11 +714,21 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		return logList;
 	}
 
+	private boolean checkPushAvailable(){
+		long pushDate=DateUtils.nowLong();
+		long syncDate=Long.parseLong(Helper.getLastSyncDate());
+		long diff=pushDate-syncDate;
+		if (diff>=1000000) {
+			return false;
+		}
+		return true;
+	}
+	
 	private void push() {
 		List<PushRequest> pushRequestList = getPendingRequests();
 		if (pushRequestList == null || pushRequestList.isEmpty()) {
-			Helper.giveNotification(getView().getContext(),
-					"Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
+			log.warn("Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
+			pushCallResponsed=true;
 			return;
 		}
 
@@ -703,8 +750,8 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	private void pushLogs() {
 		List<AuditLog> logList = getPendingLogs();
 		if (logList == null || logList.isEmpty()) {
-			Helper.giveNotification(getView().getContext(),
-					"Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
+			log.warn("Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
+			pushLogsCallResponsed=true;
 			return;
 		}
 

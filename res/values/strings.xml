@@ -69,6 +69,7 @@
     <string name="e_le_me_veri_si_ni_merkeze_yolla">EŞLEŞME VERİSİNİ MERKEZE YOLLA</string>
     <string name="uavt_veri_si_g_ncelle">UAVT VERİSİ GÜNCELLE</string>
     <string name="bekleyen_i_emri_say_s_">Bekleyen Kayıt Sayısı</string>
+    <string name="bekleyen_log_say_s_">Bekleyen Tespit Sayısı</string>
     <string name="d_kap_no_">Dış Kapı No:</string>
     <string name="site_ad_">Site Adı</string>
     <string name="blok_ad_">Blok Adı</string>
@@ -96,7 +97,7 @@
     <string name="se_ili_birim_ile_ilgili_i_lemler">Seçili birim ile ilgili işlemler</string>
     <string name="tespit_yap">Tespit Yap</string>
     <string name="veri_g_ncelle">Veri Güncelle</string>
-    <string name="yap_lan_tespitler">Yapılan Tespitler</string>
+    <string name="yap_lan_tespitler">Tespitler</string>
     <string name="yap_lan_tespiti_se_iniz">Yapılan Tespiti Seçiniz</string>
     <string name="zaten_abone_sayac_mbs_de_g_ncel">Zaten Abone - Sayacı MBS’de Güncel</string>
     <string name="zaten_abone_sayac_mbs_de_g_ncel_de_il">Zaten Abone - Sayacı MBS’de Güncel Değil</string>

@@ -244,7 +244,7 @@ public class Helper {
 					"UPDATE %s SET CHECK_STATUS='%d' WHERE ID IN (%s)",
 					tableName, value.getVal(), innerQuery);
 
-			SugarRecord.executeQuery(sql, null);
+			SugarRecord.executeQuery(sql);
 		} catch (Exception e) {
 			log.error(String
 					.format("Error occured while updating status with given StreetCode {%s} and CsbmCode {%s} and exc is {%s}",
@@ -670,6 +670,6 @@ public class Helper {
 			sql += String.format(" AND UAVT_CODE='%s'", uavtCode);
 		}
 
-		AuditLog.executeQuery(sql, null);
+		AuditLog.executeQuery(sql);
 	}
 }

@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rdlab.model.AuditLog;
+import com.rdlab.model.AuditStatus;
 import com.rdlab.model.UnitItem;
 import com.rdlab.subssync.R;
 
@@ -120,7 +121,7 @@ public class UnitItemAdapter extends ArrayAdapter<UnitItem> {
 
 	private boolean checkAuditLogExist(String uavtNo) {
 		String sql = String.format(
-				"SELECT * FROM AUDIT_LOG WHERE UAVT_CODE='%s'", uavtNo);
+				"SELECT * FROM AUDIT_LOG WHERE UAVT_CODE='%s' AND AUDIT_STATUS=%s ", uavtNo,AuditStatus.Active.getStringVal());
 		ArrayList<AuditLog> logs = (ArrayList<AuditLog>) AuditLog
 				.findWithQuery(AuditLog.class, sql, null);
 		return logs.size() > 0;
@@ -128,7 +129,7 @@ public class UnitItemAdapter extends ArrayAdapter<UnitItem> {
 	
 	private boolean checkLastAuditSuccess(String uavtNo){
 		String sql = String.format(
-				"SELECT * FROM AUDIT_LOG WHERE UAVT_CODE='%s'", uavtNo);
+				"SELECT * FROM AUDIT_LOG WHERE UAVT_CODE='%s' AND AUDIT_STATUS=%s ", uavtNo,AuditStatus.Active.getStringVal());
 		ArrayList<AuditLog> logs = (ArrayList<AuditLog>) AuditLog
 				.findWithQuery(AuditLog.class, sql, null);
 		if (logs.size()<1) {

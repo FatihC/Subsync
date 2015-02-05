@@ -65,7 +65,7 @@ public class AuditItemAdapter  extends ArrayAdapter<AuditLog> {
 		} 
 		AuditLog audit = _auditLogs.get(arg0);
 
-		TextView txtAuditIndoorNumber = (TextView) arg1.findViewById(R.id.txtAuditIndoorNumber);
+//		TextView txtAuditIndoorNumber = (TextView) arg1.findViewById(R.id.txtAuditIndoorNumber);
 		TextView txtAuditSelectionName = (TextView) arg1.findViewById(R.id.txtAuditSelectionName);
 		TextView txtAuditCreateDate = (TextView) arg1.findViewById(R.id.txtAuditCreateDate);
 		TextView txtAuditProgressStatus = (TextView) arg1.findViewById(R.id.txtAuditProgressStatus);
@@ -78,7 +78,7 @@ public class AuditItemAdapter  extends ArrayAdapter<AuditLog> {
 		int auditedCheckId=Integer.valueOf(audit.AuditedCheckStatus);
 		String status=audit.AuditStatus.equals("1")?"Aktif":"Pasif";
 		
-		txtAuditIndoorNumber.setText(audit.IndoorNumber);
+//		txtAuditIndoorNumber.setText(audit.IndoorNumber);
 		txtAuditSelectionName.setText(Constants.AUDITSELECTION.get(selectionId));
 		txtAuditCreateDate.setText(DateUtils.FormatLongToStringDate(audit.CreateDate));
 		txtAuditProgressStatus.setText(Constants.AUDITPROGRESSTYPE.get(progressId));

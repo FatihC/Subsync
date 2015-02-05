@@ -138,8 +138,8 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 				dlg.setTitle("Uyarý");
 				
 				WindowManager.LayoutParams lp=dlg.getWindow().getAttributes();
-				lp.width=400;
-				lp.height=250;
+				lp.width=500;
+				lp.height=290;
 				
 				final UnitItem item = addressList.get(--arg2);
 				
