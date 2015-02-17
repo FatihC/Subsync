@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:text="@string/se_ili_birim_ile_ilgili_i_lemler"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/btnMakeAudit"
+                android:layout_width="0dp"
+                style="?android:attr/buttonBarButtonStyle"
+                android:background="@color/info_button"
+                android:layout_margin="5dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tespit_yap" />
+
+            <Button
+                android:id="@+id/btnUpdateData"
+                android:layout_width="0dp"
+                style="?android:attr/buttonBarButtonStyle"
+                android:background="@color/info_button"
+                android:layout_margin="5dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/veri_g_ncelle" />
+
+            <Button
+                android:id="@+id/btnAuditList"
+                android:layout_width="0dp"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_margin="5dp"
+                android:background="@color/info_button"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/yap_lan_tespitler" />
+        </TableRow>
+
+       
+    </TableLayout>
+
+</LinearLayout>
