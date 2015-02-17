@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    
+   <!--  <item
+        android:id="@+id/action_viransehir"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_viransehir"/>
+    <item
+        android:id="@+id/action_bozova"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_bozova"/>
+    <item
+        android:id="@+id/action_birecik"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_birecik"/>
+    <item
+        android:id="@+id/action_akcakale"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_akcakale"/>
+    <item
+        android:id="@+id/action_haliliye"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_haliliye"/>
+    <item
+        android:id="@+id/action_eyyubiye"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_eyyubiye"/>
+    <item
+        android:id="@+id/action_siverek"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_siverek"/>
+    <item
+        android:id="@+id/action_karakopru"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_karakopru"/>
+    <item
+        android:id="@+id/action_suruc"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_suruc"/>
+    <item
+        android:id="@+id/action_ceylanpinar"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_ceylanpinar"/>
+    <item
+        android:id="@+id/action_halfeti"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_halfeti"/>
+    <item
+        android:id="@+id/action_harran"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_harran"/>
+    <item
+        android:id="@+id/action_hilvan"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_hilvan"/> -->
+    
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+
+</menu>

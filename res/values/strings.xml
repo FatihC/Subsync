@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_settings">Ayarlar</string>    
+    <string name="drawer_open">Slider Menu Opened</string>
+    <string name="drawer_close">Slider Menu Closed</string>
+    
+    <string name="app_name">UAVT</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="pre_text"></string>
+    <string name="dash">-</string>
+    
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item >Tesisat Eşleştirme</item>
+        <item >Veriyi Güncelle</item>
+        <item >Kullanıcı Bilgileri</item>
+        <item >Şifre Değiştir</item>
+        <!-- <item >İstatistik</item> -->
+        <item >Çıkış</item>
+    </string-array>
+    
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_sync</item>
+        <item>@drawable/ic_user</item>
+        <item>@drawable/ic_pass</item>
+        <!-- <item>@drawable/ic_graph</item> -->
+        <item>@drawable/ic_logout</item>
+    </array>
+     
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
+    
+    <!-- Counties -->
+    <string name="action_viransehir">Viranşehir</string>
+    <string name="action_bozova">Bozova</string>
+    <string name="action_birecik">Birecik</string>
+    <string name="action_akcakale">Akçakale</string>
+    <string name="action_haliliye">Haliliye</string>
+    <string name="action_eyyubiye">Eyyübiye</string>
+    <string name="action_siverek">Siverek</string>
+    <string name="action_karakopru">Karaköprü</string>
+    <string name="action_suruc">Suruç</string>
+    <string name="action_ceylanpinar">Ceylanpınar</string>
+    <string name="action_halfeti">Halfeti</string>
+    <string name="action_harran">Harran</string>
+    <string name="action_hilvan">Hilvan</string>
+    <string name="tesisat_no">Tesisat No:</string>
+    <string name="fatura_kmad_ancak_saya_bilgileri_mevcut_ise">Fatura çıkmadı ancak sayaç bilgileri mevcut ise</string>
+    <string name="saya_seri_no">Sayaç Seri No:</string>
+    <string name="marka">Marka:</string>
+    <string name="tan_ms_z_durumlarda">Tanımsız Durumlarda</string>
+    <string name="di_er_durumlar">Diğer Durumlar:</string>
+    <string name="kaydet">Kaydet</string>
+    <string name="fatura_kt_ise">Fatura çıktı ise</string>
+    <string name="kullan_c_ad_">Kullanıcı Adı</string>
+    <string name="_ifre">Şifre</string>
+    <string name="rdlab_uavt_tesisat_e_le_me">ŞANLIURFA UAVT – TESİSAT EŞLEME PROJESİ</string>
+    <string name="giri_">Giriş</string>
+    <string name="ara">Ara</string>
+    <string name="abone_unvan_">Abone Unvanı:</string>
+    <string name="abone_bulunamad_">Abone Bulunamadı</string>
+    <string name="i_ptal">İptal</string>
+    <string name="e_le_me_veri_si_ni_merkeze_yolla">EŞLEŞME VERİSİNİ MERKEZE YOLLA</string>
+    <string name="uavt_veri_si_g_ncelle">UAVT VERİSİ GÜNCELLE</string>
+    <string name="bekleyen_i_emri_say_s_">Bekleyen Kayıt Sayısı</string>
+    <string name="d_kap_no_">Dış Kapı No:</string>
+    <string name="site_ad_">Site Adı</string>
+    <string name="blok_ad_">Blok Adı</string>
+    <string name="yeni_d_kap_ekle">Yeni Dış Kapı Ekle</string>
+    <string name="nar_sistem_taraf_ndan_geli_tirilmi_tir_">Nar Sistem Tarafından Geliştirilmiştir.</string>
+    <string name="ekle">Ekle</string>
+    <string name="i_kap_no">İç Kapı No</string>
+    <string name="di_kap_no">Dış Kapı No</string>
+    
+    <string name="tesisat_no_saya_mrk">Tesisat No</string>
+    <string name="abone_unv_saya_no">Sayaç Mark</string>
+    <string name="sayc_mark">Sayaç Marka</string>
+    <string name="say_ser">Sayaç Serno</string>
+    <string name="durum">Durum</string>
+    <string name="abone_unv">Abone Unvanı</string>
+    
+    <string name="d_zenle">Düzenle</string>
+    <string name="sil">Sil</string>
+    <string name="birim_t_r_">Birim Türü</string>
+    <string name="g_ncelle_yap_lmad_">Güncelle yapılmadı.</string>
+    <string name="kullan_c_i_smi_">Kullanıcı İsmi:</string>
+    <string name="_al_lan_i_l_e_">Çalışılan İlçe:</string>
+    <string name="i_l_e_de_i_i_m_i_lemleri_i_i_n_merkeze_gi_tmeni_z_gerekmektedi_r_">İLÇE DEĞİŞİM İŞLEMLERİ İÇİN MERKEZE GİTMENİZ GEREKMEKTEDİR.</string>
+    <string name="yeni_ifre">Yeni Şifre</string>
+    
+    
+        
+    
+</resources>
