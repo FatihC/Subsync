@@ -438,10 +438,10 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		for (SubscriberInfo subscriberInfo : vals) {
 			Class<?> t;
 			try {
-				t = Class.forName(Constants.SelectedClassName);
+				t = Class.forName(Constants.SelectedClassName+"Mbs");
 
 				String sql = "SELECT * FROM " + NamingHelper.toSQLName(t)
-						+ "_MBS WHERE TESISAT_NO=" + subscriberInfo.TESISAT_NO
+						+ " WHERE TESISAT_NO=" + subscriberInfo.TesisatNo
 						+ "";
 				List<?> listOfT = SugarRecord.findWithQuery(t, sql, null);
 				if (listOfT.size() > 0) {
@@ -455,8 +455,8 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 						fUnv.setAccessible(true);
 						fSoz.setAccessible(true);
 						fSoz.set(object,
-								Long.valueOf(subscriberInfo.SOZLESME_TARIHI));
-						fUnv.set(object, String.valueOf(subscriberInfo.UNVAN));
+								Long.valueOf(subscriberInfo.SozlesmeTarihi));
+						fUnv.set(object, String.valueOf(subscriberInfo.Unvan));
 
 						object.getClass()
 								.getMethod("save", new Class[] { Object.class })
@@ -470,9 +470,9 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 									new Class[] { Long.class, Long.class,
 											String.class })
 							.newInstance(
-									Long.valueOf(subscriberInfo.TESISAT_NO),
-									Long.valueOf(subscriberInfo.SOZLESME_TARIHI),
-									String.valueOf(subscriberInfo.UNVAN));
+									Long.valueOf(subscriberInfo.TesisatNo),
+									Long.valueOf(subscriberInfo.SozlesmeTarihi),
+									String.valueOf(subscriberInfo.Unvan));
 					newObj.getClass()
 							.getMethod("save", new Class[] { Object.class })
 							.invoke(null, newObj);

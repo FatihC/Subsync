@@ -23,8 +23,17 @@ import com.rdlab.utility.Helper;
 
 public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 //	 private static final String API_URL ="http://uavt.dedas.com.tr/UAVTWebapi/api/v1/uavt/";
-//	 private static final String API_URL = "http://192.168.56.1/UAVTWebapi/api/v1/uavt/";
-	private static final String API_URL = "http://10.34.61.33/UAVTWebapi/api/v1/uavt/";
+//	private static final String API_URL = "http://10.34.61.33/UAVTWebapi/api/v1/uavt/";
+	
+	 private static final String API_URL ="http://uavt.dedas.com.tr/UAVTWebapiTest/api/v1/uavt/";
+//	private static final String API_URL = "http://10.34.61.33/UAVTWebapiTest/api/v1/uavt/";
+	 
+//	 private static final String API_URL ="http://uavt.dedas.com.tr/UAVTWebapi1Test/api/v1/uavt/";
+//		private static final String API_URL = "http://10.34.61.33/UAVTWebapi1Test/api/v1/uavt/";
+	 
+	 
+	
+//	private static final String API_URL = "http://192.168.56.1/UAVTWebapi/api/v1/uavt/";
 //	private static final String API_URL = "http://192.168.2.238/UAVTWebapi/api/v1/uavt/";
 	
  	private final static Logger log = Logger.getLogger(ServiceOrganizer.class);
@@ -61,12 +70,18 @@ public class ServiceOrganizer extends AsyncTask<ServiceRequest, Void, Object> {
 			this.requestMethodName = methodName;
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost(getAbsoluteUrl(methodName));
+//			httpPost.setHeader("Content-type", "application/json");
+//			httpPost.setHeader("Accept", "application/json");
 			httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+//			httpPost.setHeader("Accept", "application/json");
+//			httpPost.setHeader("Content-type", "application/json;charset=UTF-8");
+//			httpPost.setHeader("Accept-Charset", "utf-8");
 
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity httpEntity = httpResponse.getEntity();
+//			outPut=EntityUtils.toString(httpEntity);
 			is = httpEntity.getContent();
-
+//
 			outPut = convertStreamToString(is);
 			log.debug("Response retrieved from webservice");
 

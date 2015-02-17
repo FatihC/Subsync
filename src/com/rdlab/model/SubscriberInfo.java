@@ -1,20 +1,20 @@
 package com.rdlab.model;
 
 public class SubscriberInfo {
-	 public long Id ;
-     public String BOLGE_KODU ;
-     public String BOLGE_ADI ;
-     public String KARNE_NO ;
-     public String KARNE_ADRESI ;
-     public String TESISAT_NO ;
-     public String MARKA ;
-     public String SAYAC_MARKA_ADI ;
-     public String SAYAC_NO ;
-     public String UNVAN ;
-     public String ADRES ;
-     public String SOZLESME_TARIHI ;
-     public String IPTAL_TARIHI ;
-     public String SOZLESME_UNVANI ;
+	public long Id;
+    public String BolgeKodu;
+    public String BolgeAdi;
+    public String KarneNo;
+    public String KarneAdresi;
+    public String TesisatNo;
+    public String Marka;
+    public String SayacMarkaAdi;
+    public String SayacNo;
+    public String Unvan;
+    public String Adres;
+    public String SozlesmeTarihi;
+    public String IptalTarihi;
+    public String SozlesmeUnvani;
     
      public SubscriberInfo() {
 		// TODO Auto-generated constructor stub
