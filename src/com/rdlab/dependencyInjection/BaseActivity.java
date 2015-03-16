@@ -14,7 +14,6 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 
 import com.orm.SugarContext;
-import com.rdlab.data.DataInitializer;
 import com.rdlab.model.Configuration;
 import com.rdlab.model.PushRequest;
 import com.rdlab.utility.Constants;
@@ -27,23 +26,10 @@ public class BaseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-
+		
 		SugarContext.init(this);
 		FragmentManager.enableDebugLogging(true);
 
-		DataInitializer.InitData();
-
-//		File dstDB = new File(
-//				"/data/data/com.rdlab.subssync/databases/sub_sync.dat");
-//		if (!dstDB.exists()) {
-//			try {
-//				reverseCopy();
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-		
 		File dstDB = new File("/data/data/com.rdlab.subssync/databases/sub_sync.dat");
 		File currentDB = new File("/sdcard/Download", "db.dat");
 		
@@ -81,9 +67,14 @@ public class BaseActivity extends Activity {
 			// check et varmý
 			for (Configuration configuration : cf) {
 				String cfKey = configuration.getKey();
+				if (cfKey.equals(Constants.SELECTED_CITY_CODE)) {
+					Constants.SelectedCityCode=configuration.getValue();
+				}
+				if (cfKey.equals(Constants.SELECTED_CITY_NAME)) {
+					Constants.SelectedCityName=configuration.getValue();
+				}
 				if (cfKey.equals(Constants.SELECTED_COUNTY_CODE)) {
 					Constants.SelectedUniversalCountyCode=configuration.getValue();
-					setDistrictVillageCode(configuration.getValue());
 				}
 				if (cfKey.equals(Constants.SELECTED_COUNTY_NAME)) {
 					Constants.SelectedCountyName=configuration.getValue();
@@ -94,27 +85,40 @@ public class BaseActivity extends Activity {
 				if (cfKey.equals(Constants.SELECTED_CLASS_NAME)) {
 					Constants.SelectedClassName=configuration.getValue();
 				}
+				if (cfKey.equals(Constants.SELECTED_DISTRICT_CODE)) {
+					Constants.SelectedDistrictCode=configuration.getValue();
+				}
+				if (cfKey.equals(Constants.SELECTED_DISTRICT_NAME)) {
+					Constants.SelectedDistrictName=configuration.getValue();
+				}
+				if (cfKey.equals(Constants.SELECTED_VILLAGE_CODE)) {
+					Constants.SelectedVillageCode=configuration.getValue();
+				}
+				if (cfKey.equals(Constants.SELECTED_VILLAGE_NAME)) {
+					Constants.SelectedVillageName=configuration.getValue();
+				}
+				
 			}
 		}
 	}
 	
-	private void setDistrictVillageCode(String countyCode){
-		if(countyCode.equals("32")) {Constants.SelectedDistrictCode="1771";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49153";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("33")) {Constants.SelectedDistrictCode="1773";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49155";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("34")) {Constants.SelectedDistrictCode="1775";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49157";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("35")) {Constants.SelectedDistrictCode="1392";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32013";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("36")) {Constants.SelectedDistrictCode="1394";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32103";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("37")) {Constants.SelectedDistrictCode="1396";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32176";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("38")) {Constants.SelectedDistrictCode="1399";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32256";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("39")) {Constants.SelectedDistrictCode="1400";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32292";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("40")) {Constants.SelectedDistrictCode="1401";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32326";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("41")) {Constants.SelectedDistrictCode="1402";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32423";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("42")) {Constants.SelectedDistrictCode="1405";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32487";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("43")) {Constants.SelectedDistrictCode="1412";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32620";Constants.SelectedVillageName="MERKEZ";}
-		else if(countyCode.equals("44")) {Constants.SelectedDistrictCode="1414";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32705";Constants.SelectedVillageName="MERKEZ";}
-
-
-	}
+//	private void setDistrictVillageCode(String countyCode){
+//		if(countyCode.equals("32")) {Constants.SelectedDistrictCode="1771";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49153";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("33")) {Constants.SelectedDistrictCode="1773";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49155";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("34")) {Constants.SelectedDistrictCode="1775";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="49157";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("35")) {Constants.SelectedDistrictCode="1392";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32013";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("36")) {Constants.SelectedDistrictCode="1394";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32103";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("37")) {Constants.SelectedDistrictCode="1396";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32176";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("38")) {Constants.SelectedDistrictCode="1399";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32256";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("39")) {Constants.SelectedDistrictCode="1400";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32292";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("40")) {Constants.SelectedDistrictCode="1401";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32326";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("41")) {Constants.SelectedDistrictCode="1402";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32423";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("42")) {Constants.SelectedDistrictCode="1405";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32487";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("43")) {Constants.SelectedDistrictCode="1412";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32620";Constants.SelectedVillageName="MERKEZ";}
+//		else if(countyCode.equals("44")) {Constants.SelectedDistrictCode="1414";Constants.SelectedDistrictName="MERKEZ";Constants.SelectedVillageCode="32705";Constants.SelectedVillageName="MERKEZ";}
+//
+//
+//	}
 	
 	private int getPendingRequests() {
 		Integer val=PushRequest.getListCount("SELECT COUNT(*) AS COUNT FROM PUSH_REQUEST WHERE PUSHED=0");

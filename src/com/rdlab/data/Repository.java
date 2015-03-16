@@ -218,8 +218,8 @@ public class Repository implements IRepository {
 		String[] fields = new String[] { "CSBMCode", "CSBMName" };
 		String[] cols = new String[] { "STREET_CODE" };
 		String sql = String
-				.format("SELECT DISTINCT CSBM_CODE, CSBM_NAME FROM %s WHERE STREET_CODE IN (%s) ",
-						Helper.getTableName(), getControlDataSqlForGivenColumn("STREET_CODE",cols, params));
+				.format("SELECT DISTINCT CSBM_CODE, CSBM_NAME FROM %s WHERE UAVT_ADDRESS_NO IN (%s) ",
+						Helper.getTableName(), getControlDataSqlForGivenColumn("UAVT_CODE",cols, params));
 
 		log.info(String.format("SQL query is %s",sql));
 		return (ArrayList<AddressListItem>) Helper.getResultWithSql(fields,
@@ -232,9 +232,9 @@ public class Repository implements IRepository {
 		String[] cols = new String[] { "STREET_CODE", "CSBM_CODE" };
 		String sql = String
 				.format("SELECT DOOR_NUMBER,SITE_NAME,BLOCK_NAME,CHECK_STATUS,COUNT(1) AS 'UNIT_COUNT' FROM %s"
-						+ " WHERE STREET_CODE IN (%s) AND DOOR_NUMBER IN (%s) %s"
+						+ " WHERE UAVT_ADDRESS_NO IN (%s) AND DOOR_NUMBER IN (%s) %s"
 						+ " GROUP BY DOOR_NUMBER,SITE_NAME,BLOCK_NAME,CHECK_STATUS",
-						Helper.getTableName(), getControlDataSqlForGivenColumn("STREET_CODE",cols, params),getControlDataSqlForGivenColumn("DOOR_NUMBER",cols, params)
+						Helper.getTableName(), getControlDataSqlForGivenColumn("UAVT_CODE",cols, params),getControlDataSqlForGivenColumn("DOOR_NUMBER",cols, params)
 						,getConditionSql(cols, params));
 
 		log.info(String.format("SQL query is %s",sql));
@@ -249,8 +249,8 @@ public class Repository implements IRepository {
 				"DOOR_NUMBER" };
 		String sql = String.format(
 				"SELECT INDOOR_NUMBER,UAVT_ADDRESS_NO,CHECK_STATUS FROM %s"
-						+ " WHERE STREET_CODE IN (%s)   %s", Helper.getTableName(),
-						getControlDataSqlForGivenColumn("STREET_CODE",cols, params),getConditionSql(cols, params));
+						+ " WHERE UAVT_ADDRESS_NO IN (%s)   %s", Helper.getTableName(),
+						getControlDataSqlForGivenColumn("UAVT_CODE",cols, params),getConditionSql(cols, params));
 		
 		log.info(String.format("SQL query is %s",sql));
 		return (ArrayList<UnitItem>) Helper.getResultWithSql(null, sql,
@@ -270,7 +270,7 @@ public class Repository implements IRepository {
 	private String getConditionSql(String[] conditions, String[] params) {
 		String sql = "";
 		for (int i = 0; i < params.length; i++) {
-			sql += String.format("AND %s ='%s'", conditions[i], params[i]);
+			sql += String.format(" AND %s ='%s'", conditions[i], params[i]);
 		}
 
 		return sql;

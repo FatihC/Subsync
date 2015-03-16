@@ -75,14 +75,21 @@ public class AuditItemAdapter  extends ArrayAdapter<AuditLog> {
 		
 		int progressId=Integer.valueOf(audit.AuditProgressStatus);
 		int selectionId=Integer.valueOf(audit.AuditOptionSelection);
-		int auditedCheckId=Integer.valueOf(audit.AuditedCheckStatus);
+		if (audit.AuditedCheckStatus!=null&&!audit.AuditedCheckStatus.isEmpty()) {
+			int auditedCheckId=Integer.valueOf(audit.AuditedCheckStatus);
+			txtAuditedCheckStatus.setText(Constants.STATUSES.get(auditedCheckId));
+		}else
+		{
+			txtAuditedCheckStatus.setText("Enerjisiz Birim");
+		}
+		
 		String status=audit.AuditStatus.equals("1")?"Aktif":"Pasif";
 		
 //		txtAuditIndoorNumber.setText(audit.IndoorNumber);
 		txtAuditSelectionName.setText(Constants.AUDITSELECTION.get(selectionId));
 		txtAuditCreateDate.setText(DateUtils.FormatLongToStringDate(audit.CreateDate));
 		txtAuditProgressStatus.setText(Constants.AUDITPROGRESSTYPE.get(progressId));
-		txtAuditedCheckStatus.setText(Constants.STATUSES.get(auditedCheckId));
+		
 		txtAuditStatus.setText(status);
 		
 		return arg1;

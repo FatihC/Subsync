@@ -24,6 +24,8 @@ import com.rdlab.webservice.ServiceRequest;
 import com.rdlab.webservice.ServiceResult;
 
 import android.app.ActionBar;
+import android.app.DatePickerDialog.OnDateSetListener;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -31,10 +33,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class SyncFragment extends Fragment implements ServiceTaskEvent {
+public class SyncFragment extends Fragment implements ServiceTaskEvent,OnDateSetListener {
 
 	private final static Logger log = Logger.getLogger(SyncFragment.class);
 
@@ -45,8 +50,11 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	TextView txtPendingAuditCount;
 	TextView txtLastSyncDate;
 	TextView txtLastPushDate;
+	Button btnAddDate;
 	ServiceOrganizer organizer;
 
+	String selectedDate="";
+	
 	boolean pushCallResponsed=false;
 	boolean pushLogsCallResponsed=false;
 	
@@ -80,25 +88,44 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 				.findViewById(R.id.txtLastSyncDate);
 		txtLastPushDate = (TextView) rootView
 				.findViewById(R.id.txtLastPushDate);
+		btnAddDate=(Button)rootView.findViewById(R.id.btnAddDate);
+		final DialogFragment newFragment = new DatePickerFragment(this);
+		
 
 		// setting sync date to text view
 		setLastProcessDates();
 
 		// setting pending request size to text view
-		setPendingRequestSize();
+//		setPendingRequestSize();
+		
+		//setting all request size to text view
+		setAllPendingRequestSize();
 
+		
+		btnAddDate.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			    newFragment.show(getFragmentManager(), "datePicker");
+			}
+		});
+		
 		//set click methods
 		push.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				if (!checkPushAvailable()) {
-					Helper.giveNotification(getView().getContext(), "1 günden fazla senkronizasyon yapmadan gönderim yapamazsýnýz.");
-					return;
-				}
+//				if (!checkPushAvailable()) {
+//					Helper.giveNotification(getView().getContext(), "1 günden fazla senkronizasyon yapmadan gönderim yapamazsýnýz.");
+//					return;
+//				}
+				log.info("Gönderim butonu týklandý.");
 				updatePushButtonView(false);
+				log.info("Gönderim butonu state deðiþti");
 				push();
+				log.info("Gönderim yapýldý.");
 				pushLogs();
+				log.info("Log Gönderim yapýldý.");
 				
 			}
 		});
@@ -283,6 +310,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	
 	private void setPendingRequestSize() {
 		int pendingCount = getPendingRequestSize();
+
 		if (pendingCount == 0) {
 			txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
 		} else {
@@ -290,6 +318,23 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		}
 		
 		pendingCount=getPendingLogRequestSize();
+		if (pendingCount == 0) {
+			txtPendingAuditCount.setText("Bekleyen tespit bulunmamaktadýr");
+		} else {
+			txtPendingAuditCount.append(String.format(": %d", pendingCount));
+		}
+	}
+	
+	private void setAllPendingRequestSize() {
+		int pendingCount = getAllRequestSize();
+
+		if (pendingCount == 0) {
+			txtPending.setText("Bekleyen iþ emriniz bulunmamaktadýr");
+		} else {
+			txtPending.append(String.format(": %d", pendingCount));
+		}
+		
+		pendingCount=getAllLogRequestSize();
 		if (pendingCount == 0) {
 			txtPendingAuditCount.setText("Bekleyen tespit bulunmamaktadýr");
 		} else {
@@ -314,7 +359,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		prg.show();
 
 		for (AuditLog auditLog : vals) {
-			String sql=String.format("SELECT * FROM AUDIT_LOGS WHERE UAVT_CODE='%s' AND CREATE_DATE>=%s",auditLog.UavtCode,
+			String sql=String.format("SELECT * FROM AUDIT_LOG WHERE UAVT_CODE='%s' AND CREATE_DATE>=%s",auditLog.UavtCode,
 					String.valueOf(auditLog.CreateDate));
 			List<AuditLog> existedAuditLogs=AuditLog.findWithQuery(AuditLog.class, sql, null);
 			if (existedAuditLogs!=null&&existedAuditLogs.size()>0) {
@@ -323,6 +368,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 					existedAuditItem.AuditedCheckStatus = auditLog.AuditedCheckStatus;
 					existedAuditItem.AuditFormDescription = auditLog.AuditFormDescription;
 					existedAuditItem.AuditFormSerno = auditLog.AuditFormSerno;
+					existedAuditItem.AuditFormSernoText = auditLog.AuditFormSernoText;
 					existedAuditItem.AuditOptionSelection = auditLog.AuditOptionSelection;
 					existedAuditItem.AuditProgressStatus = auditLog.AuditProgressStatus;
 					existedAuditItem.AuditStatus = auditLog.AuditStatus;
@@ -551,7 +597,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	}
 
 	private void updateOrSaveOnUavt(PushRequest pushRequest) {
-		if (Helper.IsUUID(pushRequest.uavtCode)) {
+		if (Helper.IsUUID(pushRequest.uavtCode)||Helper.ContainsDash(pushRequest.uavtCode)) {
 			// yeni eklenmiþ bir birim ya da kapý
 			// sistemde var mý kontrol et yoksa ekle varsa güncelle
 			try {
@@ -563,6 +609,7 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 
 				if (checkRetrievedUavtExist(pushRequest.villageCode,
 								pushRequest.streetCode, pushRequest.csbmCode,pushRequest.uavtCode)) {
+					Helper.updateData(pushRequest.uavtCode,pushRequest.doorNumber,pushRequest.siteName,pushRequest.blockName,pushRequest.indoorNumber);
 					return;
 				}
 
@@ -691,8 +738,29 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 
 	}
 	
+	private int getAllRequestSize() {
+		Integer val = PushRequest
+				.getListCount("SELECT COUNT(*) AS COUNT FROM PUSH_REQUEST");
+		if (val == null) {
+			// no data
+			return 0;
+		}
+		return val;
+
+	}
+	
 	private int getPendingLogRequestSize() {
 		Integer val = AuditLog.getListCount("SELECT COUNT(*) AS COUNT FROM AUDIT_LOG WHERE PUSHED=0");
+		if (val == null) {
+			// no data
+			return 0;
+		}
+		return val;
+
+	}
+	
+	private int getAllLogRequestSize() {
+		Integer val = AuditLog.getListCount("SELECT COUNT(*) AS COUNT FROM AUDIT_LOG");
 		if (val == null) {
 			// no data
 			return 0;
@@ -707,10 +775,23 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 				null);
 		return pushRequestList;
 	}
+	
+	private List<PushRequest> getAllRequests() {
+		List<PushRequest> pushRequestList = PushRequest.findWithQuery(
+				PushRequest.class, "SELECT * FROM PUSH_REQUEST WHERE CREATE_DATE > "+this.selectedDate,
+				null);
+		return pushRequestList;
+	}
 
 	private List<AuditLog> getPendingLogs() {
 		List<AuditLog> logList = AuditLog.findWithQuery(AuditLog.class,
 				"SELECT * FROM AUDIT_LOG WHERE PUSHED=0", null);
+		return logList;
+	}
+	
+	private List<AuditLog> getAllLogs() {
+		List<AuditLog> logList = AuditLog.findWithQuery(AuditLog.class,
+				"SELECT * FROM AUDIT_LOG  WHERE CREATE_DATE > "+this.selectedDate, null);
 		return logList;
 	}
 
@@ -725,10 +806,19 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 	}
 	
 	private void push() {
-		List<PushRequest> pushRequestList = getPendingRequests();
+		
+		ProgressDialog prg = new ProgressDialog(getView().getContext());
+		prg.setCancelable(false);
+		prg.setTitle("Eþleþme yollama");
+		prg.setMessage("Eþleþme verileri getiriliyor.");
+		prg.show();
+		
+//		List<PushRequest> pushRequestList = getPendingRequests();
+		List<PushRequest> pushRequestList = getAllRequests();
 		if (pushRequestList == null || pushRequestList.isEmpty()) {
 			log.warn("Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
 			pushCallResponsed=true;
+			prg.dismiss();
 			return;
 		}
 
@@ -745,13 +835,23 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		ServiceRequest req = new ServiceRequest("push", paramsx);
 		new ServiceOrganizer(this, getView().getContext(), "Eþleþme gönderim",
 				"Eþleþme verileri gönderiliyor.").execute(req);
+		
+		prg.dismiss();
 	}
 
 	private void pushLogs() {
-		List<AuditLog> logList = getPendingLogs();
+		ProgressDialog prg = new ProgressDialog(getView().getContext());
+		prg.setCancelable(false);
+		prg.setTitle("Tespit yollama");
+		prg.setMessage("Tespit verileri getiriliyor.");
+		prg.show();
+		
+//		List<AuditLog> logList = getPendingLogs();
+		List<AuditLog> logList = getAllLogs();
 		if (logList == null || logList.isEmpty()) {
 			log.warn("Gönderilecek herhangi bir eþleþtirme bulunmamaktadýr.");
 			pushLogsCallResponsed=true;
+			prg.dismiss();
 			return;
 		}
 
@@ -769,6 +869,8 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		new ServiceOrganizer(this, getView().getContext(),
 				"Tespit veri gönderim", "Tespit verileri gönderiliyor.")
 				.execute(req);
+		
+		prg.dismiss();
 	}
 
 	private void fetchNewUavt() {
@@ -843,5 +945,24 @@ public class SyncFragment extends Fragment implements ServiceTaskEvent {
 		new ServiceOrganizer(this, getView().getContext(),
 				"Tespit verisi güncelleme",
 				"Tespit verisi güncelleme iþlemi yapýlýyor.").execute(req);
+	}
+
+	@Override
+	public void onDateSet(DatePicker view, int year, int monthOfYear,
+			int dayOfMonth) {
+		int tempMonth=monthOfYear+1;
+		int tempDay=dayOfMonth;
+		String month="",day="";
+		
+		if (tempMonth>9) {
+			month=String.valueOf(tempMonth);
+		}
+		
+		if (tempDay>9) {
+			day=String.valueOf(tempDay);
+		}
+
+		
+		this.selectedDate=String.valueOf(year)+month+day+"000000";
 	}
 }

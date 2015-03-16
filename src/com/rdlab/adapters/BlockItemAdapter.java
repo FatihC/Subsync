@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.rdlab.model.BlockItem;
 import com.rdlab.model.Enums;
+import com.rdlab.model.ItemConditions;
 import com.rdlab.subssync.R;
 
 public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
@@ -23,16 +24,20 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 	private ArrayList<BlockItem> _dtAddress;
 	private Context _context;
 	private Filter filter;
+	private ItemConditions _conditions;
+	private boolean _forControl;
 
 	/* private ItemType _itemType; */
 
 	public BlockItemAdapter(Context context, int resourceId,
-			ArrayList<BlockItem> addressList) {
+			ArrayList<BlockItem> addressList,ItemConditions cond,boolean forControl) {
 		// TODO Auto-generated constructor stub
 		super(context, resourceId, addressList);
 		this._addresses = addressList;
 		this._dtAddress=new ArrayList<BlockItem>(addressList);
 		this._context = context;
+		this._conditions=cond;
+		this._forControl=forControl;
 
 	}
 
@@ -105,7 +110,11 @@ public class BlockItemAdapter extends ArrayAdapter<BlockItem> {
 		return arg1;
 	}
 
-
+//	private boolean getColorOfRow(String doorNumber)
+//	{
+//		
+//	}
+	
 	@Override
 	public Filter getFilter() {
 		if (filter == null)

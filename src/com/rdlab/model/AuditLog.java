@@ -7,6 +7,7 @@ public class AuditLog extends SugarRecord {
 	public Long UserSerno;
 	public String AuditOptionSelection;
 	public String AuditFormSerno;
+	public String AuditFormSernoText;
 	public String AuditFormDescription;
 	public String AuditProgressStatus;
 	public String AuditedCheckStatus;

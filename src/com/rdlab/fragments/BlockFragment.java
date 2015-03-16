@@ -245,8 +245,14 @@ public class BlockFragment extends BaseFragment implements DataEvent {
 	}
 
 	private void setListView(ArrayList<BlockItem> items) {
+		ItemConditions cond = new ItemConditions();
+		cond.setCSBMCode(csbmCode);
+		cond.setStreetCode(streetCode);
+		cond.setDistrictCode(districtCode);
+		cond.setVillageCode(villageCode);
+		
 		_adapter = new BlockItemAdapter(getActivity().getApplicationContext(),
-				0, items);
+				0, items,cond,forControl);
 		addressList = items;
 		searchResult.setAdapter(_adapter);
 	}

@@ -34,6 +34,7 @@ import de.mindpipe.android.logging.log4j.LogConfigurator;
  * @author N04155-1013
  * 
  */
+@SuppressLint("DefaultLocale")
 public class Helper {
 
 	private final static Logger log = Logger.getLogger(Helper.class);
@@ -281,7 +282,7 @@ public class Helper {
 		
 		try {
 			innerQuery=String
-					.format("SELECT * FROM %s WHERE DISTRICT_CODE='%s' AND "
+					.format("SELECT ID FROM %s WHERE DISTRICT_CODE='%s' AND "
 							+ " VILLAGE_CODE='%s' AND STREET_CODE='%s' AND CSBM_CODE='%s' AND DOOR_NUMBER='%s'",
 							tableName, districtCode, villageCode, streetCode,
 							csbmCode, doorNumber);
@@ -295,6 +296,19 @@ public class Helper {
 			}
 			
 			sql=String.format("UPDATE %s SET DOOR_NUMBER='%s',BLOCK_NAME='%s',SITE_NAME='%s' WHERE ID IN (%s)", tableName,newDoorNum,newBlockName,newSiteName,innerQuery);
+			SugarRecord.executeQuery(sql, null);
+		} catch (Exception e) {
+			log.error(String.format("Error occured in updating data function with exc is {%s}",e.getMessage()));
+		}
+	}
+	
+	public static void updateData(String uavtCode, String newDoorNum, String newSiteName,
+			String newBlockName, String newIndoorNum){
+		String sql="",tableName=getTableName();
+		
+		try {
+			
+			sql=String.format("UPDATE %s SET DOOR_NUMBER='%s',BLOCK_NAME='%s',SITE_NAME='%s' WHERE UAVT_ADDRESS_NO='%s')", tableName,newDoorNum,newBlockName,newSiteName,uavtCode);
 			SugarRecord.executeQuery(sql, null);
 		} catch (Exception e) {
 			log.error(String.format("Error occured in updating data function with exc is {%s}",e.getMessage()));
@@ -367,6 +381,17 @@ public class Helper {
 		}
 
 		return isGuid;
+	}
+	
+	public static boolean ContainsDash(String value) {
+		boolean containsDash = false;
+		value=value.trim();
+		char firstChar=value.charAt(0);
+		if (firstChar=='-') {
+			containsDash=true;
+		}
+
+		return containsDash;
 	}
 
 	public static boolean IsIntParseable(String val) {

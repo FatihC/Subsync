@@ -148,6 +148,7 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 				Button btnAuditList=(Button)dlg.findViewById(R.id.btnAuditList);
 
 				
+				
 				btnUpdate.setOnClickListener(new OnClickListener() {
 					
 					@Override
@@ -170,6 +171,11 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 					
 					@Override
 					public void onClick(View v) {
+						if (!checkForAvailability(item)) {
+							Helper.giveNotification(getView().getContext(), "Eþleþme yapýlmýþ bu veri için tespit yapamazsýnýz.");
+							return;
+						}
+						
 						dlg.dismiss();
 						
 						AuditFormFragment frg=new AuditFormFragment();
@@ -246,6 +252,17 @@ public class UnitControlFragment extends BaseFragment implements DataEvent {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+	}
+	
+	private boolean checkForAvailability(UnitItem item){
+		String sql="SELECT * FROM PUSH_REQUEST WHERE (IFNULL(WIRING_NO,'')='')=0 AND UAVT_CODE='"+item.getUAVTNo()+"'";
+		//böyle bir item varsa iþlem yapmamasý lazým
+		List<PushRequest> prList=PushRequest.findWithQuery(PushRequest.class, sql, null);
+		if (prList.isEmpty()) {
+			return true;
+		}
+		return false;
+		
 	}
 
 	private void setListView(ArrayList<UnitItem> items) {

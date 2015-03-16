@@ -1,5 +1,7 @@
 package com.rdlab.fragments;
 
+import org.apache.log4j.Logger;
+
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,6 +30,9 @@ import com.rdlab.utility.Helper;
 
 public class AuditFormFragment extends BaseFragment {
 
+	private final static Logger loger = Logger
+			.getLogger(AuditFormFragment.class);
+
 	RadioGroup rdgAuditConditions;
 	RadioButton rd_mbs_uptodate;
 	RadioButton rd_mbs_not_uptodate;
@@ -35,7 +40,10 @@ public class AuditFormFragment extends BaseFragment {
 	RadioButton rd_not_subscribed;
 	RadioButton rd_info_correct;
 	RadioButton rd_not_need_subscribe;
+	TextView lblSerno;
+	TextView lblSernoText;
 	EditText txtFormSerNo;
+	EditText txtFormSerNoText;
 	EditText txtFormDescription;
 	Button btnSaveAudit;
 
@@ -49,6 +57,7 @@ public class AuditFormFragment extends BaseFragment {
 	String siteName;
 	String blockName;
 	boolean isSync;
+	boolean isClosedMeter = false;
 	AuditOptions selectedOptions;
 
 	@Override
@@ -91,7 +100,12 @@ public class AuditFormFragment extends BaseFragment {
 		txtFormSerNo = (EditText) rootView.findViewById(R.id.txtFormSerNo);
 		txtFormDescription = (EditText) rootView
 				.findViewById(R.id.txtFormDescription);
+		txtFormSerNoText = (EditText) rootView
+				.findViewById(R.id.txtFormSerNoText);
 		btnSaveAudit = (Button) rootView.findViewById(R.id.btnSaveAudit);
+		
+		lblSerno=(TextView)rootView.findViewById(R.id.lblSerno);
+		lblSernoText=(TextView)rootView.findViewById(R.id.lblSernoText);
 
 		// clearing selection in radio group
 		rdgAuditConditions.clearCheck();
@@ -103,12 +117,23 @@ public class AuditFormFragment extends BaseFragment {
 			rd_not_need_subscribe.setVisibility(View.GONE);
 			break;
 		case ClosedOrMeterUnreachable:
-		case UnreachableUnitOrMeter:
 			rd_mbs_uptodate.setVisibility(View.GONE);
 			rd_mbs_not_uptodate.setVisibility(View.GONE);
 			rd_subscribed.setVisibility(View.GONE);
 			rd_not_subscribed.setVisibility(View.GONE);
 			rd_not_need_subscribe.setVisibility(View.GONE);
+			break;
+		case UnreachableUnitOrMeter:
+			isClosedMeter = true;
+			rd_mbs_uptodate.setVisibility(View.GONE);
+			rd_mbs_not_uptodate.setVisibility(View.GONE);
+			rd_subscribed.setVisibility(View.GONE);
+			rd_not_subscribed.setVisibility(View.GONE);
+			rd_not_need_subscribe.setVisibility(View.GONE);
+			txtFormSerNo.setVisibility(View.GONE);
+			txtFormSerNoText.setVisibility(View.GONE);
+			lblSerno.setVisibility(View.GONE);
+			lblSernoText.setVisibility(View.GONE);
 			break;
 		case NoMeterNoSubscriber:
 			rd_mbs_uptodate.setVisibility(View.GONE);
@@ -146,9 +171,6 @@ public class AuditFormFragment extends BaseFragment {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				createAuditLog();
-				Helper.giveNotification(getView().getContext(),
-						"Tespit baþarýyla sisteme eklenmiþtir.");
-
 			}
 		});
 
@@ -158,35 +180,87 @@ public class AuditFormFragment extends BaseFragment {
 		TextView info = (TextView) ab.getCustomView().findViewById(
 				R.id.txtTitle);
 		info.setText(Constants.AUDIT_LOG_FORM);
+		Button saveMatchButton = (Button) ab.getCustomView().findViewById(
+				R.id.btnSave);
+		saveMatchButton.setVisibility(View.VISIBLE);
+		saveMatchButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				createAuditLog();
+
+			}
+		});
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
 				| ActionBar.DISPLAY_SHOW_HOME | ActionBar.NAVIGATION_MODE_LIST
 				| ActionBar.DISPLAY_HOME_AS_UP);
-
 		return rootView;
 	}
 
 	private void createAuditLog() {
-		AuditLog log = new AuditLog();
-		log.UserSerno = Constants.LoggedUserSerno;
-		log.AuditFormDescription = txtFormDescription.getText().toString();
-		log.AuditFormSerno = txtFormSerNo.getText().toString();
-		log.AuditOptionSelection = selectedOptions.getValString();
-		log.AuditProgressStatus = defineProgressStatus(selectedOptions);
-		log.AuditedCheckStatus=getCheckStatusOfElement();
-		log.AuditStatus=AuditStatus.Active.getStringVal();
-		log.RecordStatus=RecordStatus.Active.getVal();
-		log.BlockName = blockName;
-		log.CreateDate = DateUtils.nowLong();
-		log.CsbmCode = csbmCode;
-		log.DistrictCode = districtCode;
-		log.DoorNumber = doorNumber;
-		log.IndoorNumber = indoorNumber;
-		log.SiteName = siteName;
-		log.StreetCode = streetCode;
-		log.UavtCode = uavtAddresNo;
-		log.VillageCode = villageCode;
-		log.Pushed=false;
-		AuditLog.save(log);
+		loger.info("Audit log oluþturuluyor.");
+		try {
+			String serno = txtFormSerNo.getText().toString();
+			String sernoText = txtFormSerNoText.getText().toString();
+			if (!isClosedMeter) {
+				if (serno.isEmpty()) {
+					Helper.giveNotification(getView().getContext(),
+							"Lütfen form serno alanýný doldurunuz!");
+					return;
+				}
+				if (sernoText.isEmpty()) {
+					Helper.giveNotification(getView().getContext(),
+							"Lütfen form serno deðer alanýný doldurunuz!");
+					return;
+				}
+			}
+			if (selectedOptions == null) {
+				Helper.giveNotification(getView().getContext(),
+						"Lütfen durum seçimi yapýnýz!");
+				return;
+			}
+
+			AuditLog log = new AuditLog();
+			log.UserSerno = Constants.LoggedUserSerno;
+			log.AuditFormDescription = txtFormDescription.getText().toString();
+			if (isClosedMeter) {
+				log.AuditFormSerno = "";
+				log.AuditFormSernoText = "";	
+			}else{
+				log.AuditFormSerno = txtFormSerNo.getText().toString();
+				log.AuditFormSernoText = txtFormSerNoText.getText().toString();
+			}
+			
+			log.AuditOptionSelection = selectedOptions.getValString();
+			log.AuditProgressStatus = defineProgressStatus(selectedOptions);
+			log.AuditedCheckStatus = getCheckStatusOfElement();
+			log.AuditStatus = AuditStatus.Active.getStringVal();
+			log.RecordStatus = RecordStatus.Active.getVal();
+			log.BlockName = blockName;
+			log.CreateDate = DateUtils.nowLong();
+			log.CsbmCode = csbmCode;
+			log.DistrictCode = districtCode;
+			log.DoorNumber = doorNumber;
+			log.IndoorNumber = indoorNumber;
+			log.SiteName = siteName;
+			log.StreetCode = streetCode;
+			log.UavtCode = uavtAddresNo;
+			log.VillageCode = villageCode;
+			log.Pushed = false;
+			AuditLog.save(log);
+
+			loger.info("Audit log kaydedildi");
+
+			Helper.giveNotification(getView().getContext(),
+					"Tespit baþarýyla sisteme eklenmiþtir.");
+			getActivity().getFragmentManager().popBackStack();
+		} catch (Exception e) {
+			// TODO: handle exception
+			loger.error(String.format(
+					"Audit log kayýt sýrasýnda hata oluþtu exc ise %s",
+					e.getMessage()));
+		}
 	}
 
 	private String defineProgressStatus(AuditOptions selectedOption) {
@@ -202,7 +276,7 @@ public class AuditFormFragment extends BaseFragment {
 	}
 
 	private ControlStatus getControlStatus() {
-		PushRequest pr=getRelatedPushRequest();
+		PushRequest pr = getRelatedPushRequest();
 		if ((pr.wiringNo == null || pr.wiringNo.equals(""))
 				&& (pr.meterNo != null && !pr.meterNo.equals(""))) {
 			return ControlStatus.NoWiringMeterExist;
@@ -217,13 +291,13 @@ public class AuditFormFragment extends BaseFragment {
 			return ControlStatus.ClosedOrMeterUnreachable;
 		}
 	}
-	
-	private String getCheckStatusOfElement(){
-		PushRequest pr=getRelatedPushRequest();
+
+	private String getCheckStatusOfElement() {
+		PushRequest pr = getRelatedPushRequest();
 		return pr.checkStatus;
 	}
-	
-	private PushRequest getRelatedPushRequest(){
+
+	private PushRequest getRelatedPushRequest() {
 		String sql = String
 				.format("SELECT * FROM PUSH_REQUEST WHERE UAVT_CODE='%s'",
 						uavtAddresNo);
@@ -231,5 +305,5 @@ public class AuditFormFragment extends BaseFragment {
 				.findWithQuery(PushRequest.class, sql, null).get(0);
 		return pr;
 	}
-	
+
 }

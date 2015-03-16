@@ -8,7 +8,6 @@ import java.util.Map;
 public class Constants {
 	public static final String FOR_CONTROL = "FOR_CONTROL";
 	
-	public static final String CITY_CODE = "63";
 	public static final String COUNTY_CODE_TAG = "COUNTY_CODE";
 	public static final String DISTRICT_CODE_TAG = "DISTRICT_CODE";
 	public static final String VILLAGE_CODE_TAG = "VILLAGE_CODE";
@@ -20,10 +19,17 @@ public class Constants {
 	public static final String UAVT_TAG = "UAVT_ADDRESS_NO";
 	public static final String INDOOR_TAG = "INDOOR_NUMBER";
 	public static final String CHECKED_UAVT = "CHECK_STATUS";
+	
+	public static final String SELECTED_CITY_CODE = "SELECTED_CITY_CODE";
+	public static final String SELECTED_CITY_NAME = "SELECTED_CITY_NAME";
 	public static final String SELECTED_COUNTY_CODE = "SELECTED_COUNTY_CODE";
 	public static final String SELECTED_COUNTY_NAME = "SELECTED_COUNTY_NAME";
 	public static final String SELECTED_COUNTY_DB_CODE = "SELECTED_COUNTY_DB_CODE";
 	public static final String SELECTED_CLASS_NAME = "SELECTED_CLASS_NAME";
+	public static final String SELECTED_DISTRICT_CODE = "SELECTED_DISTRICT_CODE";
+	public static final String SELECTED_DISTRICT_NAME = "SELECTED_DISTRICT_NAME";
+	public static final String SELECTED_VILLAGE_CODE = "SELECTED_VILLAGE_CODE";
+	public static final String SELECTED_VILLAGE_NAME = "SELECTED_VILLAGE_NAME";
 
 	public static final String EDIT_OUTDOOR = "OUTDOOR_NUM_EDIT";
 	public static final String EDIT_SITE = "SITE_NAME_EDIT";
@@ -41,19 +47,19 @@ public class Constants {
 	public static final String STREET_LIST_STATE = "STREET_LIST_STATE";
 	public static final String CSBM_LIST_STATE = "CSBM_LIST_STATE";
 
-	public static final String HALILIYE = "1";
-	public static final String EYYUBIYE = "2";
-	public static final String VIRANSEHIR = "3";
-	public static final String SIVEREK = "4";
-	public static final String KARAKOPRU = "5";
-	public static final String BIRECIK = "6";
-	public static final String SURUC = "7";
-	public static final String AKCAKALE = "8";
-	public static final String BOZOVA = "9";
-	public static final String CEYLANPINAR = "10";
-	public static final String HALFETI = "11";
-	public static final String HARRAN = "12";
-	public static final String HILVAN = "13";
+//	public static final String HALILIYE = "1";
+//	public static final String EYYUBIYE = "2";
+//	public static final String VIRANSEHIR = "3";
+//	public static final String SIVEREK = "4";
+//	public static final String KARAKOPRU = "5";
+//	public static final String BIRECIK = "6";
+//	public static final String SURUC = "7";
+//	public static final String AKCAKALE = "8";
+//	public static final String BOZOVA = "9";
+//	public static final String CEYLANPINAR = "10";
+//	public static final String HALFETI = "11";
+//	public static final String HARRAN = "12";
+//	public static final String HILVAN = "13";
 	public static final String INITIAL_SYNC_DATE = "20141215000000";
 	
 	/*
@@ -117,10 +123,13 @@ public class Constants {
 	public static final ArrayList<String> AUDITPROGRESSTYPE = new ArrayList<String>(
 			Arrays.asList("-","Devam Ediyor", "Tamamlandý"));
 
+	public static String SelectedCityCode= "63";
+	public static String SelectedCityName= "urfa";
 	public static String SelectedCountyCode = "1115";
 	public static String SelectedUniversalCountyCode = "35";
 	public static String SelectedCountyName = "Akçakale";
-	public static String SelectedClassName= "com.rdlab.model.Akcakale";
+	public static String SelectedClassName= "com.rdlab.model."+SelectedCityName+".Akcakale";
+	
 	public static String SelectedDistrictCode= "";
 	public static String SelectedDistrictName = "";
 	public static String SelectedVillageCode = "";
@@ -137,19 +146,76 @@ public class Constants {
 	public static Map<String, String> METER_BRAND_CODES = new HashMap<String, String>();
 
 	static {
-		COUNTY_CODES.put("32", "com.rdlab.model.Eyyubiye");
-		COUNTY_CODES.put("33", "com.rdlab.model.Haliliye");
-		COUNTY_CODES.put("34", "com.rdlab.model.Karakopru");
-		COUNTY_CODES.put("35", "com.rdlab.model.Akcakale");
-		COUNTY_CODES.put("36", "com.rdlab.model.Birecik");
-		COUNTY_CODES.put("37", "com.rdlab.model.Bozova");
-		COUNTY_CODES.put("38", "com.rdlab.model.Ceylanpinar");
-		COUNTY_CODES.put("39", "com.rdlab.model.Halfeti");
-		COUNTY_CODES.put("40", "com.rdlab.model.Harran");
-		COUNTY_CODES.put("41", "com.rdlab.model.Hilvan");
-		COUNTY_CODES.put("42", "com.rdlab.model.Siverek");
-		COUNTY_CODES.put("43", "com.rdlab.model.Suruc");
-		COUNTY_CODES.put("44", "com.rdlab.model.Viransehir");
+		//urfa
+		COUNTY_CODES.put("32", "com.rdlab.model.urfa.Eyyubiye");
+		COUNTY_CODES.put("33", "com.rdlab.model.urfa.Haliliye");
+		COUNTY_CODES.put("34", "com.rdlab.model.urfa.Karakopru");
+		COUNTY_CODES.put("35", "com.rdlab.model.urfa.Akcakale");
+		COUNTY_CODES.put("36", "com.rdlab.model.urfa.Birecik");
+		COUNTY_CODES.put("37", "com.rdlab.model.urfa.Bozova");
+		COUNTY_CODES.put("38", "com.rdlab.model.urfa.Ceylanpinar");
+		COUNTY_CODES.put("39", "com.rdlab.model.urfa.Halfeti");
+		COUNTY_CODES.put("40", "com.rdlab.model.urfa.Harran");
+		COUNTY_CODES.put("41", "com.rdlab.model.urfa.Hilvan");
+		COUNTY_CODES.put("42", "com.rdlab.model.urfa.Siverek");
+		COUNTY_CODES.put("43", "com.rdlab.model.urfa.Suruc");
+		COUNTY_CODES.put("44", "com.rdlab.model.urfa.Viransehir");
+
+		//Diyarbakýr
+		COUNTY_CODES.put("2",  "com.rdlab.model.diyarbakir.Baglar");
+		COUNTY_CODES.put("3",  "com.rdlab.model.diyarbakir.Kayapinar");
+		COUNTY_CODES.put("4",  "com.rdlab.model.diyarbakir.Sur");
+		COUNTY_CODES.put("5",  "com.rdlab.model.diyarbakir.Yenisehir");
+		COUNTY_CODES.put("6",  "com.rdlab.model.diyarbakir.Bismil");
+		COUNTY_CODES.put("7",  "com.rdlab.model.diyarbakir.Cermik");
+		COUNTY_CODES.put("8",  "com.rdlab.model.diyarbakir.Cinar");
+		COUNTY_CODES.put("9",  "com.rdlab.model.diyarbakir.Cungus");
+		COUNTY_CODES.put("10", "com.rdlab.model.diyarbakir.Dicle");
+		COUNTY_CODES.put("11", "com.rdlab.model.diyarbakir.Ergani");
+		COUNTY_CODES.put("12", "com.rdlab.model.diyarbakir.Hani");
+		COUNTY_CODES.put("13", "com.rdlab.model.diyarbakir.Hazro");
+		COUNTY_CODES.put("14", "com.rdlab.model.diyarbakir.Kulp");
+		COUNTY_CODES.put("15", "com.rdlab.model.diyarbakir.Lice");
+		COUNTY_CODES.put("16", "com.rdlab.model.diyarbakir.Silvan");
+		COUNTY_CODES.put("17", "com.rdlab.model.diyarbakir.Egil");
+		COUNTY_CODES.put("18", "com.rdlab.model.diyarbakir.Kocakoy");
+
+		//Mardin
+		COUNTY_CODES.put("52", "com.rdlab.model.mardin.Artuklu");
+		COUNTY_CODES.put("53", "com.rdlab.model.mardin.Dargecit");
+		COUNTY_CODES.put("54", "com.rdlab.model.mardin.Derik");
+		COUNTY_CODES.put("55", "com.rdlab.model.mardin.Kiziltepe");
+		COUNTY_CODES.put("56", "com.rdlab.model.mardin.Mazidagi");
+		COUNTY_CODES.put("57", "com.rdlab.model.mardin.Midyat");
+		COUNTY_CODES.put("58", "com.rdlab.model.mardin.Nusaybin");
+		COUNTY_CODES.put("59", "com.rdlab.model.mardin.Omerli");
+		COUNTY_CODES.put("60", "com.rdlab.model.mardin.Savur");
+		COUNTY_CODES.put("61", "com.rdlab.model.mardin.Yesilli");
+
+		//siirt
+		COUNTY_CODES.put("64", "com.rdlab.model.siirt.Tillo");
+		COUNTY_CODES.put("65", "com.rdlab.model.siirt.Baykan");
+		COUNTY_CODES.put("66", "com.rdlab.model.siirt.Eruh");
+		COUNTY_CODES.put("67", "com.rdlab.model.siirt.Kurtalan");
+		COUNTY_CODES.put("68", "com.rdlab.model.siirt.Pervari");
+		COUNTY_CODES.put("69", "com.rdlab.model.siirt.Sirvan");
+
+		//batman
+		COUNTY_CODES.put("72", "com.rdlab.model.batman.Besiri");
+		COUNTY_CODES.put("73", "com.rdlab.model.batman.Gercus");
+		COUNTY_CODES.put("74", "com.rdlab.model.batman.Hasankeyf");
+		COUNTY_CODES.put("75", "com.rdlab.model.batman.Kozluk");
+		COUNTY_CODES.put("76", "com.rdlab.model.batman.Sason");
+
+		//þýrnak
+		COUNTY_CODES.put("82", "com.rdlab.model.sirnak.Cizre");
+		COUNTY_CODES.put("83", "com.rdlab.model.sirnak.Silopi");
+		COUNTY_CODES.put("84", "com.rdlab.model.sirnak.Uludere");
+		COUNTY_CODES.put("85", "com.rdlab.model.sirnak.Idil");
+		COUNTY_CODES.put("86", "com.rdlab.model.sirnak.Beytussebap");
+		COUNTY_CODES.put("87", "com.rdlab.model.sirnak.Uzungecit");
+		COUNTY_CODES.put("88", "com.rdlab.model.sirnak.Guclukonak");
+
 
 		METER_BRAND_CODES.put("AEG", "AEG");
 		METER_BRAND_CODES.put("KÖHLER (AEL)", "AEL");

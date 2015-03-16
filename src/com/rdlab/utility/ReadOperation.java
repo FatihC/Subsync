@@ -100,6 +100,8 @@ public class ReadOperation extends
 				return repository.getBlockItemsForControl(conditions.getStreetCode(),conditions.getCSBMCode());
 			case Indoor:
 				return repository.getUnitItemsForControl(conditions.getStreetCode(),conditions.getCSBMCode(),conditions.getDoorNumber());
+			case Subscriber:
+				return repository.getSubscriberDetail(conditions.getTesisatNo().toString());
 			default:
 				return null;
 			}
